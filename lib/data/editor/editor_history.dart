@@ -1,8 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/data/editor/page.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 import 'package:sbn/change.dart';
 
@@ -107,9 +109,14 @@ class EditorHistory {
   EditorHistoryItem? removeAccidentalStroke() {
     _isRedoPossible = true;
     if (_past.isEmpty) return null;
-    assert(_past.last.type == .draw, 'Accidental stroke is not a draw');
+    // (An erase if the stroke was a scribble that erased, see
+    // [Stroke.isScribble].)
     assert(
-      _past.last.strokes.length == 1,
+      _past.last.type == .draw || _past.last.type == .erase,
+      'Accidental stroke is not a draw',
+    );
+    assert(
+      _past.last.type != .draw || _past.last.strokes.length == 1,
       'Accidental strokes should be single-stroke',
     );
     assert(
@@ -149,6 +156,10 @@ class EditorHistoryItem {
     this.quillChange,
     this.colorChange,
     this.backgroundPatternChange,
+    this.strokeListChange,
+    this.imageRectChange,
+    this.fillChange,
+    this.linkChange,
   }) : assert(
          type != .move || offset != null,
          'Offset must be provided for move',
@@ -176,6 +187,18 @@ class EditorHistoryItem {
        assert(
          type != .backgroundPattern || backgroundPatternChange != null,
          'Background pattern change must be provided for backgroundPattern',
+       ),
+       assert(
+         type != .partialErase || strokeListChange != null,
+         'Stroke list change must be provided for partialErase',
+       ),
+       assert(
+         type != .fillChange || fillChange?.length == strokes.length,
+         'fillChange must be provided and contain each of strokes',
+       ),
+       assert(
+         type != .links || linkChange != null,
+         'Link change must be provided for links',
        );
 
   final EditorHistoryItemType type;
@@ -187,6 +210,14 @@ class EditorHistoryItem {
   final DocChange? quillChange;
   final Map<Stroke, Change<Color>>? colorChange;
   final Change<CanvasBackgroundPattern>? backgroundPatternChange;
+  final StrokeListChange? strokeListChange;
+
+  /// With [strokeListChange]: images that were resized with the strokes.
+  final Map<EditorImage, Change<Rect>>? imageRectChange;
+  final Map<Stroke, Change<Color?>>? fillChange;
+
+  /// The page's links before and after.
+  final Change<List<PageLink>>? linkChange;
 
   EditorHistoryItem copyWith({
     EditorHistoryItemType? type,
@@ -198,6 +229,10 @@ class EditorHistoryItem {
     DocChange? quillChange,
     Map<Stroke, Change<Color>>? colorChange,
     Change<CanvasBackgroundPattern>? backgroundPatternChange,
+    StrokeListChange? strokeListChange,
+    Map<EditorImage, Change<Rect>>? imageRectChange,
+    Map<Stroke, Change<Color?>>? fillChange,
+    Change<List<PageLink>>? linkChange,
   }) {
     return EditorHistoryItem(
       type: type ?? this.type,
@@ -210,6 +245,10 @@ class EditorHistoryItem {
       colorChange: colorChange ?? this.colorChange,
       backgroundPatternChange:
           backgroundPatternChange ?? this.backgroundPatternChange,
+      strokeListChange: strokeListChange ?? this.strokeListChange,
+      imageRectChange: imageRectChange ?? this.imageRectChange,
+      fillChange: fillChange ?? this.fillChange,
+      linkChange: linkChange ?? this.linkChange,
     );
   }
 }
@@ -224,4 +263,40 @@ enum EditorHistoryItemType {
   quillUndoneChange,
   changeColor,
   backgroundPattern,
+
+  /// Strokes on one page were replaced by others, see [StrokeListChange]:
+  /// partly erased, or resized and rotated (maybe with images, see
+  /// [EditorHistoryItem.imageRectChange]).
+  partialErase,
+
+  /// Closed strokes were filled, see [EditorHistoryItem.fillChange].
+  fillChange,
+
+  /// A page's links changed, see [EditorHistoryItem.linkChange].
+  links,
+}
+
+/// A change to a page's stroke list: the [removed] strokes were
+/// replaced by the [added] strokes.
+///
+/// Each removed stroke is paired with its index in the list before the
+/// change, and each added stroke with its index in the list after it,
+/// so the change can be undone without changing the strokes' order.
+class StrokeListChange {
+  const new({required this.removed, required this.added});
+
+  /// Sorted by index.
+  final List<(int, Stroke)> removed, added;
+
+  StrokeListChange reverse() =>
+      StrokeListChange(removed: added, added: removed);
+
+  /// Applies this change to [strokes], which should be as before the change.
+  void apply(List<Stroke> strokes) {
+    final toRemove = {for (final (_, stroke) in removed) stroke};
+    strokes.removeWhere(toRemove.contains);
+    for (final (i, stroke) in added) {
+      strokes.insert(min(i, strokes.length), stroke);
+    }
+  }
 }

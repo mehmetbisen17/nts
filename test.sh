@@ -24,8 +24,8 @@ if [[ "$1" == "--help" ]]; then
 fi
 
 DOCKERFILE_PATH=".github/docker/Dockerfile"
-IMAGE_NAME="saber_test_env"
-CONTAINER_NAME="saber_test_container"
+IMAGE_NAME="nts_test_env"
+CONTAINER_NAME="nts_test_container"
 
 # Check if docker is installed
 if ! command -v docker &> /dev/null; then

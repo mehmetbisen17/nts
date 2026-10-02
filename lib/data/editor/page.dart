@@ -5,13 +5,13 @@ import 'dart:ui' show FragmentShader;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:saber/components/canvas/_asset_cache.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/components/canvas/inner_canvas.dart';
-import 'package:saber/components/canvas/pencil_shader.dart';
-import 'package:saber/data/editor/editor_exporter.dart';
-import 'package:saber/data/tools/laser_pointer.dart';
+import 'package:nts/components/canvas/_asset_cache.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/canvas/pencil_shader.dart';
+import 'package:nts/data/editor/editor_exporter.dart';
+import 'package:nts/data/tools/laser_pointer.dart';
 import 'package:sbn/has_size.dart';
 
 typedef CanvasKey = GlobalKey<State<InnerCanvas>>;
@@ -49,11 +49,20 @@ class EditorPage extends ChangeNotifier implements HasSize {
   final List<EditorImage> images;
   final QuillStruct quill;
 
+  /// Areas that open a web page or another page of the note.
+  /// Replaced (not changed in place) so undo can keep the old list.
+  List<PageLink> links;
+
+  /// The tape strokes that show what's under them. Not saved, so every
+  /// tape covers its content again when the note opens.
+  final revealedTapes = <Stroke>{};
+
   EditorImage? backgroundImage;
 
   bool get isEmpty =>
       strokes.isEmpty &&
       images.isEmpty &&
+      links.isEmpty &&
       quill.controller.document.isEmpty() &&
       backgroundImage == null;
   bool get isNotEmpty => !isEmpty;
@@ -108,6 +117,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     List<EditorImage>? images,
     QuillStruct? quill,
     this.backgroundImage,
+    List<PageLink>? links,
   }) : assert(
          (size == null) || (width == null && height == null),
          "size and width/height shouldn't both be specified",
@@ -116,6 +126,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
        strokes = strokes ?? [],
        laserStrokes = [],
        images = images ?? [],
+       links = links ?? const [],
        quill =
            quill ??
            QuillStruct(
@@ -166,6 +177,10 @@ class EditorPage extends ChangeNotifier implements HasSize {
               assetCache: assetCache,
             )
           : null,
+      links: [
+        for (final link in json['lk'] as List? ?? const [])
+          PageLink.fromJson(link as Map<String, dynamic>),
+      ],
     );
   }
 
@@ -179,6 +194,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     if (!quill.controller.document.isEmpty())
       'q': quill.controller.document.toDelta().toJson(),
     if (backgroundImage != null) 'b': backgroundImage?.toJson(assets),
+    if (links.isNotEmpty) 'lk': [for (final link in links) link.toJson()],
   };
 
   /// Inserts a stroke, while keeping the strokes sorted by
@@ -324,6 +340,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     images: images ?? this.images,
     quill: quill ?? this.quill,
     backgroundImage: backgroundImage ?? this.backgroundImage,
+    links: links,
   );
 
   /// Clones this page for use in a screenshot.
@@ -337,7 +354,15 @@ class EditorPage extends ChangeNotifier implements HasSize {
     return copyWith(
       strokes: rasterizeAllStrokes
           ? strokes
-          : strokes.where(EditorExporter.shouldRasterizeStroke).toList(),
+          : [
+              for (final stroke in strokes)
+                if (EditorExporter.shouldRasterizeStroke(stroke))
+                  stroke
+                // Fills go under text and images, so they're rasterized
+                // even if the stroke itself is drawn as a vector.
+                else if (stroke.fillColor != null)
+                  stroke.copy()..color = const Color(0x00000000),
+            ],
       quill: quill.cloneForScreenshot(),
     );
   }
@@ -363,4 +388,68 @@ class QuillStruct {
     ),
     focusNode: FocusNode(debugLabel: 'Screenshot Quill Focus Node'),
   );
+}
+
+/// An area of a page that opens [url] when tapped: a web page, an email
+/// address, or `#page=N` for page N of the same note.
+class PageLink {
+  const new(this.rect, this.url);
+
+  final Rect rect;
+  final String url;
+
+  factory fromJson(Map<String, dynamic> json) => PageLink(
+    Rect.fromLTWH(
+      (json['x'] as num).toDouble(),
+      (json['y'] as num).toDouble(),
+      (json['w'] as num).toDouble(),
+      (json['h'] as num).toDouble(),
+    ),
+    json['u'] as String,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'x': rect.left,
+    'y': rect.top,
+    'w': rect.width,
+    'h': rect.height,
+    'u': url,
+  };
+
+  /// The page index for a `#page=N` link, or null for other links.
+  int? get pageIndex => switch (_pageLink.firstMatch(url)?.group(1)) {
+    final n? => int.parse(n) - 1,
+    null => null,
+  };
+
+  static final _pageLink = RegExp(r'^#page=(\d+)$');
+
+  /// The link people typed, cleaned up (e.g. `example.com` gets https),
+  /// or null if it isn't a web, email or page link in a note with
+  /// [pageCount] pages.
+  static String? parse(String input, {required int pageCount}) {
+    var url = input.trim();
+    if (url.isEmpty || url.contains(RegExp(r'\s'))) return null;
+    if (_pageLink.hasMatch(url)) {
+      final page = int.parse(_pageLink.firstMatch(url)!.group(1)!);
+      return page >= 1 && page <= pageCount ? url : null;
+    }
+    if (!url.contains(':')) {
+      url = url.contains('@') ? 'mailto:$url' : 'https://$url';
+    }
+    final uri = Uri.tryParse(url);
+    if (uri == null) return null;
+    return switch (uri.scheme) {
+      'http' || 'https' when uri.host.contains('.') => url,
+      'mailto' when uri.path.contains('@') => url,
+      _ => null,
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is PageLink && other.rect == rect && other.url == url;
+
+  @override
+  int get hashCode => Object.hash(rect, url);
 }

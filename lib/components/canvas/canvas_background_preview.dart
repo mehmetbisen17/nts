@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:saber/components/canvas/_canvas_background_painter.dart';
-import 'package:saber/components/canvas/canvas_image.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/components/canvas/inner_canvas.dart';
-import 'package:saber/data/extensions/color_extensions.dart';
+import 'package:nts/components/canvas/_canvas_background_painter.dart';
+import 'package:nts/components/canvas/canvas_image.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 
 class CanvasBackgroundPreview extends StatelessWidget {
@@ -34,26 +34,28 @@ class CanvasBackgroundPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
+    final c = context.higan;
+    final lineColors = InnerCanvas.backgroundLineColorsOf(context);
+
     final previewSize = Size(
       fixedWidth,
       pageSize.height / pageSize.width * fixedWidth,
     );
     final canvasSize = pageSize / 2;
-    return Container(
+    const radius = BorderRadius.all(.circular(HiganRadius.page));
+    return AnimatedContainer(
+      duration: HiganMotion.fast,
       width: previewSize.width,
       height: previewSize.height,
-      decoration: BoxDecoration(
+      foregroundDecoration: BoxDecoration(
         border: Border.all(
-          color: colorScheme.primary
-              .withSaturation(selected ? 1 : 0)
-              .withValues(alpha: selected ? 1 : 0.1),
-          width: 2,
+          color: selected ? c.text : c.hairline,
+          width: selected ? 1.5 : 1,
         ),
-        borderRadius: const .all(.circular(8)),
+        borderRadius: radius,
       ),
       child: ClipRRect(
-        borderRadius: const .all(.circular(8)),
+        borderRadius: radius,
         child: Stack(
           children: [
             FittedBox(
@@ -66,7 +68,7 @@ class CanvasBackgroundPreview extends StatelessWidget {
                       return Colors.white;
                     } else {
                       return backgroundColor ??
-                          InnerCanvas.defaultBackgroundColor;
+                          InnerCanvas.defaultBackgroundColorOf(context);
                     }
                   }(),
                   backgroundPattern: () {
@@ -78,12 +80,8 @@ class CanvasBackgroundPreview extends StatelessWidget {
                   }(),
                   lineHeight: lineHeight,
                   lineThickness: lineThickness,
-                  primaryColor: colorScheme.primary
-                      .withSaturation(selected ? 1 : 0)
-                      .withValues(alpha: selected ? 1 : 0.5),
-                  secondaryColor: colorScheme.secondary
-                      .withSaturation(selected ? 1 : 0)
-                      .withValues(alpha: selected ? 1 : 0.5),
+                  primaryColor: lineColors.primary,
+                  secondaryColor: lineColors.secondary,
                   preview: true,
                 ),
               ),

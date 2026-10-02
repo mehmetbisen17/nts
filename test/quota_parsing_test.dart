@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:saber/data/quota.dart';
+import 'package:nts/data/quota.dart';
 
 void main() {
   group('Quota parsing', () {

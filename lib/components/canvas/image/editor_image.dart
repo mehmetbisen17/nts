@@ -11,16 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:nts/components/canvas/_asset_cache.dart';
+import 'package:nts/components/canvas/canvas_image.dart';
+import 'package:nts/components/canvas/invert_widget.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/pages/editor/editor.dart';
 import 'package:pdfrx/pdfrx.dart';
-import 'package:saber/components/canvas/_asset_cache.dart';
-import 'package:saber/components/canvas/canvas_image.dart';
-import 'package:saber/components/canvas/invert_widget.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/pages/editor/editor.dart';
 
-part 'png_editor_image.dart';
 part 'pdf_editor_image.dart';
+part 'png_editor_image.dart';
 part 'svg_editor_image.dart';
 
 /// The data for an image in the editor.

@@ -1,24 +1,22 @@
 import 'dart:async';
 
-import 'package:collapsible/collapsible.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:logging/logging.dart';
-import 'package:saber/components/home/delete_note_button.dart';
-import 'package:saber/components/home/export_note_button.dart';
-import 'package:saber/components/home/home_layout_button.dart';
-import 'package:saber/components/home/masonry_files.dart';
-import 'package:saber/components/home/move_note_button.dart';
-import 'package:saber/components/home/new_note_button.dart';
-import 'package:saber/components/home/rename_note_button.dart';
-import 'package:saber/components/home/syncing_button.dart';
-import 'package:saber/components/home/welcome.dart';
-import 'package:saber/components/theming/saber_theme.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/routes.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/home/masonry_files.dart';
+import 'package:nts/components/home/new_note_button.dart';
+import 'package:nts/components/home/welcome.dart';
+import 'package:nts/components/icloud/icloud_widgets.dart';
+import 'package:nts/components/navbar/responsive_navbar.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/icloud/icloud_storage.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/routes.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class const RecentPage({super.key}) extends StatefulHookWidget {
   @override
@@ -110,76 +108,103 @@ class _RecentPageState extends State<RecentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    final platform = Theme.of(context).platform;
-    final crossAxisCount = MediaQuery.sizeOf(context).width ~/ 300 + 1;
-    useListenable(stows.homeLayout);
+    useValueListenable(stows.folderViewModes);
+    useOnListenableChange(ICloudStorage.state, findRecentlyAccessedNotes);
+
+    final phone = MediaQuery.sizeOf(context).width < 600;
+    final selecting = selectedFiles.value.isNotEmpty;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const .only(bottom: 8),
-            sliver: SliverAppBar(
-              collapsedHeight: kToolbarHeight,
-              expandedHeight: 200,
-              pinned: true,
-              scrolledUnderElevation: 1,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  t.home.titles.home,
-                  style: TextStyle(color: colorScheme.onSurface),
-                ),
-                centerTitle: false,
-                titlePadding: const EdgeInsetsDirectional.only(
-                  start: 16,
-                  bottom: 16,
-                ),
-              ),
-              actions: const [HomeLayoutButton(), SyncingButton()],
-            ),
-          ),
-          if (failed) ...[
-            const SliverSafeArea(sliver: SliverToBoxAdapter(child: Welcome())),
-          ] else ...[
+      // Let the home shell's background (and ember) show through.
+      backgroundColor: Colors.transparent,
+      body: NoteShortcuts(
+        files: filePaths,
+        selectedFiles: selectedFiles,
+        child: CustomScrollView(
+          // So the arrow and page keys scroll it on desktop too.
+          primary: true,
+          slivers: [
             SliverSafeArea(
-              minimum: const .only(
-                // Allow space for the FloatingActionButton
-                bottom: 70,
-              ),
-              sliver: MasonryFiles(
-                crossAxisCount: crossAxisCount,
-                files: [for (final filePath in filePaths) filePath],
-                selectedFiles: selectedFiles,
+              minimum: ResponsiveNavbar.pagePadding(context),
+              sliver: SliverMainAxisGroup(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: _Header(
+                      phone: phone,
+                      onRefreshed: findRecentlyAccessedNotes,
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: ICloudBanner()),
+                  if (failed)
+                    const SliverToBoxAdapter(
+                      child: Padding(padding: .only(top: 64), child: Welcome()),
+                    )
+                  else
+                    MasonryFiles(
+                      files: [...filePaths],
+                      selectedFiles: selectedFiles,
+                      viewMode: FolderViewMode.of(FolderViewMode.recentKey),
+                    ),
+                ],
               ),
             ),
           ],
-        ],
+        ),
       ),
-      floatingActionButton: NewNoteButton(cupertino: platform.isCupertino),
-      persistentFooterButtons: selectedFiles.value.isEmpty
-          ? null
-          : [
-              Collapsible(
-                axis: CollapsibleAxis.vertical,
-                collapsed: selectedFiles.value.length != 1,
-                child: RenameNoteButton(
-                  existingPath: selectedFiles.value.isEmpty
-                      ? ''
-                      : selectedFiles.value.first,
-                  unselectNotes: () => selectedFiles.value = [],
+      floatingActionButton: selecting
+          ? NoteSelectionBar(selectedFiles: selectedFiles)
+          : const NewNoteButton(),
+      floatingActionButtonLocation: selecting ? .centerFloat : .endFloat,
+    );
+  }
+}
+
+/// "SAT · 26 SEP", the big "Recent" title, refresh and GALLERY | LIST.
+class _Header extends StatelessWidget {
+  const new({required this.phone, required this.onRefreshed});
+
+  final bool phone;
+  final VoidCallback onRefreshed;
+
+  @override
+  Widget build(BuildContext context) {
+    const viewSwitch = HiganViewSwitch(path: FolderViewMode.recentKey);
+    final refresh = ICloudRefreshButton(onRefreshed: onRefreshed);
+    return Padding(
+      padding: const .only(bottom: 30),
+      child: Column(
+        crossAxisAlignment: .stretch,
+        children: [
+          Row(
+            crossAxisAlignment: .end,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: .start,
+                  spacing: 10,
+                  children: [
+                    HiganLabel(
+                      DateFormat('EEE · d MMM').format(DateTime.now()),
+                    ),
+                    HiganTitle(t.higan.recent, size: phone ? 34 : 40),
+                  ],
                 ),
               ),
-              MoveNoteButton(
-                filesToMove: selectedFiles.value,
-                unselectNotes: () => selectedFiles.value = [],
-              ),
-              DeleteNoteButton(
-                filesToDelete: selectedFiles.value,
-                unselectNotes: () => selectedFiles.value = [],
-              ),
-              ExportNoteButton(selectedFiles: selectedFiles.value),
+              if (!phone) ...[
+                const SizedBox(width: 16),
+                refresh,
+                const SizedBox(width: 10),
+                viewSwitch,
+              ],
             ],
+          ),
+          if (phone)
+            Padding(
+              padding: const .only(top: HiganSpace.l),
+              child: Row(children: [viewSwitch, const Spacer(), refresh]),
+            ),
+        ],
+      ),
     );
   }
 }

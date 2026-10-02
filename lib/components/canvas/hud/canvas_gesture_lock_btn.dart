@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
 
 class CanvasGestureLockBtn extends StatelessWidget {
   /// Either [icon] or [child] must be provided.
@@ -21,23 +23,35 @@ class CanvasGestureLockBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    return GestureDetector(
-      onTap: () => setLock(!lock),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface.withValues(alpha: 0.5),
-          borderRadius: const .all(.circular(16)),
-        ),
-        padding: const .all(5),
-        child: Tooltip(
-          message: tooltip,
-          child:
-              child ??
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Icon(icon, color: colorScheme.onSurface),
+    final c = context.higan;
+    return Tooltip(
+      message: tooltip,
+      child: HiganTapTarget(
+        onTap: () => setLock(!lock),
+        child: Material(
+          color: c.glass,
+          shape: CircleBorder(side: BorderSide(color: c.hairlineStrong)),
+          clipBehavior: .antiAlias,
+          child: InkWell(
+            onTap: () => setLock(!lock),
+            child: SizedBox.square(
+              dimension: 32,
+              child: IconTheme.merge(
+                // Locked reads as "on": bone/ink, otherwise quiet.
+                data: IconThemeData(
+                  size: 16,
+                  weight: 300,
+                  color: lock ? c.text : c.textSecondary,
+                ),
+                child:
+                    child ??
+                    AnimatedSwitcher(
+                      duration: HiganMotion.fast,
+                      child: Icon(icon, key: ValueKey(icon)),
+                    ),
               ),
+            ),
+          ),
         ),
       ),
     );

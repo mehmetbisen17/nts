@@ -1,12 +1,14 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/components/toolbar/color_option.dart';
-import 'package:saber/data/extensions/color_extensions.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/toolbar/color_option.dart';
+import 'package:nts/data/extensions/color_extensions.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 typedef NamedColor = ({String name, Color color});
 
@@ -26,52 +28,17 @@ class ColorBar extends StatefulWidget {
 
   static List<NamedColor> get colorPresets =>
       stows.preferGreyscale.value ? greyScaleColorOptions : normalColorOptions;
+
+  /// Higan's quiet inks (as in the mockup), plus white for black pages.
+  /// More colors are in the custom picker, and pinned/recent colors.
   static final List<NamedColor> normalColorOptions = [
     (name: t.editor.colors.black, color: Colors.black),
-    (name: t.editor.colors.red, color: Colors.red),
-    (name: t.editor.colors.orange, color: Colors.orange),
-    (name: t.editor.colors.yellow, color: Colors.yellow),
-    (name: t.editor.colors.green, color: Colors.green),
-    (name: t.editor.colors.cyan, color: Colors.cyan),
-    (name: t.editor.colors.blue, color: Colors.blue),
-    (name: t.editor.colors.purple, color: Colors.purple),
-    (name: t.editor.colors.pink, color: Colors.pink),
+    (name: t.editor.colors.red, color: const Color(0xFFD0283A)),
+    (name: t.editor.colors.yellow, color: const Color(0xFFE2B46C)),
+    (name: t.editor.colors.blue, color: const Color(0xFF6C8CA8)),
+    (name: t.editor.colors.green, color: const Color(0xFF7E9B7A)),
+    (name: t.editor.colors.purple, color: const Color(0xFF9B7EB3)),
     (name: t.editor.colors.white, color: Colors.white),
-    ..._pastelColorOptions,
-  ];
-  static final List<NamedColor> _pastelColorOptions = [
-    (
-      name: t.editor.colors.pastelRed,
-      color: const Color.fromRGBO(255, 173, 173, 1),
-    ),
-    (
-      name: t.editor.colors.pastelOrange,
-      color: const Color.fromRGBO(255, 214, 165, 1),
-    ),
-    (
-      name: t.editor.colors.pastelYellow,
-      color: const Color.fromRGBO(253, 255, 182, 1),
-    ),
-    (
-      name: t.editor.colors.pastelGreen,
-      color: const Color.fromRGBO(202, 255, 191, 1),
-    ),
-    (
-      name: t.editor.colors.pastelCyan,
-      color: const Color.fromRGBO(155, 246, 255, 1),
-    ),
-    (
-      name: t.editor.colors.pastelBlue,
-      color: const Color.fromRGBO(160, 196, 255, 1),
-    ),
-    (
-      name: t.editor.colors.pastelPurple,
-      color: const Color.fromRGBO(189, 178, 255, 1),
-    ),
-    (
-      name: t.editor.colors.pastelPink,
-      color: const Color.fromRGBO(255, 198, 255, 1),
-    ),
   ];
   static final List<NamedColor> greyScaleColorOptions = [
     (name: t.editor.colors.black, color: Colors.black),
@@ -159,161 +126,31 @@ class ColorBar extends StatefulWidget {
     }
   }
 
-  @override
-  State<ColorBar> createState() => _ColorBarState();
-}
+  static var _pickedColor = const Color.fromRGBO(255, 0, 0, 1);
 
-class _ColorBarState extends State<ColorBar> {
-  static var pickedColor = const Color.fromRGBO(255, 0, 0, 1);
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-
-    final children = <Widget>[
-      // pinned colors
-      if (stows.pinnedColors.value.isNotEmpty) ...[
-        const ColorOptionSeparatorIcon(icon: Icons.pin_drop),
-        for (final colorString in stows.pinnedColors.value)
-          ColorOption(
-            isSelected:
-                widget.currentColor?.withAlpha(255).toARGB32() ==
-                int.parse(colorString),
-            enabled: widget.currentColor != null,
-            onTap: () => widget.setColor(Color(int.parse(colorString))),
-            onLongPress: () =>
-                setState(() => ColorBar.toggleColorPinned(colorString)),
-            tooltip: ColorBar.findColorName(Color(int.parse(colorString))),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Color(int.parse(colorString))
-                    .withInversion(widget.invert),
-                shape: .circle,
-                border: Border.all(
-                  color: colorScheme.onSurface.withValues(alpha: 0.2),
-                  width: 1,
-                ),
-              ),
-            ),
-          ),
-      ],
-
-      const ColorOptionSeparatorIcon(icon: Icons.history),
-
-      // recent colors
-      for (final colorString in stows.recentColorsPositioned.value.reversed)
-        ColorOption(
-          isSelected:
-              widget.currentColor?.withAlpha(255).toARGB32() ==
-              int.parse(colorString),
-          enabled: widget.currentColor != null,
-          onTap: () => widget.setColor(Color(int.parse(colorString))),
-          onLongPress: () =>
-              setState(() => ColorBar.toggleColorPinned(colorString)),
-          tooltip: ColorBar.findColorName(Color(int.parse(colorString))),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Color(int.parse(colorString)).withInversion(widget.invert),
-              shape: .circle,
-              border: Border.all(
-                color: colorScheme.onSurface.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-          ),
-        ),
-      // placeholders for `recentColorsLength` recent colors
-      for (
-        int i = 0;
-        i <
-            stows.recentColorsLength.value -
-                stows.recentColorsPositioned.value.length;
-        ++i
-      )
-        ColorOption(
-          isSelected: false,
-          enabled: widget.currentColor != null,
-          onTap: null,
-          tooltip: null,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              shape: .circle,
-              border: Border.all(
-                color: colorScheme.onSurface.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-          ),
-        ),
-
-      const ColorOptionSeparatorIcon(icon: Icons.palette),
-
-      // custom color
-      ColorOption(
-        isSelected:
-            widget.currentColor?.withAlpha(255).toARGB32() ==
-            pickedColor.toARGB32(),
-        enabled: true,
-        onTap: () => openColorPicker(context),
-        tooltip: t.editor.colors.colorPicker,
-        child: const DecoratedBox(
-          decoration: BoxDecoration(color: Colors.transparent, shape: .circle),
-          child: Center(child: FaIcon(FontAwesomeIcons.droplet, size: 16)),
-        ),
-      ),
-
-      // color presets
-      for (final namedColor in ColorBar.colorPresets)
-        ColorOption(
-          isSelected:
-              widget.currentColor?.withAlpha(255).toARGB32() ==
-              namedColor.color.toARGB32(),
-          enabled: widget.currentColor != null,
-          onTap: () => widget.setColor(namedColor.color),
-          tooltip: namedColor.name,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: namedColor.color.withInversion(widget.invert),
-              shape: .circle,
-              border: Border.all(
-                color: colorScheme.onSurface.withValues(alpha: 0.2),
-                width: 1,
-              ),
-            ),
-          ),
-        ),
-    ];
-
-    return Center(
-      child: Padding(
-        padding: const .all(8),
-        child: SingleChildScrollView(
-          scrollDirection: widget.axis,
-          child: Flex(direction: widget.axis, children: children),
-        ),
-      ),
-    );
-  }
-
-  void openColorPicker(BuildContext context) async {
+  /// Shows a dialog to pick a custom color, then passes it to [setColor].
+  static Future<void> openColorPicker(
+    BuildContext context, {
+    required ValueChanged<Color> setColor,
+    required bool invert,
+  }) async {
     final bool? confirmChange = await showDialog(
       context: context,
-      builder: (BuildContext context) => _colorPickerDialog(context),
+      builder: _colorPickerDialog,
     );
     if (confirmChange ?? false) {
-      widget.setColor(pickedColor.withInversion(widget.invert));
+      setColor(_pickedColor.withInversion(invert));
     }
   }
 
-  Widget _colorPickerDialog(BuildContext context) => AdaptiveAlertDialog(
+  static Widget _colorPickerDialog(BuildContext context) => AdaptiveAlertDialog(
     title: Text(t.settings.accentColorPicker.pickAColor),
     content: SingleChildScrollView(
       child: ColorPicker(
-        color: pickedColor,
+        color: _pickedColor,
         pickersEnabled: const {ColorPickerType.wheel: true},
         onColorChanged: (Color color) {
-          pickedColor = color;
+          _pickedColor = color;
         },
       ),
     ),
@@ -326,4 +163,135 @@ class _ColorBarState extends State<ColorBar> {
       ),
     ],
   );
+
+  @override
+  State<ColorBar> createState() => _ColorBarState();
+}
+
+class _ColorBarState extends State<ColorBar> {
+  /// Whether more colors are scrolled out of view before or after the
+  /// visible ones: that edge fades, so no swatch is just cut off.
+  var _moreBefore = false, _moreAfter = false;
+
+  void _updateFades(ScrollMetrics metrics) {
+    final before = metrics.extentBefore > 0.5;
+    final after = metrics.extentAfter > 0.5;
+    if (before == _moreBefore && after == _moreAfter) return;
+    setState(() {
+      _moreBefore = before;
+      _moreAfter = after;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.higan;
+
+    Widget swatch(Color color) => DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withInversion(widget.invert),
+        shape: .circle,
+        border: Border.all(color: c.hairlineStrong),
+      ),
+    );
+
+    bool isCurrent(int argb) =>
+        widget.currentColor?.withAlpha(255).toARGB32() == argb;
+
+    Widget savedColor(String colorString) {
+      final color = Color(int.parse(colorString));
+      return ColorOption(
+        isSelected: isCurrent(color.toARGB32()),
+        enabled: widget.currentColor != null,
+        onTap: () => widget.setColor(color),
+        onLongPress: () =>
+            setState(() => ColorBar.toggleColorPinned(colorString)),
+        tooltip: ColorBar.findColorName(color),
+        child: swatch(color),
+      );
+    }
+
+    final pinnedColors = stows.pinnedColors.value;
+    final recentColors = stows.recentColorsPositioned.value.reversed;
+
+    final children = <Widget>[
+      for (final colorString in pinnedColors) savedColor(colorString),
+      if (pinnedColors.isNotEmpty) const ColorOptionSeparator(),
+      for (final colorString in recentColors) savedColor(colorString),
+      if (recentColors.isNotEmpty) const ColorOptionSeparator(),
+
+      // custom color
+      ColorOption(
+        isSelected: isCurrent(ColorBar._pickedColor.toARGB32()),
+        enabled: true,
+        onTap: () => ColorBar.openColorPicker(
+          context,
+          setColor: widget.setColor,
+          invert: widget.invert,
+        ),
+        tooltip: t.editor.colors.colorPicker,
+        child: Icon(
+          Symbols.colorize,
+          size: 16,
+          weight: 300,
+          color: c.textSecondary,
+        ),
+      ),
+
+      // color presets
+      for (final namedColor in ColorBar.colorPresets)
+        ColorOption(
+          isSelected: isCurrent(namedColor.color.toARGB32()),
+          enabled: widget.currentColor != null,
+          onTap: () => widget.setColor(namedColor.color),
+          tooltip: namedColor.name,
+          child: swatch(namedColor.color),
+        ),
+    ];
+
+    final horizontal = widget.axis == .horizontal;
+    return Center(
+      child: NotificationListener<ScrollMetricsNotification>(
+        onNotification: (notification) {
+          _updateFades(notification.metrics);
+          return false;
+        },
+        child: NotificationListener<ScrollUpdateNotification>(
+          onNotification: (notification) {
+            _updateFades(notification.metrics);
+            return false;
+          },
+          child: ShaderMask(
+            blendMode: .dstIn,
+            shaderCallback: (bounds) {
+              const fade = 24.0;
+              final length = horizontal ? bounds.width : bounds.height;
+              final stop = length <= 2 * fade ? 0.5 : fade / length;
+              return LinearGradient(
+                begin: horizontal ? .centerLeft : .topCenter,
+                end: horizontal ? .centerRight : .bottomCenter,
+                colors: [
+                  if (_moreBefore) Colors.transparent else Colors.white,
+                  Colors.white,
+                  Colors.white,
+                  if (_moreAfter) Colors.transparent else Colors.white,
+                ],
+                stops: [0, stop, 1 - stop, 1],
+              ).createShader(bounds);
+            },
+            child: ScrollConfiguration(
+              // A mouse drag scrolls it too
+              behavior: ScrollConfiguration.of(context)
+                  .copyWith(dragDevices: PointerDeviceKind.values.toSet()),
+              child: SingleChildScrollView(
+                scrollDirection: widget.axis,
+                padding: const .symmetric(horizontal: 4),
+                child: Flex(direction: widget.axis, children: children),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

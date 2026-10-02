@@ -16,7 +16,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsCs({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.cs,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -25,7 +25,8 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
 
 	/// Metadata for the translations of <cs>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final TranslationsCs _root = this; // ignore: unused_field
 
@@ -64,14 +65,11 @@ class _Translations$home$cs extends Translations$home$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$home$tabs$cs tabs = _Translations$home$tabs$cs._(_root);
 	@override late final _Translations$home$titles$cs titles = _Translations$home$titles$cs._(_root);
 	@override late final _Translations$home$tooltips$cs tooltips = _Translations$home$tooltips$cs._(_root);
 	@override late final _Translations$home$create$cs create = _Translations$home$create$cs._(_root);
-	@override String get welcome => 'Vítejte v aplikaci Saber';
+	@override String get welcome => 'Vítejte v aplikaci nts';
 	@override String get invalidFormat => 'Vybrali jste nepodporovaný soubor. Vyberte prosím soubor s příponou .sbn, .sbn2, .sba nebo .pdf.';
-	@override String get noFiles => 'Žádné poznámky nebyly nalezeny';
-	@override String get noPreviewAvailable => 'Náhled není k dispozici';
 	@override String get createNewNote => 'Pro přidání nové poznámky klepněte na tlačítko +';
 	@override String get backFolder => 'Přejít do předchozí složky';
 	@override late final _Translations$home$newFolder$cs newFolder = _Translations$home$newFolder$cs._(_root);
@@ -82,7 +80,6 @@ class _Translations$home$cs extends Translations$home$en {
 	@override late final _Translations$home$renameFolder$cs renameFolder = _Translations$home$renameFolder$cs._(_root);
 	@override late final _Translations$home$deleteFolder$cs deleteFolder = _Translations$home$deleteFolder$cs._(_root);
 	@override late final _Translations$home$sort$cs sort = _Translations$home$sort$cs._(_root);
-	@override late final _Translations$home$layout$cs layout = _Translations$home$layout$cs._(_root);
 }
 
 // Path: sentry
@@ -117,7 +114,7 @@ class _Translations$settings$cs extends Translations$settings$en {
 	];
 	@override late final _Translations$settings$reset$cs reset = _Translations$settings$reset$cs._(_root);
 	@override String get resyncEverything => 'Znovu synchronizovat všechny poznámky';
-	@override String get openDataDir => 'Otevřít složku aplikace Saber';
+	@override String get openDataDir => 'Otevřít složku aplikace nts';
 	@override late final _Translations$settings$customDataDir$cs customDataDir = _Translations$settings$customDataDir$cs._(_root);
 	@override String get autosaveDisabled => 'Nikdy';
 	@override String get shapeRecognitionDisabled => 'Nikdy';
@@ -190,7 +187,7 @@ class _Translations$appInfo$cs extends Translations$appInfo$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String licenseNotice({required Object buildYear}) => 'Saber  Copyright © 2022-${buildYear}  Adil Hanney\nTento program je poskytován bez jakékoliv záruky. Jedná se o software poskytovaný zdarma, který je možné šířit při splnění určitých podmínek.';
+	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nTento program je poskytován bez jakékoliv záruky. Jedná se o software poskytovaný zdarma, který je možné šířit při splnění určitých podmínek.';
 	@override String get debug => 'LADÍCÍ VERZE';
 	@override String get sponsorButton => 'Klepněte sem, pokud mě chcete sponzorovat nebo si přikoupit úložiště';
 	@override String get licenseButton => 'Klepněte sem pro zobrazení podrobnějších licenčních informací';
@@ -231,19 +228,6 @@ class _Translations$editor$cs extends Translations$editor$en {
 	@override String get pages => 'Stránky';
 	@override String get untitled => 'Nepojmenovaná poznámka';
 	@override String get needsToSaveBeforeExiting => 'Ukládání změn… Po skončení této operace můžete editor bezpečně opustit';
-}
-
-// Path: home.tabs
-class _Translations$home$tabs$cs extends Translations$home$tabs$en {
-	_Translations$home$tabs$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => 'Domů';
-	@override String get browse => 'Poznámky';
-	@override String get whiteboard => 'Tabule';
-	@override String get settings => 'Nastavení';
 }
 
 // Path: home.titles
@@ -387,18 +371,6 @@ class _Translations$home$sort$cs extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => 'Změny (nejprve starší)';
 }
 
-// Path: home.layout
-class _Translations$home$layout$cs extends Translations$home$layout$en {
-	_Translations$home$layout$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => 'Rozvržení položek';
-	@override String get masonryGrid => 'Cihlová mřížka';
-	@override String get simpleGrid => 'Jednoduchá mřížka';
-}
-
 // Path: sentry.consent
 class _Translations$sentry$consent$cs extends Translations$sentry$consent$en {
 	_Translations$sentry$consent$cs._(TranslationsCs root) : this._root = root, super.internal(root);
@@ -406,7 +378,7 @@ class _Translations$sentry$consent$cs extends Translations$sentry$consent$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Chcete pomoct vylepšit aplikaci Saber?';
+	@override String get title => 'Chcete pomoct vylepšit aplikaci nts?';
 	@override late final _Translations$sentry$consent$description$cs description = _Translations$sentry$consent$description$cs._(_root);
 	@override late final _Translations$sentry$consent$answers$cs answers = _Translations$sentry$consent$answers$cs._(_root);
 }
@@ -438,7 +410,7 @@ class _Translations$settings$prefLabels$cs extends Translations$settings$prefLab
 	@override String get layoutSize => 'Rozvržení uživatelského rozhraní';
 	@override String get customAccentColor => 'Vlastní barevný odstín';
 	@override String get hyperlegibleFont => 'Lépe čitelný font';
-	@override String get shouldCheckForUpdates => 'Automaticky kontrolovat dostupnost aktualizací aplikace Saber';
+	@override String get shouldCheckForUpdates => 'Automaticky kontrolovat dostupnost aktualizací aplikace nts';
 	@override String get shouldAlwaysAlertForUpdates => 'Rychlejší aktualizace';
 	@override String get allowInsecureConnections => 'Povolit nezabezpečená připojení';
 	@override String get editorToolbarAlignment => 'Umístění nabídky editoru';
@@ -457,7 +429,7 @@ class _Translations$settings$prefLabels$cs extends Translations$settings$prefLab
 	@override String get autosave => 'Automatické ukládání';
 	@override String get shapeRecognitionDelay => 'Zpoždění rozpoznávání tvarů';
 	@override String get autoStraightenLines => 'Automaticky narovnávat čáry';
-	@override String get customDataDir => 'Vlastní umístění složky aplikace Saber';
+	@override String get customDataDir => 'Vlastní umístění složky aplikace nts';
 	@override String get sentry => 'Hlášení chyb';
 }
 
@@ -469,7 +441,7 @@ class _Translations$settings$prefDescriptions$cs extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Font Atkinson Hyperlegible zvyšuje čitelnost pro čtenáře se slabým zrakem';
-	@override String get allowInsecureConnections => '(Nedoporučuje se) Povolit aplikaci Saber připojovat se k serverům se samopodepsaným/nedůvěryhodným certifikátem';
+	@override String get allowInsecureConnections => '(Nedoporučuje se) Povolit aplikaci nts připojovat se k serverům se samopodepsaným/nedůvěryhodným certifikátem';
 	@override String get preferGreyscale => 'Pro elektronické čtečky knih s e-ink displejem';
 	@override String get autoClearWhiteboardOnExit => 'Bude synchronizováno do dalších zařízení';
 	@override String get disableEraserAfterUse => 'Po použití gumy automaticky přepnout zpět na pero';
@@ -580,10 +552,10 @@ class _Translations$login$ncLoginStep$cs extends Translations$login$ncLoginStep$
 
 	// Translations
 	@override String get whereToStoreData => 'Zvolte si, kam chcete ukládat svá data:';
-	@override String get saberNcServer => 'Oficiální Nextcloud server aplikace Saber';
+	@override String get saberNcServer => 'Oficiální Nextcloud server aplikace nts';
 	@override String get otherNcServer => 'Jiný Nextcloud server';
 	@override String get serverUrl => 'URL adresa serveru';
-	@override String get loginWithSaber => 'Přihlásit přes aplikaci Saber';
+	@override String get loginWithSaber => 'Přihlásit přes aplikaci nts';
 	@override String get loginWithNextcloud => 'Přihlásit přes Nextcloud server';
 	@override late final _Translations$login$ncLoginStep$loginFlow$cs loginFlow = _Translations$login$ncLoginStep$loginFlow$cs._(_root);
 }
@@ -596,7 +568,7 @@ class _Translations$login$encLoginStep$cs extends Translations$login$encLoginSte
 
 	// Translations
 	@override String get enterEncPassword => 'Pro ochranu svých dat prosím zadejte heslo pro šifrování:';
-	@override String get newToSaber => 'Poprvé v aplikaci Saber? Stačí zadat nové heslo pro šifrování.';
+	@override String get newToSaber => 'Poprvé v aplikaci nts? Stačí zadat nové heslo pro šifrování.';
 	@override String get encPassword => 'Heslo pro šifrování';
 	@override String get encFaqTitle => 'Často kladené otázky';
 	@override String get wrongEncPassword => 'Dešifrování pomocí zadaného hesla pro šifrování selhalo. Zkuste ho prosím zadat znovu.';
@@ -638,7 +610,7 @@ class _Translations$profile$faq$1$cs extends Translations$profile$faq$1$en {
 
 	// Translations
 	@override String get q => 'Jak změním své heslo k Nextcloud účtu?';
-	@override String get a => 'Přejděte na webovou stránku vašeho serveru a přihlašte se. Poté přejděte do Nastavení > Zabezpečení > Změnit heslo. Po změně hesla se budete muset odhlásit z aplikace Saber a poté se do ní opětovně přihlásit.';
+	@override String get a => 'Přejděte na webovou stránku vašeho serveru a přihlašte se. Poté přejděte do Nastavení > Zabezpečení > Změnit heslo. Po změně hesla se budete muset odhlásit z aplikace nts a poté se do ní opětovně přihlásit.';
 }
 
 // Path: profile.faq.2
@@ -649,7 +621,7 @@ class _Translations$profile$faq$2$cs extends Translations$profile$faq$2$en {
 
 	// Translations
 	@override String get q => 'Jak změním své heslo pro šifrování?';
-	@override String get a => '0. Ujistěte se, že byla dokončena synchronizace (průběh synchronizace uvidíte na domovské obrazovce).\n1. Odhlašte se z aplikace Saber.\n2. Přejděte na webovou stránku vašeho serveru a smažte složku „Saber“. Tím ze serveru odstraníte všechny poznámky.\n3. Opětovně se přihlašte do aplikace Saber. Při přihlašování můžete zvolit nové heslo pro šifrování.\n4. Nezapomeňte se z aplikace Saber odhlásit a opětovně se do ní přihlásit na ostatních zařízeních.';
+	@override String get a => '0. Ujistěte se, že byla dokončena synchronizace (průběh synchronizace uvidíte na domovské obrazovce).\n1. Odhlašte se z aplikace nts.\n2. Přejděte na webovou stránku vašeho serveru a smažte složku „Saber“. Tím ze serveru odstraníte všechny poznámky.\n3. Opětovně se přihlašte do aplikace nts. Při přihlašování můžete zvolit nové heslo pro šifrování.\n4. Nezapomeňte se z aplikace nts odhlásit a opětovně se do ní přihlásit na ostatních zařízeních.';
 }
 
 // Path: profile.faq.3
@@ -660,7 +632,7 @@ class _Translations$profile$faq$3$cs extends Translations$profile$faq$3$en {
 
 	// Translations
 	@override String get q => 'Jak odstraním svůj účet?';
-	@override String get a => 'Klepněte na tlačítko „${_root.profile.quickLinks.deleteAccount}“ umístěné výše a přihlašte se, pokud to bude vyžadováno.\nPokud používáte oficiální server od aplikace Saber, bude váš účet odstraněn po uplynutí týdenní ochranné lhůty. Během této lhůty mě můžete kontaktovat pro odvolání zrušení účtu na adilhanney@disroot.org.\nPokud používáte server třetí strany, nemusí nabízet možnost odstranění účtu: pro více informací se bude třeba obrátit na zásady ochrany osobních údajů daného serveru.';
+	@override String get a => 'Klepněte na tlačítko „${_root.profile.quickLinks.deleteAccount}“ umístěné výše a přihlašte se, pokud to bude vyžadováno.\nPokud používáte oficiální server od aplikace nts, bude váš účet odstraněn po uplynutí týdenní ochranné lhůty. Během této lhůty mě můžete kontaktovat pro odvolání zrušení účtu na adilhanney@disroot.org.\nPokud používáte server třetí strany, nemusí nabízet možnost odstranění účtu: pro více informací se bude třeba obrátit na zásady ochrany osobních údajů daného serveru.';
 }
 
 // Path: editor.toolbar
@@ -813,7 +785,7 @@ class _Translations$editor$versionTooNew$cs extends Translations$editor$versionT
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Tato poznámka byla upravena v novější verzi aplikace Saber';
+	@override String get title => 'Tato poznámka byla upravena v novější verzi aplikace nts';
 	@override String get subtitle => 'Úpravou této poznámky můžete přijít o některé informace. Přejete tuto skutečnost ignorovat a přesto pokračovat k úpravě poznámky?';
 	@override String get allowEditing => 'Povolit úpravy';
 }
@@ -905,7 +877,7 @@ class _Translations$login$ncLoginStep$loginFlow$cs extends Translations$login$nc
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String get pleaseAuthorize => 'Autorizujte prosím aplikaci Saber k přístupu na váš Nextcloud účet';
+	@override String get pleaseAuthorize => 'Autorizujte prosím aplikaci nts k přístupu na váš Nextcloud účet';
 	@override String get followPrompts => 'Následujte prosím kroky v rozhraní Nextcloud serveru';
 	@override String get browserDidntOpen => 'Neotevřela se přihlašovací stránka? Klepněte zde';
 }
@@ -929,7 +901,7 @@ class _Translations$login$encLoginStep$encFaq$1$cs extends Translations$login$en
 
 	// Translations
 	@override String get q => 'Ještě jsem heslo pro šifrování nenastavoval. Kde ho získám?';
-	@override String get a => 'Zvolte si nové heslo pro šifrování a zadejte ho výše.\nAplikace Saber z hesla automaticky vygeneruje šifrovací klíče.';
+	@override String get a => 'Zvolte si nové heslo pro šifrování a zadejte ho výše.\nAplikace nts z hesla automaticky vygeneruje šifrovací klíče.';
 }
 
 // Path: login.encLoginStep.encFaq.2

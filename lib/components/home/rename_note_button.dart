@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/components/theming/adaptive_text_field.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/home/new_folder_dialog.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/adaptive_text_field.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
 
 class RenameNoteButton extends StatelessWidget {
   const new({
@@ -23,21 +26,25 @@ class RenameNoteButton extends StatelessWidget {
     return IconButton(
       padding: .zero,
       tooltip: t.home.renameNote.renameNote,
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return _RenameNoteDialog(
-              existingPath: existingPath,
-              unselectNotes: unselectNotes,
-            );
-          },
-        );
-      },
-      icon: const Icon(Icons.edit_square),
+      onPressed: () =>
+          showRenameNoteDialog(context, existingPath, unselectNotes),
+      icon: const Icon(Symbols.edit, weight: 300),
     );
   }
 }
+
+/// Asks for a new name for the note at [existingPath], then renames it.
+Future<void> showRenameNoteDialog(
+  BuildContext context,
+  String existingPath,
+  VoidCallback unselectNotes,
+) => showDialog(
+  context: context,
+  builder: (context) => _RenameNoteDialog(
+    existingPath: existingPath,
+    unselectNotes: unselectNotes,
+  ),
+);
 
 class _RenameNoteDialog extends StatefulWidget {
   const new({required this.existingPath, required this.unselectNotes});
@@ -98,14 +105,18 @@ class _RenameNoteDialogState extends State<_RenameNoteDialog> {
       content: Form(
         key: _formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: AdaptiveTextField(
+        child: DialogFieldKeys(
           controller: _controller,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.done,
-          focusOrder: const NumericFocusOrder(1),
-          placeholder: t.home.renameNote.noteName,
-          prefixIcon: const Icon(Icons.edit_square),
-          validator: validateNoteName,
+          onSubmit: submit,
+          child: AdaptiveTextField(
+            controller: _controller,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,
+            focusOrder: const NumericFocusOrder(1),
+            placeholder: t.home.renameNote.noteName,
+            prefixIcon: const Icon(Symbols.edit, weight: 300),
+            validator: validateNoteName,
+          ),
         ),
       ),
       actions: [
@@ -113,21 +124,30 @@ class _RenameNoteDialogState extends State<_RenameNoteDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
+          textStyle: TextStyle(color: context.higan.text),
           child: Text(t.common.cancel),
         ),
         CupertinoDialogAction(
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-            if (_controller.text != oldName) {
-              await renameNote(_controller.text);
-            }
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-            widget.unselectNotes();
-          },
+          onPressed: submit,
           child: Text(t.home.renameNote.rename),
         ),
       ],
     );
+  }
+
+  Future<void> submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    final messenger = ScaffoldMessenger.of(context);
+    if (_controller.text != oldName) {
+      try {
+        await renameNote(_controller.text);
+      } on FileSystemException catch (e) {
+        // e.g. an asset is still downloading from iCloud
+        messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    widget.unselectNotes();
   }
 }

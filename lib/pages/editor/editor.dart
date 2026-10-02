@@ -1,61 +1,82 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:collapsible/collapsible.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kDebugMode;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as flutter_quill;
 import 'package:keybinder/keybinder.dart';
 import 'package:logging/logging.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/ai/ai_menu.dart';
+import 'package:nts/components/canvas/_asset_cache.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/canvas.dart';
+import 'package:nts/components/canvas/canvas_gesture_detector.dart';
+import 'package:nts/components/canvas/canvas_image.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/canvas/link_dialog.dart';
+import 'package:nts/components/canvas/ruler.dart';
+import 'package:nts/components/canvas/save_indicator.dart';
+import 'package:nts/components/editor/read_only_banner.dart';
+import 'package:nts/components/navbar/responsive_navbar.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/dynamic_material_app.dart';
+import 'package:nts/components/theming/higan/higan_lily.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/components/toolbar/color_bar.dart';
+import 'package:nts/components/toolbar/editor_bottom_sheet.dart';
+import 'package:nts/components/toolbar/editor_page_manager.dart';
+import 'package:nts/components/toolbar/floating_bar.dart';
+import 'package:nts/components/toolbar/selection_bar.dart';
+import 'package:nts/components/toolbar/toolbar.dart';
+import 'package:nts/components/toolbar/top_bar.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/editor/editor_exporter.dart';
+import 'package:nts/data/editor/editor_history.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/extensions/change_notifier_extensions.dart';
+import 'package:nts/data/extensions/matrix4_extensions.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/services/handwriting.dart';
+import 'package:nts/data/services/selection_clipboard.dart';
+import 'package:nts/data/tools/_tool.dart';
+import 'package:nts/data/tools/calligraphy_pen.dart';
+import 'package:nts/data/tools/eraser.dart';
+import 'package:nts/data/tools/fill.dart';
+import 'package:nts/data/tools/highlighter.dart';
+import 'package:nts/data/tools/insert_space.dart';
+import 'package:nts/data/tools/laser_pointer.dart';
+import 'package:nts/data/tools/pen.dart';
+import 'package:nts/data/tools/pencil.dart';
+import 'package:nts/data/tools/select.dart';
+import 'package:nts/data/tools/shape_pen.dart';
+import 'package:nts/data/tools/tape.dart';
+import 'package:nts/data/tools/tool_catalog.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/home/whiteboard.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
-import 'package:saber/components/canvas/_asset_cache.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/canvas.dart';
-import 'package:saber/components/canvas/canvas_gesture_detector.dart';
-import 'package:saber/components/canvas/canvas_image.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/components/canvas/save_indicator.dart';
-import 'package:saber/components/editor/read_only_banner.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/components/theming/adaptive_icon.dart';
-import 'package:saber/components/theming/dynamic_material_app.dart';
-import 'package:saber/components/theming/saber_theme.dart';
-import 'package:saber/components/toolbar/color_bar.dart';
-import 'package:saber/components/toolbar/editor_bottom_sheet.dart';
-import 'package:saber/components/toolbar/editor_page_manager.dart';
-import 'package:saber/components/toolbar/toolbar.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/data/editor/editor_exporter.dart';
-import 'package:saber/data/editor/editor_history.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/extensions/change_notifier_extensions.dart';
-import 'package:saber/data/extensions/matrix4_extensions.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/nextcloud/saber_syncer.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/tools/_tool.dart';
-import 'package:saber/data/tools/eraser.dart';
-import 'package:saber/data/tools/highlighter.dart';
-import 'package:saber/data/tools/laser_pointer.dart';
-import 'package:saber/data/tools/pen.dart';
-import 'package:saber/data/tools/pencil.dart';
-import 'package:saber/data/tools/select.dart';
-import 'package:saber/data/tools/shape_pen.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/home/whiteboard.dart';
 import 'package:sbn/change.dart';
+import 'package:sbn/tool_id.dart';
 import 'package:super_clipboard/super_clipboard.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 typedef _PhotoInfo = ({Uint8List bytes, String extension});
 
 class Editor extends StatefulWidget {
-  new({super.key, String? path, this.customTitle, this.pdfPath})
+  new({super.key, String? path, this.embedded = false, this.pdfPath})
     : initialPath = path != null
           ? Future.value(path)
           : FileManager.newFilePath('/'),
@@ -64,7 +85,9 @@ class Editor extends StatefulWidget {
   final Future<String> initialPath;
   final bool needsNaming;
 
-  final String? customTitle;
+  /// The whiteboard tab, under the home shell's header: no back button or
+  /// title of its own, and the shell's gutters.
+  final bool embedded;
   final String? pdfPath;
 
   /// The file extension used by the app.
@@ -78,6 +101,13 @@ class Editor extends StatefulWidget {
   static const extensionOldJson = '.sbn';
 
   static const double gapBetweenPages = 16;
+
+  /// Control, or Command on a Mac, for keyboard shortcuts:
+  /// either works on any platform.
+  static const ctrlOrCmd = KeyCode({
+    0x00200000100, 0x00200000101, // controlLeft, controlRight
+    0x00200000106, 0x00200000107, // metaLeft, metaRight
+  }, label: 'ctrl');
 
   /// Returns true if [path] belongs to a hidden file
   /// used by other functions of the app
@@ -103,6 +133,12 @@ class EditorState extends State<Editor> {
 
   final _canvasGestureDetectorKey = GlobalKey<CanvasGestureDetectorState>();
   final _transformationController = TransformationController();
+
+  /// The area below the header where the toolbar and top bar can be moved.
+  final _barAreaKey = GlobalKey();
+  late final _toolbarBar = FloatingBar('toolbar', areaKey: _barAreaKey);
+  late final _topBarBar = FloatingBar('topBar', areaKey: _barAreaKey);
+
   double get scrollY {
     final transformation = _transformationController.value;
     final scale = transformation.approxScale;
@@ -139,16 +175,36 @@ class EditorState extends State<Editor> {
           Pen.currentPen = ShapePen();
         }
         return Pen.currentPen;
+      case .brushPen:
+        if (Pen.currentPen.toolId != stows.lastTool.value) {
+          Pen.currentPen = Pen.brushPen();
+        }
+        return Pen.currentPen;
+      case .calligraphyPen:
+        if (Pen.currentPen.toolId != stows.lastTool.value) {
+          Pen.currentPen = CalligraphyPen();
+        }
+        return Pen.currentPen;
+      case .tape:
+        return Tape.currentTape;
+      case .fill:
+        return Fill.currentFill;
+      case .insertSpace:
+        return InsertSpace.currentInsertSpace;
       case .highlighter:
         return Highlighter.currentHighlighter;
       case .pencil:
         return Pencil.currentPencil;
+      case .textEditing:
+        return Tool.textEditing;
+      // On a computer, opening a note with these makes the pen look broken
+      // (they're no longer saved there, but may have been before)
+      case .eraser || .select || .laserPointer when _isComputer:
+        return Pen.currentPen;
       case .eraser:
         return Eraser();
       case .select:
         return Select.currentSelect;
-      case .textEditing:
-        return Tool.textEditing;
       case .laserPointer:
         return LaserPointer.currentLaserPointer;
     }
@@ -156,13 +212,34 @@ class EditorState extends State<Editor> {
   Tool get currentTool => _currentTool;
   set currentTool(Tool tool) {
     _currentTool = tool;
+    AiMenu.lassoArmed = false; // "Ask AI" lasts until the next tool
     if (tool is! Eraser) _lastNonEraserTool = tool;
-    stows.lastTool.value = tool.toolId;
+    // On a computer, notes open with the last tool that writes,
+    // see [_currentTool]
+    if (!_isComputer ||
+        (tool is! Eraser && tool is! Select && tool is! LaserPointer)) {
+      stows.lastTool.value = tool.toolId;
+    }
   }
+
+  /// A Mac, Windows or Linux, where the mouse is the pen. Not an iPad or
+  /// Android tablet, whose mouse and trackpad follow "Draw with finger".
+  static bool get _isComputer => switch (defaultTargetPlatform) {
+    .macOS || .windows || .linux => true,
+    .iOS || .android || .fuchsia => false,
+  };
 
   ValueNotifier<SavingState> savingState = ValueNotifier(SavingState.saved);
   Timer? _delayedSaveTimer;
-  Timer? _watchServerTimer;
+
+  /// The note file's last modified time when we loaded or last saved it
+  /// (null if it didn't exist), to notice when iCloud Drive replaced it
+  /// with another device's version.
+  DateTime? _fileLastModified;
+  static DateTime? _lastModifiedOf(String filePath) {
+    final file = FileManager.getFile(filePath + Editor.extension);
+    return file.existsSync() ? file.lastModifiedSync() : null;
+  }
 
   // used to prevent accidentally drawing when pinch zooming
   var lastSeenPointerCount = 0;
@@ -180,15 +257,37 @@ class EditorState extends State<Editor> {
   /// If we add customized button bindings, we may have to separate this again.
   var stylusButtonWasPressed = false;
 
+  /// The page shown in the header's readout, following the canvas.
+  final _readoutPageIndex = ValueNotifier(0);
+  void _onTransformChanged() {
+    void update() {
+      if (mounted) _readoutPageIndex.value = currentPageIndex;
+    }
+
+    // The canvas can move while it's being laid out
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) => update());
+    } else {
+      update();
+    }
+  }
+
   @override
   void initState() {
     DynamicMaterialApp.addFullscreenListener(_setState);
+    _transformationController.addListener(_onTransformChanged);
 
     _initAsync();
     _assignKeybindings();
+    HardwareKeyboard.instance.addHandler(_onKey);
 
     super.initState();
   }
+
+  /// Running just after the editor opens, when the mouse doesn't draw:
+  /// the second click of a double-click that opened the note lands here.
+  final _opening = Timer(const Duration(milliseconds: 500), () {});
 
   void _initAsync() async {
     final filePath = await widget.initialPath;
@@ -209,6 +308,8 @@ class EditorState extends State<Editor> {
   }
 
   Future _loadCoreInfo(String filePath) async {
+    // Before reading, so a version arriving meanwhile counts as a change
+    _fileLastModified = _lastModifiedOf(filePath);
     coreInfo = await EditorCoreInfo.loadFromFilePath(filePath);
     if (coreInfo.readOnly) {
       log.info('Loaded file as read-only: ${coreInfo.readOnlyReason}');
@@ -265,21 +366,29 @@ class EditorState extends State<Editor> {
   Keybinding? _ctrlZ, _ctrlY, _ctrlShiftZ;
   void _assignKeybindings() {
     _ctrlZ = Keybinding([
-      KeyCode.ctrl,
+      Editor.ctrlOrCmd,
       KeyCode.from(LogicalKeyboardKey.keyZ),
     ], inclusive: true);
     _ctrlY = Keybinding([
-      KeyCode.ctrl,
+      Editor.ctrlOrCmd,
       KeyCode.from(LogicalKeyboardKey.keyY),
     ], inclusive: true);
     _ctrlShiftZ = Keybinding([
-      KeyCode.ctrl,
+      Editor.ctrlOrCmd,
       KeyCode.shift,
       KeyCode.from(LogicalKeyboardKey.keyZ),
     ], inclusive: true);
-    Keybinder.bind(_ctrlZ!, undo);
-    Keybinder.bind(_ctrlY!, redo);
-    Keybinder.bind(_ctrlShiftZ!, redo);
+    // Ctrl+Z matches Ctrl+Shift+Z too, which would undo and then redo.
+    // Text (the note's, or a text field like its name) has its own undo.
+    Keybinder.bind(_ctrlZ!, () {
+      if (!HardwareKeyboard.instance.isShiftPressed && !_isTyping) undo();
+    });
+    void redoUnlessTyping() {
+      if (!_isTyping) redo();
+    }
+
+    Keybinder.bind(_ctrlY!, redoUnlessTyping);
+    Keybinder.bind(_ctrlShiftZ!, redoUnlessTyping);
   }
 
   void _removeKeybindings() {
@@ -376,6 +485,28 @@ class EditorState extends State<Editor> {
             coreInfo.pages[image.pageIndex].images.add(image);
             image.newImage = true;
           }
+
+        case .partialErase:
+          createPage(item.pageIndex);
+          final page = coreInfo.pages[item.pageIndex];
+          item.strokeListChange!.reverse().apply(page.strokes);
+          item.imageRectChange?.forEach(
+            (image, change) => image.dstRect = change.previous,
+          );
+          page.redrawStrokes();
+          removeExcessPages();
+
+        case .fillChange:
+          for (final stroke in item.strokes) {
+            stroke.fillColor = item.fillChange![stroke]!.previous;
+          }
+          coreInfo.pages[item.pageIndex].redrawStrokes();
+
+        case .links:
+          createPage(item.pageIndex);
+          coreInfo.pages[item.pageIndex]
+            ..links = item.linkChange!.previous
+            ..redrawStrokes();
 
         case .deletePage:
           // make sure we already have a (blank/otherwise) page at this index
@@ -486,6 +617,25 @@ class EditorState extends State<Editor> {
             backgroundPatternChange: item.backgroundPatternChange!.reverse(),
           ),
         );
+      case .partialErase:
+        undo(
+          item.copyWith(
+            strokeListChange: item.strokeListChange!.reverse(),
+            imageRectChange: item.imageRectChange?.map(
+              (image, change) => MapEntry(image, change.reverse()),
+            ),
+          ),
+        );
+      case .fillChange:
+        undo(
+          item.copyWith(
+            fillChange: item.fillChange!.map(
+              (stroke, change) => MapEntry(stroke, change.reverse()),
+            ),
+          ),
+        );
+      case .links:
+        undo(item.copyWith(linkChange: item.linkChange!.reverse()));
     }
   }
 
@@ -513,6 +663,16 @@ class EditorState extends State<Editor> {
   int? dragPageIndex;
   PointerDeviceKind? currentPointerKind;
   double? currentPressure;
+
+  /// The current pointer's buttons, e.g. [kPrimaryMouseButton].
+  var currentPointerButtons = 0;
+
+  /// Whether Space is held (and not typed): then dragging pans,
+  /// like the hand tool in design apps.
+  bool get _spaceHeld =>
+      HardwareKeyboard.instance.isLogicalKeyPressed(LogicalKeyboardKey.space) &&
+      !_isTyping;
+
   bool isDrawGesture(ScaleStartDetails details) {
     if (coreInfo.readOnly) return false;
 
@@ -527,6 +687,7 @@ class EditorState extends State<Editor> {
     } else if (details.pointerCount >= 2) {
       // is a zoom gesture, remove accidental stroke
       if (lastSeenPointerCount == 1 &&
+          _drawRecorded &&
           stows.editorFingerDrawing.value &&
           (currentTool is Pen || currentTool is Eraser)) {
         final item = history.removeAccidentalStroke();
@@ -542,8 +703,12 @@ class EditorState extends State<Editor> {
     dragPageIndex = onWhichPageIsFocalPoint(details.focalPoint);
     if (dragPageIndex == null) return false;
 
-    if (currentTool == Tool.textEditing) {
+    if (currentTool == Tool.textEditing || _spaceHeld) {
       return false;
+    } else if (currentPointerKind == PointerDeviceKind.mouse && _isComputer) {
+      // On a computer, the mouse (and a trackpad's click) is like a stylus:
+      // finger drawing is for touch screens. Its other buttons pan.
+      return currentPointerButtons == kPrimaryMouseButton && !_opening.isActive;
     } else if (stows.editorFingerDrawing.value ||
         currentPointerKind == PointerDeviceKind.stylus ||
         currentPointerKind == PointerDeviceKind.invertedStylus ||
@@ -555,9 +720,59 @@ class EditorState extends State<Editor> {
     }
   }
 
+  /// Where the current draw gesture started, to tell taps from drags.
+  var _drawStartFocalPoint = Offset.zero;
+  var _drawIsTap = true;
+
+  /// Where the last pointer went down, which is where a draw gesture
+  /// really started if it had to move before it was accepted.
+  Offset? _pointerDownPosition;
+
+  /// Whether the last draw gesture added to the history,
+  /// so a pinch that follows it can take it back.
+  var _drawRecorded = false;
+
+  /// Taps move less than this, in logical pixels.
+  static const _tapSlop = 4.0;
+
+  /// The on-screen ruler, or null when it's hidden.
+  final ruler = ValueNotifier<RulerPosition?>(null);
+  final _rulerKey = GlobalKey();
+  RenderBox? get _rulerBox =>
+      _rulerKey.currentContext?.findRenderObject() as RenderBox?;
+
+  /// The ruler edge the current pen stroke follows (see [RulerSnapping]).
+  int? _rulerEdge;
+
+  void toggleRuler() {
+    if (ruler.value != null) {
+      ruler.value = null;
+    } else {
+      final size = _rulerBox?.size ?? MediaQuery.sizeOf(context);
+      ruler.value = (center: size.center(Offset.zero), angle: 0);
+    }
+  }
+
+  /// [focalPoint] moved onto the ruler edge the stroke follows, if any.
+  Offset _snapToRuler(Offset focalPoint) {
+    final edge = _rulerEdge, ruler = this.ruler.value, box = _rulerBox;
+    if (edge == null || ruler == null || box == null) return focalPoint;
+    return box.localToGlobal(ruler.snap(box.globalToLocal(focalPoint), edge));
+  }
+
   void onDrawStart(ScaleStartDetails details) {
     final page = coreInfo.pages[dragPageIndex!];
-    final position = page.renderBox!.globalToLocal(details.focalPoint);
+    _drawStartFocalPoint = details.focalPoint;
+    _drawIsTap = true;
+    _drawRecorded = false;
+    _rulerEdge = null;
+    if ((ruler.value, _rulerBox) case (final ruler?, final box?)
+        when currentTool is Pen) {
+      _rulerEdge = ruler.edgeNear(box.globalToLocal(details.focalPoint));
+    }
+    final position = page.renderBox!.globalToLocal(
+      _snapToRuler(details.focalPoint),
+    );
     history.canRedo = false;
 
     if (currentTool is Pen) {
@@ -568,17 +783,20 @@ class EditorState extends State<Editor> {
         currentPressure,
       );
     } else if (currentTool is Eraser) {
-      for (final stroke in (currentTool as Eraser).checkForOverlappingStrokes(
-        position,
-        page.strokes,
-      )) {
-        page.strokes.remove(stroke);
-      }
-      removeExcessPages();
+      (currentTool as Eraser).erase(position, page.strokes);
     } else if (currentTool is Select) {
       final select = currentTool as Select;
-      if (select.doneSelecting &&
-          select.selectResult.pageIndex == dragPageIndex! &&
+      final onSelectedPage =
+          select.doneSelecting &&
+          select.selectResult.pageIndex == dragPageIndex!;
+      // Where the pointer went down, since the gesture may have moved
+      // before it started (e.g. on an image, which also takes taps)
+      final down = page.renderBox!.globalToLocal(
+        _pointerDownPosition ?? details.focalPoint,
+      );
+      if (onSelectedPage && select.startTransform(down, page.strokes)) {
+        // resize or rotate the selection in onDrawUpdate
+      } else if (onSelectedPage &&
           select.selectResult.path.contains(position)) {
         // drag selection in onDrawUpdate
       } else {
@@ -587,6 +805,8 @@ class EditorState extends State<Editor> {
       }
     } else if (currentTool is LaserPointer) {
       (currentTool as LaserPointer).onDragStart(position, page, dragPageIndex!);
+    } else if (currentTool case final CanvasTool tool) {
+      tool.onDrawStart(_canvasToolInput(page, position));
     }
 
     previousPosition = position;
@@ -602,24 +822,31 @@ class EditorState extends State<Editor> {
 
   void onDrawUpdate(ScaleUpdateDetails details) {
     final page = coreInfo.pages[dragPageIndex!];
-    final position = page.renderBox!.globalToLocal(details.focalPoint);
+    final position = page.renderBox!.globalToLocal(
+      _snapToRuler(details.focalPoint),
+    );
     final offset = position - previousPosition;
+    if ((details.focalPoint - _drawStartFocalPoint).distance > _tapSlop) {
+      _drawIsTap = false;
+    }
 
     if (currentTool is Pen) {
+      // Just the first point and this one
+      if (_straightLine) Pen.currentStroke?.keepFirstPoint();
       (currentTool as Pen).onDragUpdate(position, currentPressure);
       page.redrawStrokes();
     } else if (currentTool is Eraser) {
-      for (final stroke in (currentTool as Eraser).checkForOverlappingStrokes(
+      (currentTool as Eraser).erase(
         position,
         page.strokes,
-      )) {
-        page.strokes.remove(stroke);
-      }
+        from: previousPosition,
+      );
       page.redrawStrokes();
-      removeExcessPages();
     } else if (currentTool is Select) {
       final select = currentTool as Select;
-      if (select.doneSelecting) {
+      if (select.isTransforming) {
+        select.updateTransform(position, page.strokes);
+      } else if (select.doneSelecting) {
         for (final stroke in select.selectResult.strokes) {
           stroke.shift(offset);
         }
@@ -634,6 +861,9 @@ class EditorState extends State<Editor> {
     } else if (currentTool is LaserPointer) {
       (currentTool as LaserPointer).onDragUpdate(position);
       page.redrawStrokes();
+    } else if (currentTool case final CanvasTool tool) {
+      tool.onDrawUpdate(_canvasToolInput(page, position));
+      page.redrawStrokes();
     }
     previousPosition = position;
     moveOffset += offset;
@@ -642,15 +872,49 @@ class EditorState extends State<Editor> {
   void onDrawEnd(ScaleEndDetails details) {
     final page = coreInfo.pages[dragPageIndex!];
     bool shouldSave = true;
+    var askAi = false;
     setState(() {
       if (currentTool is Pen) {
         final newStroke = (currentTool as Pen).onDragEnd();
         if (newStroke == null) return;
         if (newStroke.isEmpty) return;
 
-        if (stows.autoStraightenLines.value &&
-            currentTool is! ShapePen &&
-            newStroke.isStraightLine()) {
+        // Tapping a tape shows or hides what's under it
+        if (currentTool is Tape && _drawIsTap) {
+          if (Tape.tapeAt(page, previousPosition) case final tape?) {
+            Tape.toggle(page, tape);
+            shouldSave = false;
+            history.canRedo = true;
+            return;
+          }
+        }
+
+        if (stows.scribbleToErase.value &&
+            _canScribbleToErase.contains(newStroke.toolId) &&
+            newStroke.isScribble()) {
+          final erased = Eraser.strokesUnderScribble(newStroke, page.strokes);
+          if (erased.isNotEmpty) {
+            final erasedSet = erased.toSet();
+            page.strokes.removeWhere(erasedSet.contains);
+            history.recordChange(
+              EditorHistoryItem(
+                type: .erase,
+                pageIndex: dragPageIndex!,
+                strokes: erased,
+                images: [],
+              ),
+            );
+            _drawRecorded = true;
+            removeExcessPages();
+            return;
+          }
+        }
+
+        if (_straightLine
+            ? newStroke.length > 1
+            : stows.autoStraightenLines.value &&
+                  currentTool is! ShapePen &&
+                  newStroke.isStraightLine()) {
           newStroke.convertToLine();
         }
 
@@ -664,26 +928,41 @@ class EditorState extends State<Editor> {
             images: [],
           ),
         );
+        _drawRecorded = true;
       } else if (currentTool is Eraser) {
-        final erased = (currentTool as Eraser).onDragEnd();
+        final item = (currentTool as Eraser).finishDrag(dragPageIndex!);
+        // Not mid-drag, which could remove the page being erased
+        removeExcessPages();
         if (stylusButtonWasPressed || stows.disableEraserAfterUse.value) {
           // restore previous tool
           stylusButtonWasPressed = false;
           currentTool = _lastNonEraserTool;
         }
-        if (erased.isEmpty) return;
-        history.recordChange(
-          EditorHistoryItem(
-            type: .erase,
-            pageIndex: dragPageIndex!,
-            strokes: erased,
-            images: [],
-          ),
-        );
+        if (item == null) return;
+        history.recordChange(item);
+        _drawRecorded = true;
       } else if (currentTool is Select) {
-        if (moveOffset == .zero) return;
         final select = currentTool as Select;
+        if (select.isTransforming) {
+          final item = select.finishTransform(dragPageIndex!, page.strokes);
+          if (item == null) {
+            shouldSave = false;
+            history.canRedo = true;
+          } else {
+            history.recordChange(item);
+          }
+          return;
+        }
+        if (!select.doneSelecting &&
+            _drawIsTap &&
+            _tapLinkOrTape(page, previousPosition)) {
+          shouldSave = false;
+          select.unselect();
+          return;
+        }
         if (select.doneSelecting) {
+          // A lasso that closes where it started also adds up to zero
+          if (moveOffset == .zero) return;
           history.recordChange(
             EditorHistoryItem(
               type: .move,
@@ -702,12 +981,16 @@ class EditorState extends State<Editor> {
           shouldSave = false;
           select.onDragEnd(page.strokes, page.images);
 
-          if (select.selectResult.isEmpty) {
+          // "Ask AI" also reads imported pages and typed text, or says
+          // there's nothing to read
+          askAi = AiMenu.lassoArmed && !_drawIsTap;
+          if (select.selectResult.isEmpty && !askAi) {
             Select.currentSelect.unselect();
           }
         }
       } else if (currentTool is LaserPointer) {
         shouldSave = false;
+        if (_drawIsTap) _tapLinkOrTape(page, previousPosition);
         final newStroke = (currentTool as LaserPointer).onDragEnd(
           page.redrawStrokes,
           (Stroke stroke) {
@@ -715,11 +998,154 @@ class EditorState extends State<Editor> {
           },
         );
         if (newStroke != null) page.laserStrokes.add(newStroke);
+      } else if (currentTool case final CanvasTool tool) {
+        final item = tool.onDrawEnd(_canvasToolInput(page, previousPosition));
+        page.redrawStrokes();
+        if (item == null) {
+          shouldSave = false;
+        } else {
+          history.recordChange(item);
+        }
       }
     });
 
+    if (askAi) unawaited(_askAi());
     if (shouldSave) autosaveAfterDelay();
   }
+
+  /// The AI menu for the "Ask AI" lasso. A lasso that selected nothing
+  /// was only for the AI, so it goes when the AI is done.
+  Future<void> _askAi() async {
+    await showAiMenu(context, this);
+    final select = Select.currentSelect;
+    if (mounted && select.doneSelecting && select.selectResult.isEmpty) {
+      setState(select.unselect);
+    }
+  }
+
+  /// Whether the pen draws a straight line: Shift is held,
+  /// as in design apps. (The shape pen makes its own shapes.)
+  bool get _straightLine =>
+      HardwareKeyboard.instance.isShiftPressed && currentTool is! ShapePen;
+
+  /// The pens whose scribbles can erase (see [Stows.scribbleToErase]).
+  static const _canScribbleToErase = {
+    ToolId.fountainPen,
+    ToolId.ballpointPen,
+    ToolId.pencil,
+    ToolId.brushPen,
+    ToolId.calligraphyPen,
+  };
+
+  /// Opens the link, or shows or hides the tape, at [position] on [page].
+  /// Returns whether there was one.
+  bool _tapLinkOrTape(EditorPage page, Offset position) {
+    for (final link in page.links.reversed) {
+      if (!link.rect.contains(position)) continue;
+      unawaited(_openLink(link));
+      return true;
+    }
+    if (Tape.tapeAt(page, position) case final tape?) {
+      Tape.toggle(page, tape);
+      return true;
+    }
+    return false;
+  }
+
+  /// Taps in read-only notes, which can't draw.
+  void _onReadOnlyTap(TapUpDetails details) {
+    final pageIndex = onWhichPageIsFocalPoint(details.globalPosition);
+    if (pageIndex == null) return;
+    final page = coreInfo.pages[pageIndex];
+    _tapLinkOrTape(page, page.renderBox!.globalToLocal(details.globalPosition));
+  }
+
+  Future<void> _openLink(PageLink link) async {
+    if (link.pageIndex case final pageIndex?) {
+      if (pageIndex >= coreInfo.pages.length) return;
+      CanvasGestureDetector.scrollToPage(
+        pageIndex: pageIndex,
+        pages: coreInfo.pages,
+        screenWidth: MediaQuery.sizeOf(context).width,
+        transformationController: _transformationController,
+      );
+      return;
+    }
+    var opened = false;
+    try {
+      opened = await launchUrl(
+        Uri.parse(link.url),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      log.warning('Failed to open ${link.url}', e);
+    }
+    if (!opened && mounted) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text(t.editor.canvasTools.couldNotOpenLink(url: link.url)),
+        ),
+      );
+    }
+  }
+
+  /// Adds a link to the selection, or changes or removes its link.
+  Future<void> editSelectionLink() async {
+    final select = Select.currentSelect;
+    final bounds = select.selectionBounds;
+    if (coreInfo.readOnly || !select.doneSelecting || bounds == null) return;
+    final pageIndex = select.selectResult.pageIndex;
+    final page = coreInfo.pages[pageIndex];
+    final existing = page.links
+        .where((link) => link.rect.overlaps(bounds))
+        .lastOrNull;
+
+    final url = await showDialog<String>(
+      context: context,
+      builder: (context) =>
+          LinkDialog(initial: existing?.url, pageCount: coreInfo.pages.length),
+    );
+    if (url == null || !mounted) return;
+
+    final change = Change(
+      previous: page.links,
+      current: [
+        for (final link in page.links)
+          if (link != existing) link,
+        if (url.isNotEmpty) PageLink(bounds, url),
+      ],
+    );
+    setState(() {
+      page.links = change.current;
+      history.recordChange(
+        EditorHistoryItem(
+          type: .links,
+          pageIndex: pageIndex,
+          strokes: const [],
+          images: const [],
+          linkChange: change,
+        ),
+      );
+    });
+    page.redrawStrokes();
+    autosaveAfterDelay();
+  }
+
+  /// Logical pixels per page unit on [page] at the current zoom.
+  double _pixelsPerUnit(EditorPage page) {
+    final width =
+        _canvasGestureDetectorKey.currentState?.containerBounds.maxWidth ??
+        MediaQuery.sizeOf(context).width;
+    return _transformationController.value.approxScale *
+        min(1.0, width / page.size.width);
+  }
+
+  CanvasToolInput _canvasToolInput(EditorPage page, Offset position) => (
+    page: page,
+    pageIndex: dragPageIndex!,
+    position: position,
+    pressure: currentPressure,
+  );
 
   void onInteractionEnd(ScaleEndDetails details) {
     // reset after 1ms to keep track of the same gesture only
@@ -729,9 +1155,14 @@ class EditorState extends State<Editor> {
     });
   }
 
-  void updatePointerData(PointerDeviceKind kind, double? pressure) {
+  void updatePointerData(
+    PointerDeviceKind kind,
+    double? pressure,
+    int buttons,
+  ) {
     currentPointerKind = kind;
     currentPressure = pressure;
+    currentPointerButtons = buttons;
   }
 
   void onHovering() {
@@ -846,38 +1277,6 @@ class EditorState extends State<Editor> {
     );
   }
 
-  void _refreshCurrentNote() async {
-    if (coreInfo.readOnlyReason != .watchingServer) return;
-    if (!stows.loggedIn) return;
-
-    final relativeFilePath = coreInfo.filePath;
-    assert(relativeFilePath.isNotEmpty, 'Cannot refresh unnamed file');
-    final syncFile = await SaberSyncFile.relative(
-      relativeFilePath + Editor.extension,
-    );
-
-    final bestFile = await SaberSyncInterface.getBestFile(
-      syncFile,
-      onLocalFileNotFound: .local,
-      onEqualFiles: .local,
-      preferCache: false,
-    );
-    if (bestFile != .remote) return;
-
-    late final StreamSubscription<SaberSyncFile> subscription;
-    void listener(SaberSyncFile transferred) {
-      if (transferred != syncFile) return;
-      subscription.cancel();
-      _loadCoreInfo(relativeFilePath)
-          .then((_) => coreInfo.readOnlyReason = .watchingServer);
-    }
-
-    subscription = syncer.downloader.transferStream.listen(listener);
-
-    await syncer.downloader.enqueue(syncFile: syncFile);
-    syncer.downloader.bringToFront(syncFile);
-  }
-
   void autosaveAfterDelay() {
     if (history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
 
@@ -931,6 +1330,24 @@ class EditorState extends State<Editor> {
 
     await _renameFileNow();
 
+    final lastModified = _lastModifiedOf(coreInfo.filePath);
+    if (lastModified != null && lastModified != _fileLastModified) {
+      // Another device's version replaced the file since we loaded it:
+      // keep it, and save ours as a copy instead of overwriting it.
+      log.warning('${coreInfo.filePath} changed on disk, saving a copy');
+      coreInfo.filePath = await FileManager.suffixFilePathToMakeItUnique(
+        '${coreInfo.filePath} (conflict)',
+      );
+      filenameTextEditingController.text = coreInfo.fileName;
+      if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(
+            content: Text(t.icloud.savedAsCopy(name: coreInfo.fileName)),
+          ),
+        );
+      }
+    }
+
     final filePath = coreInfo.filePath + Editor.extension;
     final Uint8List bson;
     final OrderedAssetCache assets;
@@ -944,7 +1361,11 @@ class EditorState extends State<Editor> {
     }
     try {
       await Future.wait([
-        FileManager.writeFile(filePath, bson, awaitWrite: true),
+        FileManager.writeFile(filePath, bson, awaitWrite: true).then(
+          // ponytail: iCloud replacing the file in the instant between the
+          // write and this check goes unnoticed; needs NSFileCoordinator.
+          (_) => _fileLastModified = _lastModifiedOf(coreInfo.filePath),
+        ),
         for (int i = 0; i < assets.length; ++i)
           assets
               .getBytes(i)
@@ -1002,15 +1423,24 @@ class EditorState extends State<Editor> {
 
     if (_filenameFormKey.currentState?.validate() ??
         _validateFilenameTextField(newName) == null) {
-      coreInfo.filePath = await FileManager.moveFile(
-        coreInfo.filePath + Editor.extension,
-        newName.trim() + Editor.extension,
-      );
-      coreInfo.filePath = coreInfo.filePath.substring(
-        0,
-        coreInfo.filePath.lastIndexOf(Editor.extension),
-      );
-      needsNaming = false;
+      try {
+        coreInfo.filePath = await FileManager.moveFile(
+          coreInfo.filePath + Editor.extension,
+          newName.trim() + Editor.extension,
+        );
+        coreInfo.filePath = coreInfo.filePath.substring(
+          0,
+          coreInfo.filePath.lastIndexOf(Editor.extension),
+        );
+        needsNaming = false;
+      } on FileSystemException catch (e) {
+        // e.g. an asset is still downloading from iCloud: keep the old name
+        log.warning('Failed to rename ${coreInfo.filePath}: $e', e);
+        if (mounted) {
+          ScaffoldMessenger.maybeOf(context)
+              ?.showSnackBar(SnackBar(content: Text(e.message)));
+        }
+      }
     }
 
     final actualName = coreInfo.fileName;
@@ -1086,10 +1516,16 @@ class EditorState extends State<Editor> {
   /// Returns the number of photos picked.
   ///
   /// If [photoInfos] is provided, it will be used instead of the file picker.
-  Future<int> _pickPhotos([List<_PhotoInfo>? photoInfos]) async {
+  /// They go on [pageIndex] (the page in view if null), at [at] if given.
+  Future<int> _pickPhotos({
+    List<_PhotoInfo>? photoInfos,
+    int? pageIndex,
+    Offset? at,
+  }) async {
     if (coreInfo.readOnly) return 0;
 
-    final currentPageIndex = this.currentPageIndex;
+    final currentPageIndex = pageIndex ?? this.currentPageIndex;
+    final dstRect = at == null ? Rect.zero : at & Size.zero;
 
     photoInfos ??= await _pickPhotosWithFilePicker();
     if (photoInfos.isEmpty) return 0;
@@ -1106,6 +1542,7 @@ class EditorState extends State<Editor> {
             svgFile: null,
             pageIndex: currentPageIndex,
             pageSize: coreInfo.pages[currentPageIndex].size,
+            dstRect: dstRect,
             onMoveImage: onMoveImage,
             onDeleteImage: onDeleteImage,
             onMiscChange: autosaveAfterDelay,
@@ -1119,6 +1556,7 @@ class EditorState extends State<Editor> {
             imageProvider: MemoryImage(photoInfo.bytes),
             pageIndex: currentPageIndex,
             pageSize: coreInfo.pages[currentPageIndex].size,
+            dstRect: dstRect,
             onMoveImage: onMoveImage,
             onDeleteImage: onDeleteImage,
             onMiscChange: autosaveAfterDelay,
@@ -1245,23 +1683,54 @@ class EditorState extends State<Editor> {
     return true;
   }
 
-  Future paste() async {
-    /// Maps image formats to their file extension.
-    const Map<SimpleFileFormat, String> formats = {
-      Formats.jpeg: '.jpeg',
-      Formats.png: '.png',
-      Formats.gif: '.gif',
-      Formats.tiff: '.tiff',
-      Formats.bmp: '.bmp',
-      Formats.ico: '.ico',
-      Formats.svg: '.svg',
-      Formats.webp: '.webp',
-    };
+  /// The image formats [paste] takes from the system clipboard,
+  /// and their file extensions.
+  static const Map<SimpleFileFormat, String> _imageFormats = {
+    Formats.jpeg: '.jpeg',
+    Formats.png: '.png',
+    Formats.gif: '.gif',
+    Formats.tiff: '.tiff',
+    Formats.bmp: '.bmp',
+    Formats.ico: '.ico',
+    Formats.svg: '.svg',
+    Formats.webp: '.webp',
+  };
 
+  /// Whether the system clipboard has an image that [paste] can take
+  /// (on iOS, whether it might).
+  static Future<bool> _clipboardHasImage() async {
+    // Reading iOS's pasteboard asks "Allow Paste?", so only [paste] does
+    if (Platform.isIOS) return true;
+    try {
+      final reader = await SystemClipboard.instance?.read();
+      return reader != null && _imageFormats.keys.any(reader.canProvide);
+    } catch (_) {
+      return false; // e.g. no clipboard plugin in tests
+    }
+  }
+
+  /// Ctrl+V: what was copied with the lasso, or images on the system
+  /// clipboard, whichever was copied last. It goes on [pageIndex] (the page
+  /// in view if null), at [at] if given (e.g. where a right-click was).
+  Future paste({int? pageIndex, Offset? at}) async {
+    // Ctrl+V while typing (a note's text, its name, a link) is the text's
+    if (currentTool == Tool.textEditing ||
+        FocusManager.instance.primaryFocus?.context
+                ?.findAncestorWidgetOfExactType<EditableText>() !=
+            null) {
+      return;
+    }
+    void pasteSelection() =>
+        SelectionClipboard.paste(this, pageIndex: pageIndex, at: at);
+    if (SelectionClipboard.isNewest) return pasteSelection();
+
+    const formats = _imageFormats;
     final reader = await SystemClipboard.instance?.read();
-    if (reader == null) return;
-
     final List<_PhotoInfo> photoInfos = [];
+    if (reader == null || !formats.keys.any(reader.canProvide)) {
+      return pasteSelection();
+    }
+
     final List<ReadProgress> progresses = [];
 
     for (final format in formats.keys) {
@@ -1297,7 +1766,7 @@ class EditorState extends State<Editor> {
       await Future.delayed(const Duration(milliseconds: 50));
     }
 
-    await _pickPhotos(photoInfos);
+    await _pickPhotos(photoInfos: photoInfos, pageIndex: pageIndex, at: at);
   }
 
   Future exportAsPdf(BuildContext context) async {
@@ -1357,13 +1826,433 @@ class EditorState extends State<Editor> {
     }
   }
 
+  void setTool(Tool tool) {
+    if (tool is Eraser && currentTool is Eraser) {
+      // setTool(Eraser) is a special case to toggle the eraser on/off
+      tool = _lastNonEraserTool;
+    }
+
+    currentTool = tool;
+
+    if (tool is Highlighter) {
+      Highlighter.currentHighlighter = tool;
+    } else if (tool is Pencil) {
+      Pencil.currentPencil = tool;
+    } else if (tool is Tape) {
+      Tape.currentTape = tool;
+    } else if (tool is Pen) {
+      Pen.currentPen = tool;
+    }
+
+    if (mounted) setState(() {});
+  }
+
+  void toggleTextEditing() => setState(() {
+    if (currentTool == Tool.textEditing) {
+      currentTool = Pen.currentPen;
+      for (final page in coreInfo.pages) {
+        // unselect text, but maintain cursor position
+        page.quill.controller.moveCursorToPosition(
+          page.quill.controller.selection.extentOffset,
+        );
+        page.quill.focusNode.unfocus();
+      }
+    } else {
+      currentTool = Tool.textEditing;
+      quillFocus.value = coreInfo.pages[currentPageIndex].quill
+        ..focusNode.requestFocus();
+    }
+  });
+
+  void duplicateSelection() {
+    final select = Select.currentSelect;
+    if (currentTool != select || !select.doneSelecting) return;
+
+    setState(() {
+      final page = coreInfo.pages[select.selectResult.pageIndex];
+      final strokes = select.selectResult.strokes;
+      final images = select.selectResult.images;
+
+      const duplicationFeedbackOffset = Offset(25, -25);
+
+      final duplicatedStrokes = strokes.map((stroke) {
+        return stroke.copy()..shift(duplicationFeedbackOffset);
+      }).toList();
+
+      final duplicatedImages = images.map((image) {
+        return image.copy()
+          ..id = coreInfo.nextImageId++
+          ..dstRect.shift(duplicationFeedbackOffset);
+      }).toList();
+
+      page.strokes.addAll(duplicatedStrokes);
+      page.images.addAll(duplicatedImages);
+
+      select.selectResult = select.selectResult.copyWith(
+        strokes: duplicatedStrokes,
+        images: duplicatedImages,
+        path: select.selectResult.path.shift(duplicationFeedbackOffset),
+      );
+
+      history.recordChange(
+        EditorHistoryItem(
+          type: .draw,
+          pageIndex: select.selectResult.pageIndex,
+          strokes: duplicatedStrokes,
+          images: duplicatedImages,
+        ),
+      );
+      autosaveAfterDelay();
+    });
+  }
+
+  void deleteSelection() {
+    final select = Select.currentSelect;
+    if (currentTool != select || !select.doneSelecting) return;
+
+    setState(() {
+      final pageIndex = select.selectResult.pageIndex;
+      final page = coreInfo.pages[pageIndex];
+      final strokes = select.selectResult.strokes;
+      final images = select.selectResult.images;
+
+      for (final stroke in strokes) {
+        page.strokes.remove(stroke);
+      }
+      for (final image in images) {
+        page.images.remove(image);
+      }
+
+      select.unselect();
+
+      history.recordChange(
+        EditorHistoryItem(
+          type: .erase,
+          pageIndex: pageIndex,
+          strokes: strokes,
+          images: images,
+        ),
+      );
+      autosaveAfterDelay();
+    });
+  }
+
+  /// Selects everything on the page in view, or [pageIndex],
+  /// with the lasso.
+  void selectAll([int? pageIndex]) {
+    pageIndex ??= currentPageIndex;
+    final page = coreInfo.pages[pageIndex];
+    if (page.strokes.isEmpty && page.images.isEmpty) return;
+    currentTool = Select.currentSelect;
+    final select = Select.currentSelect
+      ..unselect()
+      ..selectResult = SelectResult(
+        pageIndex: pageIndex,
+        strokes: [...page.strokes],
+        images: [...page.images],
+        path: Path(),
+      )
+      ..doneSelecting = true;
+    select.selectResult.path.addRect(select.selectionBounds!.inflate(8));
+    setState(() {});
+  }
+
+  /// Moves the lasso's selection by [offset] (in page units), e.g. with
+  /// the arrow keys.
+  void _nudgeSelection(Offset offset) {
+    final select = Select.currentSelect;
+    final selection = select.selectResult;
+    for (final stroke in selection.strokes) {
+      stroke.shift(offset);
+    }
+    for (final image in selection.images) {
+      image.dstRect = image.dstRect.shift(offset);
+    }
+    selection.path = selection.path.shift(offset);
+    history.recordChange(
+      EditorHistoryItem(
+        type: .move,
+        pageIndex: selection.pageIndex,
+        strokes: selection.strokes,
+        images: selection.images,
+        offset: .fromLTRB(offset.dx, offset.dy, offset.dx, offset.dy),
+      ),
+    );
+    coreInfo.pages[selection.pageIndex].redrawStrokes();
+    setState(() {});
+    autosaveAfterDelay();
+  }
+
+  /// Whether a text field (e.g. the note's name) or the note's text
+  /// has the keyboard.
+  bool get _isTyping => currentTool == Tool.textEditing || _textFieldFocused;
+
+  /// Whether the note's keyboard shortcuts apply: not while typing (text
+  /// has its own, e.g. ⌘F finds and ⌘0 is normal text in the note's text),
+  /// or while a dialog or menu is open.
+  bool shortcutsApply() =>
+      mounted && !_isTyping && (ModalRoute.isCurrentOf(context) ?? true);
+
+  /// Whether a text field has the keyboard, e.g. the note's name,
+  /// but not the note's own text.
+  static bool get _textFieldFocused =>
+      FocusManager.instance.primaryFocus?.context
+          ?.findAncestorWidgetOfExactType<EditableText>() !=
+      null;
+
+  /// Keys that [Keybinder] can't bind, since they'd be taken from text
+  /// fields: single keys for tools ([ToolCatalog.shortcuts]) and the
+  /// lasso's selection, and Space to pan. Returns whether it used [event].
+  bool _onKey(KeyEvent event) {
+    if (!mounted) return false;
+    final key = event.logicalKey;
+    final keyboard = HardwareKeyboard.instance;
+    if (key == LogicalKeyboardKey.space) {
+      // For the grab cursor (see [_spaceHeld])
+      if (event is! KeyRepeatEvent && !_isTyping) setState(() {});
+      return false;
+    }
+    if (event is KeyUpEvent || keyboard.isAltPressed) return false;
+    // Not while typing, or while a dialog or menu is open
+    if (coreInfo.readOnly || !(ModalRoute.isCurrentOf(context) ?? true)) {
+      return false;
+    }
+    if (currentTool == Tool.textEditing && key == LogicalKeyboardKey.escape) {
+      toggleTextEditing();
+      return true;
+    }
+    if (_isTyping) return false;
+
+    final selection = SelectionActions.selectionOf(currentTool);
+    if (keyboard.isMetaPressed || keyboard.isControlPressed) {
+      switch (key) {
+        case LogicalKeyboardKey.keyA:
+          selectAll();
+        case LogicalKeyboardKey.keyC when selection != null:
+          unawaited(SelectionActions.copy(this));
+        case LogicalKeyboardKey.keyX when selection != null:
+          unawaited(SelectionActions.cut(this));
+        case LogicalKeyboardKey.keyD when selection != null:
+          duplicateSelection();
+        default:
+          return false;
+      }
+      return true;
+    }
+
+    if (selection != null) {
+      final step = keyboard.isShiftPressed ? 10.0 : 1.0;
+      final nudge = switch (key) {
+        LogicalKeyboardKey.arrowLeft => Offset(-step, 0),
+        LogicalKeyboardKey.arrowRight => Offset(step, 0),
+        LogicalKeyboardKey.arrowUp => Offset(0, -step),
+        LogicalKeyboardKey.arrowDown => Offset(0, step),
+        _ => null,
+      };
+      if (nudge != null) {
+        _nudgeSelection(nudge);
+        return true;
+      }
+      if (key == LogicalKeyboardKey.delete ||
+          key == LogicalKeyboardKey.backspace) {
+        deleteSelection();
+        return true;
+      }
+      if (key == LogicalKeyboardKey.escape) {
+        setState(Select.currentSelect.unselect);
+        return true;
+      }
+    }
+    if (event is KeyRepeatEvent || keyboard.isShiftPressed) return false;
+
+    final id = ToolCatalog.shortcuts.entries
+        .where((shortcut) => shortcut.value == key)
+        .firstOrNull
+        ?.key;
+    switch (id) {
+      case 'lasso':
+        setTool(Select.currentSelect);
+      case 'pen':
+        setTool(Pen.currentPen);
+      case 'highlighter':
+        setTool(Highlighter.currentHighlighter);
+      case 'eraser':
+        setTool(Eraser());
+      case 'text':
+        toggleTextEditing();
+      case 'shapes':
+        if (currentTool is! ShapePen) setTool(ShapePen());
+      case 'laserPointer':
+        setTool(LaserPointer.currentLaserPointer);
+      case 'tape':
+        setTool(Tape.currentTape);
+      case 'ruler':
+        toggleRuler();
+      case 'image':
+        unawaited(_pickPhotos());
+      default:
+        return false;
+    }
+    return true;
+  }
+
+  /// A right-click (or Control-click) on the canvas at [position]:
+  /// the lasso's actions on its selection, or else paste, select all,
+  /// undo and redo. Images and the note's text have their own menus.
+  Future<void> _showCanvasMenu(Offset position) async {
+    // The note's text: its own menu (cut, copy, paste) from its editor
+    if (currentTool == Tool.textEditing) return;
+    final pageIndex = onWhichPageIsFocalPoint(position);
+    if (pageIndex == null) return;
+    final page = coreInfo.pages[pageIndex];
+    final local = page.renderBox!.globalToLocal(position);
+    final selection = SelectionActions.selectionOf(currentTool);
+    final onSelection =
+        selection != null &&
+        selection.pageIndex == pageIndex &&
+        (Select.currentSelect.selectionBounds?.contains(local) ?? false);
+    // The lasso's images have their own menu
+    if (!onSelection &&
+        currentTool == Select.currentSelect &&
+        page.images.any((image) => image.dstRect.contains(local))) {
+      return;
+    }
+
+    final editable = !coreInfo.readOnly;
+    final ink = onSelection ? Handwriting.inkOf(selection.strokes) : const [];
+    final canPaste =
+        editable &&
+        !onSelection &&
+        (SelectionClipboard.content.value != null ||
+            await _clipboardHasImage());
+    if (!mounted) return;
+    final actions = <(String, VoidCallback)>[
+      if (onSelection) ...[
+        (t.editor.otherTools.copy, () => SelectionActions.copy(this)),
+        if (editable) ...[
+          (t.editor.otherTools.cut, () => SelectionActions.cut(this)),
+          (t.editor.selectionBar.duplicate, duplicateSelection),
+          (t.editor.selectionBar.delete, deleteSelection),
+          (t.editor.canvasTools.addLink, editSelectionLink),
+        ],
+        (
+          t.editor.otherTools.screenshot,
+          () => SelectionActions.screenshot(context, this, at: position),
+        ),
+        if (Handwriting.isSupported && ink.isNotEmpty)
+          (
+            t.editor.otherTools.handwriting,
+            () => SelectionActions.handwriting(context, this, at: position),
+          ),
+        (t.ai.askAi, () => showAiMenu(context, this)),
+      ] else if (editable) ...[
+        // Where the right-click was
+        if (canPaste)
+          (
+            t.editor.otherTools.paste,
+            () => paste(pageIndex: pageIndex, at: local),
+          ),
+        if (page.strokes.isNotEmpty || page.images.isNotEmpty)
+          (t.editor.mouse.selectAll, () => selectAll(pageIndex)),
+        if (history.canUndo) (t.editor.toolbar.undo, undo),
+        if (history.canRedo) (t.editor.toolbar.redo, redo),
+      ],
+    ];
+    if (actions.isEmpty) return;
+    await showBarMenu(context, position, actions: actions);
+  }
+
+  /// The mouse over the canvas, for its cursor and the eraser's outline.
+  /// Null when it's elsewhere.
+  final _mouse = ValueNotifier<({Offset position, int buttons})?>(null);
+
+  void _onMouse(PointerEvent event) {
+    if (event.kind != PointerDeviceKind.mouse) return;
+    _mouse.value = event is PointerExitEvent
+        ? null
+        : (position: event.position, buttons: event.buttons);
+  }
+
+  /// [child] with the mouse cursor for the current tool (see [_cursorFor]).
+  Widget _withMouseCursor(Widget child) => ValueListenableBuilder(
+    valueListenable: _mouse,
+    builder: (context, mouse, child) => MouseRegion(
+      cursor: _cursorFor(mouse),
+      onEnter: _onMouse,
+      onHover: _onMouse,
+      onExit: _onMouse,
+      child: child,
+    ),
+    child: Listener(
+      onPointerDown: _onMouse,
+      onPointerMove: _onMouse,
+      onPointerUp: _onMouse,
+      child: child,
+    ),
+  );
+
+  MouseCursor _cursorFor(({Offset position, int buttons})? mouse) {
+    if (mouse == null) return MouseCursor.defer;
+    final hand = mouse.buttons == 0
+        ? SystemMouseCursors.grab
+        : SystemMouseCursors.grabbing;
+    if (_spaceHeld) return hand;
+    // A middle- or right-drag pans
+    if (mouse.buttons & (kMiddleMouseButton | kSecondaryMouseButton) != 0) {
+      return SystemMouseCursors.grabbing;
+    }
+    if (switch ((ruler.value, _rulerBox)) {
+      (final ruler?, final box?) => ruler.contains(
+        box.globalToLocal(mouse.position),
+        box.size,
+      ),
+      _ => false,
+    }) {
+      return hand;
+    }
+    return switch (currentTool) {
+      _ when coreInfo.readOnly => MouseCursor.defer,
+      Tool.textEditing => SystemMouseCursors.text,
+      Eraser() => SystemMouseCursors.none, // see [_EraserOutline]
+      InsertSpace() => SystemMouseCursors.resizeUpDown,
+      final Select select => _selectionCursor(select, mouse.position, hand),
+      _ => SystemMouseCursors.precise,
+    };
+  }
+
+  /// Grab the selection, or resize it from a corner.
+  MouseCursor _selectionCursor(
+    Select select,
+    Offset position,
+    MouseCursor hand,
+  ) {
+    final box = select.doneSelecting
+        ? coreInfo.pages
+              .elementAtOrNull(select.selectResult.pageIndex)
+              ?.renderBox
+        : null;
+    if (box == null) return SystemMouseCursors.precise;
+    final local = box.globalToLocal(position);
+    // A Mac has no diagonal resize cursors
+    final mac = defaultTargetPlatform == TargetPlatform.macOS;
+    return switch (select.handleAt(local)) {
+      SelectionHandle.topLeft || SelectionHandle.bottomRight when !mac =>
+        SystemMouseCursors.resizeUpLeftDownRight,
+      SelectionHandle.topRight || SelectionHandle.bottomLeft when !mac =>
+        SystemMouseCursors.resizeUpRightDownLeft,
+      null when !select.selectResult.path.contains(local) =>
+        SystemMouseCursors.precise,
+      _ => hand,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    final platform = Theme.of(context).platform;
+    final c = context.higan;
+    final alignment = stows.editorToolbarAlignment.value;
     final isToolbarVertical =
-        stows.editorToolbarAlignment.value == AxisDirection.left ||
-        stows.editorToolbarAlignment.value == AxisDirection.right;
+        alignment == AxisDirection.left || alignment == AxisDirection.right;
+    final headerShown = !DynamicMaterialApp.isFullscreen;
 
     final Widget canvas = CanvasGestureDetector(
       key: _canvasGestureDetectorKey,
@@ -1373,6 +2262,9 @@ class EditorState extends State<Editor> {
       onDrawStart: onDrawStart,
       onDrawUpdate: onDrawUpdate,
       onDrawEnd: onDrawEnd,
+      onTapUp: coreInfo.readOnly ? _onReadOnlyTap : null,
+      onPointerDown: (position) => _pointerDownPosition = position,
+      onSecondaryTap: (position) => unawaited(_showCanvasMenu(position)),
       onHovering: onHovering,
       onHoveringEnd: onHoveringEnd,
       onStylusButtonChanged: onStylusButtonChanged,
@@ -1382,7 +2274,10 @@ class EditorState extends State<Editor> {
       pages: coreInfo.pages,
       initialPageIndex: coreInfo.initialPageIndex,
       pageBuilder: pageBuilder,
-      isTextEditing: () => currentTool == Tool.textEditing,
+      // Arrow keys move the text cursor, or nudge the selection
+      arrowKeysPan: () =>
+          !_isTyping && SelectionActions.selectionOf(currentTool) == null,
+      shortcutsApply: shortcutsApply,
       placeholderPageBuilder: (BuildContext context, int pageIndex) {
         return Canvas(
           path: coreInfo.filePath,
@@ -1409,214 +2304,243 @@ class EditorState extends State<Editor> {
           : null,
     );
 
-    final Widget toolbar = Collapsible(
-      axis: isToolbarVertical
-          ? CollapsibleAxis.horizontal
-          : CollapsibleAxis.vertical,
-      collapsed:
-          DynamicMaterialApp.isFullscreen &&
-          !stows.editorToolbarShowInFullscreen.value,
-      maintainState: true,
-      child: SafeArea(
-        bottom: stows.editorToolbarAlignment.value != AxisDirection.up,
-        child: Toolbar(
-          readOnly: coreInfo.readOnly,
-          setTool: (tool) {
-            if (tool is Eraser && currentTool is Eraser) {
-              // setTool(Eraser) is a special case to toggle the eraser on/off
-              tool = _lastNonEraserTool;
-            }
+    void setColor(Color color) {
+      final tool = currentTool;
+      if (tool is Select &&
+          (!tool.doneSelecting || tool.selectResult.strokes.isEmpty)) {
+        return; // nothing to recolor
+      }
+      setState(() {
+        updateColorBar(color);
 
-            currentTool = tool;
+        if (currentTool is Highlighter) {
+          (currentTool as Highlighter).color = color.withAlpha(
+            Highlighter.alpha,
+          );
+        } else if (currentTool is Pen) {
+          (currentTool as Pen).color = color;
+        } else if (currentTool is Fill) {
+          (currentTool as Fill).color = color;
+        } else if (currentTool is Select) {
+          // Changes color of selected strokes
+          final select = currentTool as Select;
+          if (select.doneSelecting) {
+            final strokes = select.selectResult.strokes;
 
-            if (tool is Highlighter) {
-              Highlighter.currentHighlighter = tool;
-            } else if (tool is Pencil) {
-              Pencil.currentPencil = tool;
-            } else if (tool is Pen) {
-              Pen.currentPen = tool;
-            }
-
-            if (mounted) setState(() {});
-          },
-          currentTool: currentTool,
-          duplicateSelection: () {
-            final select = currentTool as Select;
-            if (!select.doneSelecting) return;
-
-            setState(() {
-              final page = coreInfo.pages[select.selectResult.pageIndex];
-              final strokes = select.selectResult.strokes;
-              final images = select.selectResult.images;
-
-              const duplicationFeedbackOffset = Offset(25, -25);
-
-              final duplicatedStrokes = strokes.map((stroke) {
-                return stroke.copy()..shift(duplicationFeedbackOffset);
-              }).toList();
-
-              final duplicatedImages = images.map((image) {
-                return image.copy()
-                  ..id = coreInfo.nextImageId++
-                  ..dstRect.shift(duplicationFeedbackOffset);
-              }).toList();
-
-              page.strokes.addAll(duplicatedStrokes);
-              page.images.addAll(duplicatedImages);
-
-              select.selectResult = select.selectResult.copyWith(
-                strokes: duplicatedStrokes,
-                images: duplicatedImages,
-                path: select.selectResult.path.shift(duplicationFeedbackOffset),
+            final colorChange = <Stroke, Change<Color>>{};
+            for (final stroke in strokes) {
+              colorChange[stroke] = Change(
+                previous: stroke.color,
+                current: color,
               );
-
-              history.recordChange(
-                EditorHistoryItem(
-                  type: .draw,
-                  pageIndex: select.selectResult.pageIndex,
-                  strokes: duplicatedStrokes,
-                  images: duplicatedImages,
-                ),
-              );
-              autosaveAfterDelay();
-            });
-          },
-          deleteSelection: () {
-            final select = currentTool as Select;
-            if (!select.doneSelecting) {
-              return;
+              stroke.color = color;
             }
 
-            setState(() {
-              final page = coreInfo.pages[select.selectResult.pageIndex];
-              final strokes = select.selectResult.strokes;
-              final images = select.selectResult.images;
+            history.recordChange(
+              EditorHistoryItem(
+                type: .changeColor,
+                pageIndex: strokes.first.pageIndex,
+                strokes: strokes,
+                colorChange: colorChange,
+                images: [],
+              ),
+            );
+            autosaveAfterDelay();
+          }
+        }
+      });
+    }
 
-              for (final stroke in strokes) {
-                page.strokes.remove(stroke);
-              }
-              for (final image in images) {
-                page.images.remove(image);
-              }
+    final toolbarHidden =
+        DynamicMaterialApp.isFullscreen &&
+        !stows.editorToolbarShowInFullscreen.value;
 
-              select.unselect();
-
-              history.recordChange(
-                EditorHistoryItem(
-                  type: .erase,
-                  pageIndex: strokes.first.pageIndex,
-                  strokes: strokes,
-                  images: images,
-                ),
-              );
-              autosaveAfterDelay();
-            });
-          },
-          setColor: (color) {
-            setState(() {
-              updateColorBar(color);
-
-              if (currentTool is Highlighter) {
-                (currentTool as Highlighter).color = color.withAlpha(
-                  Highlighter.alpha,
-                );
-              } else if (currentTool is Pen) {
-                (currentTool as Pen).color = color;
-              } else if (currentTool is Select) {
-                // Changes color of selected strokes
-                final select = currentTool as Select;
-                if (select.doneSelecting) {
-                  final strokes = select.selectResult.strokes;
-
-                  final colorChange = <Stroke, Change<Color>>{};
-                  for (final stroke in strokes) {
-                    colorChange[stroke] = Change(
-                      previous: stroke.color,
-                      current: color,
-                    );
-                    stroke.color = color;
-                  }
-
-                  history.recordChange(
-                    EditorHistoryItem(
-                      type: .changeColor,
-                      pageIndex: strokes.first.pageIndex,
-                      strokes: strokes,
-                      colorChange: colorChange,
-                      images: [],
-                    ),
-                  );
-                  autosaveAfterDelay();
-                }
-              }
-            });
-          },
-          quillFocus: quillFocus,
-          textEditing: currentTool == Tool.textEditing,
-          toggleTextEditing: () => setState(() {
-            if (currentTool == Tool.textEditing) {
-              currentTool = Pen.currentPen;
-              for (final page in coreInfo.pages) {
-                // unselect text, but maintain cursor position
-                page.quill.controller.moveCursorToPosition(
-                  page.quill.controller.selection.extentOffset,
-                );
-                page.quill.focusNode.unfocus();
-              }
-            } else {
-              currentTool = Tool.textEditing;
-              quillFocus.value = coreInfo.pages[currentPageIndex].quill
-                ..focusNode.requestFocus();
-            }
-          }),
-          undo: undo,
-          isUndoPossible: history.canUndo,
-          redo: redo,
-          isRedoPossible: history.canRedo,
-          toggleFingerDrawing: () {
-            stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
-            lastSeenPointerCount = 0;
-          },
-          pickPhoto: _pickPhotos,
-          paste: paste,
-          exportAsSba: exportAsSba,
-          exportAsPdf: exportAsPdf,
-          exportAsPng: exportAsPng,
-        ),
-      ),
+    // Keyed by their [FloatingBar]s, so they keep their state when they
+    // move between their default places and floating above the page.
+    final toolbarWidget = Toolbar(
+      key: _toolbarBar.key,
+      bar: _toolbarBar,
+      readOnly: coreInfo.readOnly,
+      setTool: setTool,
+      currentTool: currentTool,
+      duplicateSelection: duplicateSelection,
+      deleteSelection: deleteSelection,
+      setColor: setColor,
+      quillFocus: quillFocus,
+      textEditing: currentTool == Tool.textEditing,
+      toggleTextEditing: toggleTextEditing,
+      undo: undo,
+      isUndoPossible: history.canUndo,
+      redo: redo,
+      isRedoPossible: history.canRedo,
+      toggleFingerDrawing: () {
+        stows.editorFingerDrawing.value = !stows.editorFingerDrawing.value;
+        lastSeenPointerCount = 0;
+      },
+      pickPhoto: _pickPhotos,
+      paste: paste,
+      shortcutsApply: shortcutsApply,
+      exportAsSba: exportAsSba,
+      exportAsPdf: exportAsPdf,
+      exportAsPng: exportAsPng,
     );
 
-    final Widget body;
-    if (isToolbarVertical) {
-      body = Row(
-        textDirection: stows.editorToolbarAlignment.value == AxisDirection.left
-            ? .ltr
-            : .rtl,
-        children: [
-          toolbar,
-          Expanded(
-            child: Column(
-              children: [
-                Expanded(child: canvas),
-                readonlyBanner,
-              ],
-            ),
-          ),
-        ],
-      );
-    } else {
-      body = Column(
-        verticalDirection:
-            stows.editorToolbarAlignment.value == AxisDirection.up
-            ? VerticalDirection.up
-            : VerticalDirection.down,
-        children: [
-          Expanded(child: canvas),
-          toolbar,
-          readonlyBanner,
-        ],
+    // Like [ReadOnlyBanner], don't hide it while the note is loading
+    final topBarReadOnly =
+        coreInfo.readOnly && coreInfo.readOnlyReason != .placeholder;
+    final topBarWidget = EditorTopBar(
+      key: _topBarBar.key,
+      bar: _topBarBar,
+      currentTool: currentTool,
+      setTool: setTool,
+      setColor: setColor,
+      readOnly: topBarReadOnly,
+    );
+
+    // Moved or minimized bars float above the page, inside the insets
+    final viewPadding = MediaQuery.paddingOf(context);
+    for (final bar in [_toolbarBar, _topBarBar]) {
+      bar.compact = MediaQuery.sizeOf(context).width < 600;
+      bar.insets = .fromLTRB(
+        viewPadding.left + 8,
+        (headerShown ? 0 : viewPadding.top) + 8,
+        viewPadding.right + 8,
+        viewPadding.bottom + 8,
       );
     }
+
+    final isLoading = coreInfo.readOnlyReason == .placeholder;
+
+    final barsAndCanvas = ListenableBuilder(
+      listenable: Listenable.merge([_toolbarBar, _topBarBar]),
+      builder: (context, _) {
+        final toolbarDocked = _toolbarBar.docked;
+        final topBarDocked = _topBarBar.docked;
+
+        final Widget toolbar = Collapsible(
+          axis: isToolbarVertical
+              ? CollapsibleAxis.horizontal
+              : CollapsibleAxis.vertical,
+          collapsed: toolbarHidden,
+          maintainState: true,
+          child: SafeArea(
+            top: !headerShown && alignment != AxisDirection.down,
+            bottom: alignment != AxisDirection.up,
+            left: alignment != AxisDirection.right,
+            right: alignment != AxisDirection.left,
+            child: Padding(
+              padding: switch (alignment) {
+                AxisDirection.down => const .fromLTRB(12, 0, 12, 20),
+                AxisDirection.up => const .fromLTRB(12, 12, 12, 0),
+                AxisDirection.left => const .fromLTRB(16, 12, 12, 12),
+                AxisDirection.right => const .fromLTRB(12, 12, 16, 12),
+              },
+              child: toolbarWidget,
+            ),
+          ),
+        );
+        final Widget topBar = Collapsible(
+          axis: CollapsibleAxis.vertical,
+          collapsed: toolbarHidden || topBarReadOnly,
+          maintainState: true,
+          child: SafeArea(
+            top: !headerShown && alignment != AxisDirection.up,
+            bottom: false,
+            child: Padding(
+              padding: const .fromLTRB(16, 12, 16, 0),
+              child: topBarWidget,
+            ),
+          ),
+        );
+        Widget floating(FloatingBar bar, Widget child) => Positioned.fill(
+          child: Padding(
+            padding: bar.insets,
+            child: Visibility(
+              visible: !toolbarHidden,
+              maintainState: true,
+              child: child,
+            ),
+          ),
+        );
+
+        return Stack(
+          key: _barAreaKey,
+          children: [
+            Positioned.fill(
+              child: Column(
+                children: [
+                  if (toolbarDocked && alignment == AxisDirection.up) toolbar,
+                  if (topBarDocked) topBar,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        if (toolbarDocked && alignment == AxisDirection.left)
+                          Center(child: toolbar),
+                        Expanded(
+                          // The canvas runs under the floating bottom toolbar
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: _withMouseCursor(
+                                  RulerOverlay(
+                                    key: _rulerKey,
+                                    ruler: ruler,
+                                    child: AnimatedOpacity(
+                                      opacity: isLoading ? 0 : 1,
+                                      duration: HiganMotion.medium,
+                                      child: canvas,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: CustomPaint(
+                                    painter: _EraserOutline(
+                                      this,
+                                      color: c.text,
+                                      halo: c.bg,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (isLoading)
+                                const Positioned.fill(
+                                  child: IgnorePointer(child: HiganLoading()),
+                                ),
+                              if (toolbarDocked &&
+                                  alignment == AxisDirection.down)
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  child: toolbar,
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (toolbarDocked && alignment == AxisDirection.right)
+                          Center(child: toolbar),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (!topBarDocked) floating(_topBarBar, topBarWidget),
+            if (!toolbarDocked) floating(_toolbarBar, toolbarWidget),
+          ],
+        );
+      },
+    );
+
+    final body = Column(
+      children: [
+        if (headerShown) _header(context),
+        Expanded(child: barsAndCanvas),
+        readonlyBanner,
+      ],
+    );
 
     return ValueListenableBuilder(
       valueListenable: savingState,
@@ -1641,96 +2565,137 @@ class EditorState extends State<Editor> {
         );
       },
       child: Scaffold(
-        appBar: DynamicMaterialApp.isFullscreen
-            ? null
-            : AppBar(
-                toolbarHeight: kToolbarHeight,
-                title: widget.customTitle != null
-                    ? Text(widget.customTitle!)
-                    : Form(
-                        key: _filenameFormKey,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                          controller: filenameTextEditingController,
-                          onChanged: renameFile,
-                          autofocus: needsNaming,
-                          validator: _validateFilenameTextField,
-                        ),
-                      ),
-                leading: SaveIndicator(
-                  savingState: savingState,
-                  triggerSave: saveToFile,
-                ),
-                actions: [
-                  IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.insert_page_break,
-                      cupertinoIcon: CupertinoIcons.add,
-                    ),
-                    tooltip: t.editor.menu.insertPage,
-                    onPressed: () => setState(() {
-                      final currentPageIndex = this.currentPageIndex;
-                      insertPageAfter(currentPageIndex);
-                      CanvasGestureDetector.scrollToPage(
-                        pageIndex: currentPageIndex + 1,
-                        pages: coreInfo.pages,
-                        screenWidth: MediaQuery.sizeOf(context).width,
-                        transformationController: _transformationController,
-                      );
-                    }),
-                  ),
-                  IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.grid_view,
-                      cupertinoIcon: CupertinoIcons.rectangle_grid_2x2,
-                    ),
-                    tooltip: t.editor.pages,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AdaptiveAlertDialog(
-                          title: Text(t.editor.pages),
-                          content: pageManager(context),
-                          actions: const [],
-                        ),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.more_vert,
-                      cupertinoIcon: CupertinoIcons.ellipsis_vertical,
-                    ),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => bottomSheet(context),
-                        isScrollControlled: true,
-                        showDragHandle: true,
-                        backgroundColor: colorScheme.surface,
-                        constraints: const BoxConstraints(maxWidth: 500),
-                      );
-                    },
-                  ),
-                ],
-              ),
+        backgroundColor: c.bg,
         body: body,
-        floatingActionButton:
-            (DynamicMaterialApp.isFullscreen &&
-                !stows.editorToolbarShowInFullscreen.value)
-            ? FloatingActionButton(
-                shape: platform.isCupertino ? const CircleBorder() : null,
+        floatingActionButton: toolbarHidden
+            ? FloatingActionButton.small(
+                tooltip: t.editor.toolbar.fullscreen,
+                backgroundColor: c.surface2,
+                foregroundColor: c.text,
+                shape: CircleBorder(side: BorderSide(color: c.hairlineStrong)),
                 onPressed: () {
                   DynamicMaterialApp.setFullscreen(false, updateSystem: true);
                 },
-                child: const Icon(Icons.fullscreen_exit),
+                child: const Icon(Symbols.fullscreen_exit, weight: 300),
               )
             : null,
       ),
     );
+  }
+
+  /// Back (and save state), the note's title and a mono readout,
+  /// then the page and note options.
+  Widget _header(BuildContext context) {
+    final isPhone = MediaQuery.sizeOf(context).width < 600;
+    final titleStyle = HiganText.body(context, size: 16);
+    final embedded = widget.embedded;
+    final EdgeInsets padding;
+    if (embedded) {
+      // Line up with the shell's header (e.g. its settings button).
+      final gutters = ResponsiveNavbar.pagePadding(context);
+      padding = .fromLTRB(gutters.left, 8, gutters.right, 0);
+    } else {
+      final gutter = isPhone ? 12.0 : 22.0;
+      padding = .fromLTRB(gutter, 12, gutter + 8, 0);
+    }
+    final readout = ListenableBuilder(
+      listenable: Listenable.merge([_readoutPageIndex, savingState]),
+      builder: (context, _) =>
+          HiganLabel(_headerReadout(withFolder: !isPhone), size: 10),
+    );
+
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: padding,
+        child: Row(
+          children: [
+            if (embedded)
+              Expanded(child: readout)
+            else ...[
+              SaveIndicator(savingState: savingState, triggerSave: saveToFile),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: .start,
+                  mainAxisSize: .min,
+                  children: [
+                    Form(
+                      key: _filenameFormKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: TextFormField(
+                        style: titleStyle,
+                        decoration: const InputDecoration(
+                          isCollapsed: true,
+                          contentPadding: .zero,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                        ),
+                        controller: filenameTextEditingController,
+                        onChanged: renameFile,
+                        autofocus: needsNaming,
+                        validator: _validateFilenameTextField,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    readout,
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(width: 12),
+            // On phones, pages are inserted from the page manager
+            if (!isPhone) ...[
+              HiganCircleButton(
+                icon: Symbols.insert_page_break,
+                tooltip: t.editor.menu.insertPage,
+                onPressed: insertPageAfterCurrent,
+              ),
+              const SizedBox(width: 8),
+            ],
+            HiganCircleButton(
+              icon: Symbols.grid_view,
+              tooltip: t.editor.pages,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AdaptiveAlertDialog(
+                    title: Text(t.editor.pages),
+                    content: pageManager(context),
+                    actions: const [],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
+            HiganCircleButton(
+              icon: Symbols.more_horiz,
+              tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+              onPressed: showNoteOptions,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// E.g. "MATHEMATICS · PAGE 2 / 4 · SAVED".
+  String _headerReadout({required bool withFolder}) {
+    final folder = p.dirname(coreInfo.filePath);
+    return [
+      if (withFolder && folder != '/' && folder != '.' && folder.isNotEmpty)
+        p.basename(folder),
+      if (coreInfo.pages.isNotEmpty && coreInfo.readOnlyReason != .placeholder)
+        t.higan.pageOf(
+          n: _readoutPageIndex.value.clamp(0, coreInfo.pages.length - 1) + 1,
+          total: coreInfo.pages.length,
+        ),
+      if (savingState.value == .saved) t.higan.saved else t.higan.saving,
+    ].join(' · ');
   }
 
   void snackBarNeedsToSaveBeforeExiting() {
@@ -1740,9 +2705,30 @@ class EditorState extends State<Editor> {
     ).showSnackBar(SnackBar(content: Text(t.editor.needsToSaveBeforeExiting)));
   }
 
+  /// The note's options, e.g. its background pattern.
+  void showNoteOptions() => showModalBottomSheet(
+    context: context,
+    builder: (context) => bottomSheet(context),
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: context.higan.surface1,
+    constraints: const BoxConstraints(maxWidth: 500),
+  );
+
+  /// Inserts a page after the one in view and scrolls to it.
+  void insertPageAfterCurrent() {
+    final currentPageIndex = this.currentPageIndex;
+    insertPageAfter(currentPageIndex);
+    CanvasGestureDetector.scrollToPage(
+      pageIndex: currentPageIndex + 1,
+      pages: coreInfo.pages,
+      screenWidth: MediaQuery.sizeOf(context).width,
+      transformationController: _transformationController,
+    );
+  }
+
   Widget bottomSheet(BuildContext context) {
-    final Brightness brightness = Theme.brightnessOf(context);
-    final invert = stows.editorAutoInvert.value && brightness == .dark;
+    final invert = InnerCanvas.invertOf(context);
     final int currentPageIndex = this.currentPageIndex;
 
     return EditorBottomSheet(
@@ -1802,27 +2788,6 @@ class EditorState extends State<Editor> {
       pickPhotos: _pickPhotos,
       importPdf: importPdf,
       canRasterPdf: Editor.canRasterPdf,
-      getIsWatchingServer: () => _watchServerTimer?.isActive ?? false,
-      setIsWatchingServer: (bool watch) {
-        if (watch) {
-          _watchServerTimer ??= Timer.periodic(
-            const Duration(seconds: 5),
-            (_) => _refreshCurrentNote(),
-          );
-          if (coreInfo.readOnlyReason != .watchingServer) {
-            assert(coreInfo.readOnlyReason == null);
-            coreInfo.readOnlyReason = .watchingServer;
-            if (mounted) setState(() {});
-          }
-        } else {
-          _watchServerTimer?.cancel();
-          _watchServerTimer = null;
-          if (coreInfo.readOnlyReason == .watchingServer) {
-            coreInfo.readOnlyReason = null;
-            if (mounted) setState(() {});
-          }
-        }
-      },
     );
   }
 
@@ -1837,6 +2802,9 @@ class EditorState extends State<Editor> {
       pageIndex: pageIndex,
       textEditing: currentTool == Tool.textEditing,
       coreInfo: coreInfo,
+      // The header's readout shows the page, except in full screen.
+      // (It would also peek out around the floating toolbar.)
+      showPageIndicator: DynamicMaterialApp.isFullscreen,
       currentStroke: currentStroke,
       currentStrokeDetectedShape:
           currentTool is ShapePen && currentStroke != null
@@ -1844,9 +2812,11 @@ class EditorState extends State<Editor> {
           : null,
       currentSelection: () {
         if (currentTool is! Select) return null;
-        final selectResult = (currentTool as Select).selectResult;
-        if (selectResult.pageIndex != pageIndex) return null;
-        return selectResult;
+        final select = currentTool as Select;
+        if (select.selectResult.pageIndex != pageIndex) return null;
+        // The same size on screen at any zoom
+        select.handleRadius = 16 / _pixelsPerUnit(page);
+        return select.selectResult;
       }(),
       setAsBackground: (EditorImage image) {
         if (page.backgroundImage != null) {
@@ -2063,12 +3033,18 @@ class EditorState extends State<Editor> {
     unawaited(_cleanUpAsync());
 
     DynamicMaterialApp.removeFullscreenListener(_setState);
+    _readoutPageIndex.dispose();
+    ruler.dispose();
+    _toolbarBar.dispose();
+    _topBarBar.dispose();
 
     _delayedSaveTimer?.cancel();
-    _watchServerTimer?.cancel();
     _lastSeenPointerCountTimer?.cancel();
+    _opening.cancel();
 
     _removeKeybindings();
+    HardwareKeyboard.instance.removeHandler(_onKey);
+    _mouse.dispose();
 
     // manually save pen properties since the listeners don't fire if a property is changed
     stows.lastFountainPenOptions.notifyListeners();
@@ -2076,6 +3052,9 @@ class EditorState extends State<Editor> {
     stows.lastHighlighterOptions.notifyListeners();
     stows.lastPencilOptions.notifyListeners();
     stows.lastShapePenOptions.notifyListeners();
+    stows.lastTapeOptions.notifyListeners();
+    stows.lastBrushPenOptions.notifyListeners();
+    stows.lastCalligraphyPenOptions.notifyListeners();
 
     super.dispose();
   }
@@ -2092,4 +3071,51 @@ class EditorState extends State<Editor> {
       coreInfo.dispose();
     }
   }
+}
+
+/// The eraser's size around the mouse, which has no cursor for it.
+class _EraserOutline extends CustomPainter {
+  new(this.editor, {required this.color, required this.halo})
+    : super(repaint: editor._mouse);
+
+  final EditorState editor;
+
+  /// The outline, and a wider line under it so it shows on any ink.
+  final Color color, halo;
+
+  @override
+  void paint(ui.Canvas canvas, Size size) {
+    final (mouse, tool, box) = (
+      editor._mouse.value,
+      editor.currentTool,
+      editor._rulerBox,
+    );
+    if (mouse == null || tool is! Eraser || box == null) return;
+    if (editor._spaceHeld) return;
+    final page = editor.coreInfo.pages.elementAtOrNull(
+      editor.onWhichPageIsFocalPoint(mouse.position) ?? 0,
+    );
+    if (page == null) return;
+    final center = box.globalToLocal(mouse.position);
+    final radius = tool.size * editor._pixelsPerUnit(page);
+    canvas
+      ..drawCircle(
+        center,
+        radius,
+        Paint()
+          ..style = .stroke
+          ..strokeWidth = 3
+          ..color = halo.withValues(alpha: 0.6),
+      )
+      ..drawCircle(
+        center,
+        radius,
+        Paint()
+          ..style = .stroke
+          ..color = color,
+      );
+  }
+
+  @override
+  bool shouldRepaint(_EraserOutline oldDelegate) => true;
 }

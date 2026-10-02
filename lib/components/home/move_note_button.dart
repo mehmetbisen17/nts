@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/home/grid_folders.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/home/grid_folders.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
 
 class MoveNoteButton extends StatelessWidget {
   const new({
@@ -21,20 +26,47 @@ class MoveNoteButton extends StatelessWidget {
     return IconButton(
       padding: .zero,
       tooltip: t.home.moveNote.moveNote,
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return _MoveNoteDialog(
-              filesToMove: filesToMove,
-              unselectNotes: unselectNotes,
-            );
-          },
-        );
-      },
-      icon: const Icon(Icons.drive_file_move),
+      onPressed: () => showMoveNoteDialog(context, filesToMove, unselectNotes),
+      icon: const Icon(Symbols.drive_file_move, weight: 300),
     );
   }
+}
+
+/// Asks which folder to move [filesToMove] to, then moves them.
+Future<void> showMoveNoteDialog(
+  BuildContext context,
+  List<String> filesToMove,
+  VoidCallback unselectNotes,
+) => showDialog(
+  context: context,
+  builder: (context) =>
+      _MoveNoteDialog(filesToMove: filesToMove, unselectNotes: unselectNotes),
+);
+
+/// Moves the notes [files] (paths without the extension) into [folder]
+/// (with a trailing slash, e.g. `/Maths/`), renaming any whose name is
+/// taken there. Shows a snack bar if a note couldn't be moved.
+Future<void> moveNotes(
+  BuildContext context,
+  List<String> files,
+  String folder,
+) async {
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  String? error;
+  for (final file in files) {
+    final extension =
+        FileManager.doesFileExist('$file${Editor.extensionOldJson}')
+        ? Editor.extensionOldJson
+        : Editor.extension;
+    final name = file.substring(file.lastIndexOf('/') + 1);
+    try {
+      await FileManager.moveFile('$file$extension', '$folder$name$extension');
+    } on FileSystemException catch (e) {
+      // e.g. an asset is still downloading from iCloud
+      error = e.message;
+    }
+  }
+  if (error != null) messenger?.showSnackBar(SnackBar(content: Text(error)));
 }
 
 class _MoveNoteDialog extends StatefulWidget {
@@ -160,18 +192,23 @@ class _MoveNoteDialogState extends State<_MoveNoteDialog> {
           ? Text(t.home.moveNote.moveName(f: originalFileNames.join(', ')))
           : Text(t.home.moveNote.moveNotes(n: originalFileNames.length)),
       content: SizedBox(
-        width: 300,
-        height: 300,
+        width: 360,
+        height: 360,
         child: Column(
           children: [
-            Text(currentFolder),
+            Align(
+              alignment: .centerLeft,
+              child: HiganLabel(currentFolder, maxLines: 2),
+            ),
+            const SizedBox(height: 8),
             Expanded(
               child: CustomScrollView(
                 shrinkWrap: true,
                 slivers: [
                   GridFolders(
                     isAtRoot: currentFolder == '/',
-                    crossAxisCount: 3,
+                    viewMode: .list,
+                    showNavigation: true,
                     onTap: (String folder) {
                       setState(() {
                         if (folder == '..') {
@@ -238,19 +275,12 @@ class _MoveNoteDialogState extends State<_MoveNoteDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
+          textStyle: TextStyle(color: context.higan.text),
           child: Text(t.common.cancel),
         ),
         CupertinoDialogAction(
           onPressed: () async {
-            for (int i = 0; i < widget.filesToMove.length; ++i) {
-              final extension = oldExtensions[i]
-                  ? Editor.extensionOldJson
-                  : Editor.extension;
-              await FileManager.moveFile(
-                '${widget.filesToMove[i]}$extension',
-                '$currentFolder${newFileNames[i]}$extension',
-              );
-            }
+            await moveNotes(context, widget.filesToMove, currentFolder);
             widget.unselectNotes();
             if (!context.mounted) return;
             Navigator.of(context).pop();

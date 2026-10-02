@@ -8,16 +8,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:nts/components/canvas/_asset_cache.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/tools/stroke_properties.dart';
+import 'package:nts/pages/editor/editor.dart';
 import 'package:path/path.dart' as p;
-import 'package:saber/components/canvas/_asset_cache.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/tools/stroke_properties.dart';
-import 'package:saber/pages/editor/editor.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 import 'package:sbn/has_size.dart';
 import 'package:sbn/read_only_reason.dart';
@@ -30,6 +30,8 @@ class EditorCoreInfo {
   /// Increment this if earlier versions of the app can't satisfiably read the file.
   ///
   /// Version history:
+  /// - 20: Tape, brush and calligraphy pens, filled shapes (`fc`),
+  ///   and page links (`lk`)
   /// - 19: Assets are now stored in separate files, and added the `sba` file format.
   /// - 18: [Pencil] tool introduced
   /// - 17: [PdfEditorImage] introduced
@@ -49,7 +51,7 @@ class EditorCoreInfo {
   /// - 3: Store page sizes for each page
   /// - 2: Store width and height in sbn
   /// - 1: Store version in sbn
-  static const sbnVersion = 19;
+  static const sbnVersion = 20;
 
   /// The reason why the note is read-only,
   /// or `null` if the note is editable.

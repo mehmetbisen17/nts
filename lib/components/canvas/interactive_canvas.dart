@@ -698,9 +698,14 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
     return switch (gestureType) {
       _GestureType.rotate => _rotateEnabled,
       _GestureType.scale => widget.scaleEnabled,
-      _GestureType.pan || null => widget.panEnabled,
+      _GestureType.pan || null => widget.panEnabled || _panLockExempt,
     };
   }
+
+  /// Whether the current gesture pans even if [InteractiveCanvasViewer.panEnabled]
+  /// is false: that locks panning with a finger, not with a mouse (e.g. a
+  /// middle-button drag) or a trackpad.
+  bool _panLockExempt = false;
 
   // Decide which type of gesture this is by comparing the amount of scale
   // and rotation in the gesture, if any. Scale starts at 1 and rotation
@@ -741,6 +746,9 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
     _scaleStart = _transformer.value.getMaxScaleOnAxis();
     _referenceFocalPoint = _transformer.toScene(details.localFocalPoint);
     _rotationStart = _currentRotation;
+    _panLockExempt =
+        details.kind == PointerDeviceKind.mouse ||
+        details.kind == PointerDeviceKind.trackpad;
 
     if (widget.isDrawGesture?.call(details) ?? false) {
       isCurrentGestureADrawGesture = true;
@@ -937,11 +945,15 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
       if (!HardwareKeyboard.instance.isControlPressed &&
           !HardwareKeyboard.instance.isMetaPressed) {
         // Scroll without Ctrl pressed, so treat it as a pan.
-        if (!_gestureIsSupported(_GestureType.pan)) return;
-
+        // (Even if panning is locked: that's for fingers.)
+        var scrollDelta = event.scrollDelta;
+        // Shift scrolls sideways (macOS swaps the axes itself)
+        if (HardwareKeyboard.instance.isShiftPressed && scrollDelta.dx == 0) {
+          scrollDelta = Offset(scrollDelta.dy, 0);
+        }
         final Offset localDelta = PointerEvent.transformDeltaViaPositions(
-          untransformedEndPosition: global + event.scrollDelta,
-          untransformedDelta: event.scrollDelta,
+          untransformedEndPosition: global + scrollDelta,
+          untransformedDelta: scrollDelta,
           transform: event.transform,
         );
 
@@ -1113,17 +1125,111 @@ class _InteractiveCanvasViewerState extends State<InteractiveCanvasViewer>
 
     return Listener(
       key: _parentKey,
-      onPointerSignal: _receivedPointerSignal,
-      child: GestureDetector(
+      // Something over the canvas (e.g. the ruler) can take it first
+      onPointerSignal: (event) => GestureBinding.instance.pointerSignalResolver
+          .register(event, _receivedPointerSignal),
+      child: RawGestureDetector(
         behavior: HitTestBehavior.opaque, // Necessary when panning off screen.
-        onScaleEnd: _onScaleEnd,
-        onScaleStart: _onScaleStart,
-        onScaleUpdate: _onScaleUpdate,
-        trackpadScrollCausesScale: widget.trackpadScrollCausesScale,
-        trackpadScrollToScaleFactor: Offset(0, -1 / widget.scaleFactor),
+        gestures: {
+          _ScrollZoomRecognizer:
+              GestureRecognizerFactoryWithHandlers<_ScrollZoomRecognizer>(
+                () => _ScrollZoomRecognizer(debugOwner: this),
+                (recognizer) => recognizer
+                  ..onStart = _onScaleStart
+                  ..onUpdate = _onScaleUpdate
+                  ..onEnd = _onScaleEnd
+                  ..gestureSettings = MediaQuery.maybeGestureSettingsOf(context)
+                  ..trackpadScrollCausesScale = widget.trackpadScrollCausesScale
+                  // The way a mouse wheel zooms: a trackpad's pan is
+                  // the opposite of a wheel's scroll delta
+                  ..trackpadScrollToScaleFactor = Offset(
+                    0,
+                    1 / widget.scaleFactor,
+                  ),
+              ),
+        },
         child: child,
       ),
     );
+  }
+}
+
+/// Zooms when a trackpad (or Magic Mouse) scrolls with Cmd or Ctrl held,
+/// like a mouse wheel does: a Mac sends their scrolls as pan-zoom gestures,
+/// not as [PointerScrollEvent]s. Without Cmd or Ctrl they still pan.
+///
+/// Also rejects palms: a touch while a stylus is down (or just lifted) is
+/// the hand resting on the screen, so it's ignored instead of turning the
+/// stroke into a pinch.
+class _ScrollZoomRecognizer extends ScaleGestureRecognizer {
+  new({super.debugOwner});
+
+  /// Whether Cmd or Ctrl was held when the current pan-zoom started.
+  var _zoomKeyHeld = false;
+
+  /// The styluses that are down.
+  final _styluses = <int>{};
+
+  /// When the last stylus lifted, in [PointerEvent.timeStamp]'s clock.
+  Duration? _stylusUp;
+
+  /// How long after a stylus lifts a touch is still a palm, e.g. between
+  /// words. ponytail: a palm that lands before the stylus still pans.
+  static const _palmDelay = Duration(milliseconds: 300);
+
+  @override
+  bool get trackpadScrollCausesScale =>
+      super.trackpadScrollCausesScale || _zoomKeyHeld;
+
+  @override
+  void addAllowedPointerPanZoom(PointerPanZoomStartEvent event) {
+    final keyboard = HardwareKeyboard.instance;
+    _zoomKeyHeld = keyboard.isMetaPressed || keyboard.isControlPressed;
+    super.addAllowedPointerPanZoom(event);
+  }
+
+  bool _isPalm(PointerDownEvent event) {
+    if (event.kind != .touch) return false;
+    if (_styluses.isNotEmpty) return true;
+    final sinceUp = _stylusUp == null ? null : event.timeStamp - _stylusUp!;
+    return sinceUp != null && sinceUp >= .zero && sinceUp < _palmDelay;
+  }
+
+  @override
+  void addPointer(PointerDownEvent event) {
+    // Not even in the arena, so the stroke carries on
+    if (_isPalm(event)) return;
+    if (event.kind == .stylus || event.kind == .invertedStylus) {
+      _styluses.add(event.pointer);
+      // A route of our own, since the arena may stop us tracking it
+      GestureBinding.instance.pointerRouter.addRoute(
+        event.pointer,
+        _onStylusEvent,
+      );
+    }
+    super.addPointer(event);
+  }
+
+  void _onStylusEvent(PointerEvent event) {
+    if (event is! PointerUpEvent && event is! PointerCancelEvent) return;
+    _styluses.remove(event.pointer);
+    _stylusUp = event.timeStamp;
+    GestureBinding.instance.pointerRouter.removeRoute(
+      event.pointer,
+      _onStylusEvent,
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final pointer in _styluses) {
+      GestureBinding.instance.pointerRouter.removeRoute(
+        pointer,
+        _onStylusEvent,
+      );
+    }
+    _styluses.clear();
+    super.dispose();
   }
 }
 

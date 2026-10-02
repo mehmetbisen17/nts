@@ -3,11 +3,6 @@ common:
   continueBtn: Продовжити
   cancel: Скасувати
 home:
-  tabs:
-    home: Головна
-    browse: Переглянути
-    whiteboard(OUTDATED): Біла дошка
-    settings(OUTDATED): Налаштування
   titles:
     home(OUTDATED): Недавні нотатки
     browse(OUTDATED): Переглянути
@@ -68,14 +63,8 @@ home:
     nameZToA(OUTDATED): Ім'я (З-А)
     lastModifiedNewToOld(OUTDATED): Відредаговано (Новіші першими)
     lastModifiedOldToNew(OUTDATED): Відредаговано (Найстаріші першими)
-  layout:
-    layout(OUTDATED): Макет
-    masonryGrid(OUTDATED): Сітка з використанням мозаїки
-    simpleGrid(OUTDATED): Проста сітка
-  welcome(OUTDATED): Ласкаво просимо до Saber
+  welcome(OUTDATED): Ласкаво просимо до nts
   invalidFormat(OUTDATED): Обраний файл не підтримується. Будь ласка, виберіть файл sbn, sbn2, sba або pdf.
-  noFiles(OUTDATED): Не знайдено файлів
-  noPreviewAvailable(OUTDATED): Немає попереднього перегляду
   createNewNote(OUTDATED): Натисніть кнопку + для створення нової нотатки
   backFolder(OUTDATED): Повернутися до попередньої папки
   deleteNote(OUTDATED): Видалити нотатку
@@ -91,7 +80,7 @@ sentry:
       yes(OUTDATED): Так
       no(OUTDATED): Ні
       later(OUTDATED): Запитайте мене пізніше
-    title(OUTDATED): Допоможіть покращити Saber?
+    title(OUTDATED): Допоможіть покращити nts?
 settings:
   prefCategories:
     general(OUTDATED): Загальне
@@ -106,7 +95,7 @@ settings:
     layoutSize(OUTDATED): Тип макета
     customAccentColor(OUTDATED): Кольоровий акцент
     hyperlegibleFont(OUTDATED): шрифт Atkinson Hyperlegible
-    shouldCheckForUpdates(OUTDATED): Перевірити оновлення Saber
+    shouldCheckForUpdates(OUTDATED): Перевірити оновлення nts
     shouldAlwaysAlertForUpdates(OUTDATED): Швидші оновлення
     allowInsecureConnections(OUTDATED): Дозволити незахоплені з'єднання
     editorToolbarAlignment(OUTDATED): Позиція панелі інструментів
@@ -125,7 +114,7 @@ settings:
     autosave(OUTDATED): Автозбереження
     shapeRecognitionDelay(OUTDATED): Затримка розпізнавання форми
     autoStraightenLines(OUTDATED): Автоматично вирівнювати лінії
-    customDataDir(OUTDATED): Кастомна папка Saber
+    customDataDir(OUTDATED): Кастомна папка nts
     sentry(OUTDATED): Повідомлення про помилку
   prefDescriptions:
     hideFingerDrawing:
@@ -138,7 +127,7 @@ settings:
       activeUntilRestart(OUTDATED): Активно до перезапуску програми
       inactiveUntilRestart(OUTDATED): Неактивно до перезапуску програми
     hyperlegibleFont(OUTDATED): Покращує читабельність для користувачів з низьким зором
-    allowInsecureConnections(OUTDATED): (Не рекомендовано) Дозволити Saber підключатися до серверів з самопідписаними/недовіреними сертифікатами
+    allowInsecureConnections(OUTDATED): (Не рекомендовано) Дозволити nts підключатися до серверів з самопідписаними/недовіреними сертифікатами
     preferGreyscale(OUTDATED): Для е-чманітерів
     autoClearWhiteboardOnExit(OUTDATED): Очищує дошку після виходу з програми
     disableEraserAfterUse(OUTDATED): Автоматично повертається до ручки після використання гумки.
@@ -171,7 +160,7 @@ settings:
     unsupported(OUTDATED): Ця функція наразі доступна лише розробникам. Використання її може призвести до втрати даних.
   systemLanguage(OUTDATED): Авто
   resyncEverything(OUTDATED): Пересинхронізувати все
-  openDataDir(OUTDATED): Відкрити папку Saber
+  openDataDir(OUTDATED): Відкрити папку nts
   autosaveDisabled(OUTDATED): Ніколи
   shapeRecognitionDisabled(OUTDATED): Ніколи
   axisDirections(OUTDATED):
@@ -196,14 +185,14 @@ login:
     loggedIn(OUTDATED): Увійшов через Nextcloud
   ncLoginStep:
     loginFlow:
-      pleaseAuthorize(OUTDATED): Будь ласка, авторизуйте Saber для доступу до вашого облікового запису Nextcloud
+      pleaseAuthorize(OUTDATED): Будь ласка, авторизуйте nts для доступу до вашого облікового запису Nextcloud
       followPrompts(OUTDATED): Будь ласка, дотримуйтесь інструкцій у інтерфейсі Nextcloud
       browserDidntOpen(OUTDATED): Сторінка входу не відкрилася? Натисніть сюди
     whereToStoreData(OUTDATED): "Оберіть, де ви хочете зберігати ваші дані:"
-    saberNcServer(OUTDATED): Сервер Nextcloud Saber
+    saberNcServer(OUTDATED): Сервер Nextcloud nts
     otherNcServer(OUTDATED): Інший сервер Nextcloud
     serverUrl(OUTDATED): URL сервера
-    loginWithSaber(OUTDATED): Увійти через Saber
+    loginWithSaber(OUTDATED): Увійти через nts
     loginWithNextcloud(OUTDATED): Увійти через Nextcloud
   encLoginStep:
     encFaq:
@@ -215,11 +204,11 @@ login:
     - q(OUTDATED): Я ще не встановлював пароль шифрування. Де я його отримаю?
       a(OUTDATED): |-
         Оберіть новий пароль шифрування та введіть його вище.
-        Saber автоматично згенерує ваші ключі шифрування з цього пароля.
+        nts автоматично згенерує ваші ключі шифрування з цього пароля.
     - q(OUTDATED): Чи можу я використовувати той самий пароль для свого облікового запису Nextcloud?
       a(OUTDATED): Так, але пам'ятайте, що буде легше для адміністратора сервера або когось іншого отримати доступ до ваших нотаток, якщо вони отримають доступ до вашого облікового запису Nextcloud.
     enterEncPassword(OUTDATED): "Для захисту ваших даних, будь ласка, введіть ваш пароль шифрування:"
-    newToSaber(OUTDATED): Нова у Saber? Просто введіть новий пароль шифрування.
+    newToSaber(OUTDATED): Нова у nts? Просто введіть новий пароль шифрування.
     encPassword(OUTDATED): Пароль шифрування
     encFaqTitle(OUTDATED): Часті запитання
     wrongEncPassword(OUTDATED): Дешифрування не вдалося з наданим паролем. Будь ласка, спробуйте ввести його ще раз.
@@ -235,18 +224,18 @@ profile:
   - q(OUTDATED): Чи втрачу я свої нотатки, якщо вийду з системи?
     a(OUTDATED): Ваші нотатки залишаться як на вашому пристрої, так і на сервері. Вони не будуть синхронізовані з сервером доти, доки ви не увійдете знову. Переконайтеся, що синхронізація завершена перед виходом (подивіться на прогрес синхронізації на головному екрані), щоб не втратити жодних даних.
   - q(OUTDATED): Як змінити пароль у Nextcloud?
-    a(OUTDATED): Перейдіть на вебсайт вашого сервера та увійдіть. Потім перейдіть до Налаштування > Безпека > Змінити пароль. Вам потрібно буде вийти та увійти назад до Saber після зміни пароля.
+    a(OUTDATED): Перейдіть на вебсайт вашого сервера та увійдіть. Потім перейдіть до Налаштування > Безпека > Змінити пароль. Вам потрібно буде вийти та увійти назад до nts після зміни пароля.
   - q(OUTDATED): Як змінити пароль шифрування?
     a(OUTDATED): |-
       0. Переконайтеся, що синхронізація завершена (подивіться на прогрес синхронізації на головному екрані).
-      1. Вийдіть з облікового запису Saber.
+      1. Вийдіть з облікового запису nts.
       2. Перейдіть на вебсайт вашого сервера та видаліть папку 'Saber'. Це видалить усі ваші нотатки з сервера.
-      3. Увійдіть назад у Saber. Ви можете вибрати новий пароль шифрування при вході.
-      4. Не забудьте вийти та увійти назад у Saber на інших пристроях також.
+      3. Увійдіть назад у nts. Ви можете вибрати новий пароль шифрування при вході.
+      4. Не забудьте вийти та увійти назад у nts на інших пристроях також.
   - q(OUTDATED): Як я можу видалити свій обліковий запис?
     a(OUTDATED): |-
       Натисніть на кнопку "@:profile.quickLinks.deleteAccount" вище та увійдіть у систему, якщо потрібно.
-      Якщо ви використовуєте офіційний сервер Saber, ваш обліковий запис буде видалено після 1 тижневого періоду графіка. Ви можете зв'язатися зі мною за адресою adilhanney@disroot.org протягом цього періоду, щоб скасувати видалення.
+      Якщо ви використовуєте офіційний сервер nts, ваш обліковий запис буде видалено після 1 тижневого періоду графіка. Ви можете зв'язатися зі мною за адресою adilhanney@disroot.org протягом цього періоду, щоб скасувати видалення.
       Якщо ви використовуєте сторонній сервер, у вас може не бути опції видалення вашого облікового запису: вам потрібно буде ознайомитися з політикою конфіденційності сервера для отримання додаткової інформації.
   title(OUTDATED): Мій профіль
   logout(OUTDATED): Вийти
@@ -256,7 +245,7 @@ profile:
   quotaUsageUncapped(OUTDATED): Ви використовуєте $used
 appInfo:
   licenseNotice(OUTDATED): |-
-    Saber Авторські права © 2022-$buildYear Adil Hanney
+    nts (modified from Saber) Авторські права © 2022-$buildYear Adil Hanney
     Ця програма не має жодної гарантії. Це безкоштовне програмне забезпечення, і ви маєте право поширювати його за певних умов.
   debug(OUTDATED): ВІДЛАДКА
   sponsorButton(OUTDATED): Натисніть сюди, щоб мене спонсорувати або купити більше сховища
@@ -360,7 +349,7 @@ editor:
     watchingServer(OUTDATED): Ви наразі стежите за оновленнями на сервері. Редагування вимкнено в цьому режимі.
     corrupted(OUTDATED): Не вдалося завантажити нотатку. Вона може бути пошкоджена або все ще завантажується.
   versionTooNew:
-    title(OUTDATED): Ця нота була відредагована за допомогою новішої версії Saber
+    title(OUTDATED): Ця нота була відредагована за допомогою новішої версії nts
     subtitle(OUTDATED): Редагування цієї нотатки може призвести до втрати деякої інформації. Ви хочете проігнорувати це та редагувати все одно?
     allowEditing(OUTDATED): Дозволити редагування
   quill:

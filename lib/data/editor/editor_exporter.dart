@@ -5,16 +5,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:image/image.dart' as im;
+import 'package:nts/components/canvas/_circle_stroke.dart';
+import 'package:nts/components/canvas/_rectangle_stroke.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/canvas_preview.dart';
+import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/is_this_a_test.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pool/pool.dart';
-import 'package:saber/components/canvas/_circle_stroke.dart';
-import 'package:saber/components/canvas/_rectangle_stroke.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/canvas_preview.dart';
-import 'package:saber/components/canvas/inner_canvas.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/data/is_this_a_test.dart';
 import 'package:screenshot/screenshot.dart';
 
 abstract class EditorExporter {
@@ -156,6 +156,9 @@ abstract class EditorExporter {
   /// See [shouldRasterizeStroke] for more details, or set
   /// [rasterizeAllStrokes] to true to include all strokes in the screenshot.
   ///
+  /// With [area], only that part of the page is drawn (e.g. what the lasso
+  /// circled), so it costs no more than its own pixels.
+  ///
   /// You must dispose this image when you're done.
   static Future<ui.Image> screenshotPage({
     required EditorCoreInfo coreInfo,
@@ -164,6 +167,7 @@ abstract class EditorExporter {
     Size? targetSize,
     double? cropHeight,
     double pixelRatio = 2,
+    Rect? area,
   }) async {
     final page = coreInfo.pages[pageIndex].cloneForRasterization(
       rasterizeAllStrokes: rasterizeAllStrokes,
@@ -177,22 +181,38 @@ abstract class EditorExporter {
         .timeout(const Duration(seconds: 10), onTimeout: () => const []);
 
     try {
-      targetSize ??= page.size;
+      targetSize ??= area?.size ?? page.size;
       coreInfo = coreInfo.copyWith(
         pages: [for (var i = 0; i < coreInfo.pages.length; ++i) page],
       );
-      return await ScreenshotController.widgetToUiImage(
-        EditorExporterTheme(
-          targetSize: targetSize,
-          child: CanvasPreview(
-            pageIndex: pageIndex,
-            height: cropHeight,
-            coreInfo: coreInfo,
+      Widget preview = CanvasPreview(
+        pageIndex: pageIndex,
+        height: cropHeight,
+        coreInfo: coreInfo,
+      );
+      if (area != null) {
+        preview = SizedBox.fromSize(
+          size: area.size,
+          child: ClipRect(
+            child: OverflowBox(
+              alignment: .topLeft,
+              maxWidth: .infinity,
+              maxHeight: .infinity,
+              child: Transform.translate(offset: -area.topLeft, child: preview),
+            ),
           ),
-        ),
+        );
+      }
+      // Time for pictures to decode; ink and text are drawn at once
+      final hasPictures =
+          page.backgroundImage != null || page.images.isNotEmpty;
+      return await ScreenshotController.widgetToUiImage(
+        EditorExporterTheme(targetSize: targetSize, child: preview),
         pixelRatio: pixelRatio,
         targetSize: targetSize,
-        delay: isThisATest ? .zero : const Duration(milliseconds: 200),
+        delay: isThisATest || (area != null && !hasPictures)
+            ? .zero
+            : const Duration(milliseconds: 200),
       );
     } finally {
       for (final image in imagesToLoad) unawaited(image.loadOut());

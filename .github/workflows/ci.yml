@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # nts targets Mac and iPad, so test on macOS (it also has Rust for native assets).
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Use the bundled Flutter
+        working-directory: submodules/flutter
+        run: |
+          # The shallow submodule has no tags, and Flutter reads its version from one.
+          tag=$(git ls-remote --tags origin | awk -v h="$(git rev-parse HEAD)" \
+            '$1 == h { sub("refs/tags/", "", $2); sub(/\^\{\}$/, "", $2); print $2; exit }')
+          git fetch --depth=1 origin "refs/tags/$tag:refs/tags/$tag"
+          echo "$PWD/bin" >> "$GITHUB_PATH"
+
+      - run: flutter config --no-cli-animations
+      - run: flutter pub get
+      - run: flutter analyze --no-pub
+
+      # Golden images differ from machine to machine, so CI rewrites them
+      # instead of comparing pixels. Every other check still runs.
+      - run: flutter test --no-pub --update-goldens

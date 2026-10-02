@@ -20,7 +20,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.en,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -28,7 +28,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 		  );
 
 	/// Metadata for the translations of <en>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final Translations _root = this; // ignore: unused_field
 
@@ -39,12 +40,15 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$sentry$en sentry = Translations$sentry$en.internal(_root);
 	late final Translations$settings$en settings = Translations$settings$en.internal(_root);
+	late final Translations$icloud$en icloud = Translations$icloud$en.internal(_root);
 	late final Translations$logs$en logs = Translations$logs$en.internal(_root);
 	late final Translations$login$en login = Translations$login$en.internal(_root);
 	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
 	late final Translations$appInfo$en appInfo = Translations$appInfo$en.internal(_root);
 	late final Translations$update$en update = Translations$update$en.internal(_root);
 	late final Translations$editor$en editor = Translations$editor$en.internal(_root);
+	late final Translations$higan$en higan = Translations$higan$en.internal(_root);
+	late final Translations$ai$en ai = Translations$ai$en.internal(_root);
 }
 
 // Path: common
@@ -63,6 +67,9 @@ class Translations$common$en {
 
 	/// en: 'Cancel'
 	String get cancel => 'Cancel';
+
+	/// en: 'Couldn't save the image to Photos. Allow nts to add photos in Settings.'
+	String get savePhotoFailed => 'Couldn\'t save the image to Photos. Allow nts to add photos in Settings.';
 }
 
 // Path: home
@@ -72,22 +79,15 @@ class Translations$home$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	late final Translations$home$tabs$en tabs = Translations$home$tabs$en.internal(_root);
 	late final Translations$home$titles$en titles = Translations$home$titles$en.internal(_root);
 	late final Translations$home$tooltips$en tooltips = Translations$home$tooltips$en.internal(_root);
 	late final Translations$home$create$en create = Translations$home$create$en.internal(_root);
 
-	/// en: 'Welcome to Saber'
-	String get welcome => 'Welcome to Saber';
+	/// en: 'Welcome to nts'
+	String get welcome => 'Welcome to nts';
 
 	/// en: 'The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.'
 	String get invalidFormat => 'The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.';
-
-	/// en: 'No files found'
-	String get noFiles => 'No files found';
-
-	/// en: 'No preview available'
-	String get noPreviewAvailable => 'No preview available';
 
 	/// en: 'Tap the + button to create a new note'
 	String get createNewNote => 'Tap the + button to create a new note';
@@ -106,7 +106,7 @@ class Translations$home$en {
 	late final Translations$home$renameFolder$en renameFolder = Translations$home$renameFolder$en.internal(_root);
 	late final Translations$home$deleteFolder$en deleteFolder = Translations$home$deleteFolder$en.internal(_root);
 	late final Translations$home$sort$en sort = Translations$home$sort$en.internal(_root);
-	late final Translations$home$layout$en layout = Translations$home$layout$en.internal(_root);
+	late final Translations$home$menu$en menu = Translations$home$menu$en.internal(_root);
 }
 
 // Path: sentry
@@ -147,8 +147,8 @@ class Translations$settings$en {
 	/// en: 'Resync everything'
 	String get resyncEverything => 'Resync everything';
 
-	/// en: 'Open Saber folder'
-	String get openDataDir => 'Open Saber folder';
+	/// en: 'Open nts folder'
+	String get openDataDir => 'Open nts folder';
 
 	late final Translations$settings$customDataDir$en customDataDir = Translations$settings$customDataDir$en.internal(_root);
 
@@ -157,6 +157,66 @@ class Translations$settings$en {
 
 	/// en: 'Never'
 	String get shapeRecognitionDisabled => 'Never';
+}
+
+// Path: icloud
+class Translations$icloud$en {
+	Translations$icloud$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'iCloud'
+	String get title => 'iCloud';
+
+	/// en: 'Connect iCloud'
+	String get connectICloud => 'Connect iCloud';
+
+	/// en: 'Connect'
+	String get connect => 'Connect';
+
+	/// en: 'Change folder'
+	String get changeFolder => 'Change folder';
+
+	/// en: 'Reconnect'
+	String get reconnect => 'Reconnect';
+
+	/// en: 'Refresh from iCloud'
+	String get refresh => 'Refresh from iCloud';
+
+	/// en: 'Saving to $folder'
+	String savingTo({required Object folder}) => 'Saving to ${folder}';
+
+	/// en: 'This folder isn't in iCloud Drive, so it won't sync'
+	String get notInICloud => 'This folder isn\'t in iCloud Drive, so it won\'t sync';
+
+	/// en: 'Not connected — notes are only on this device'
+	String get notConnected => 'Not connected — notes are only on this device';
+
+	/// en: 'Reconnect your iCloud folder'
+	String get needsReconnect => 'Reconnect your iCloud folder';
+
+	/// en: 'Pick or create a folder in iCloud Drive (for example 'nts'). Use the same folder on your Mac and iPad.'
+	String get help => 'Pick or create a folder in iCloud Drive (for example \'nts\'). Use the same folder on your Mac and iPad.';
+
+	/// en: 'Connect iCloud to sync notes between your devices'
+	String get banner => 'Connect iCloud to sync notes between your devices';
+
+	/// en: 'Connected. Your notes now save to iCloud Drive.'
+	String get connected => 'Connected. Your notes now save to iCloud Drive.';
+
+	/// en: 'Connected, but this folder isn't in iCloud Drive, so your notes won't sync.'
+	String get connectedNotICloud => 'Connected, but this folder isn\'t in iCloud Drive, so your notes won\'t sync.';
+
+	/// en: 'Couldn't connect to the iCloud folder.'
+	String get failed => 'Couldn\'t connect to the iCloud folder.';
+
+	/// en: 'This note is still downloading from iCloud. Try again in a moment.'
+	String get stillDownloading => 'This note is still downloading from iCloud. Try again in a moment.';
+
+	/// en: 'This note was changed on another device, so your changes were saved as '$name'.'
+	String savedAsCopy({required Object name}) => 'This note was changed on another device, so your changes were saved as \'${name}\'.';
 }
 
 // Path: logs
@@ -176,8 +236,8 @@ class Translations$logs$en {
 	/// en: 'Logs contain information useful for debugging and development'
 	String get debuggingInfo => 'Logs contain information useful for debugging and development';
 
-	/// en: 'No logs here!'
-	String get noLogs => 'No logs here!';
+	/// en: 'No logs yet'
+	String get noLogs => 'No logs yet';
 
 	/// en: 'Logs will appear here as you use the app'
 	String get useTheApp => 'Logs will appear here as you use the app';
@@ -259,8 +319,8 @@ class Translations$appInfo$en {
 
 	// Translations
 
-	/// en: 'Saber Copyright © 2022-$buildYear Adil Hanney This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.'
-	String licenseNotice({required Object buildYear}) => 'Saber  Copyright © 2022-${buildYear}  Adil Hanney\nThis program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.';
+	/// en: 'nts (modified from Saber) Copyright © 2022-$buildYear Adil Hanney This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.'
+	String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nThis program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.';
 
 	/// en: 'DEBUG'
 	String get debug => 'DEBUG';
@@ -306,6 +366,7 @@ class Translations$editor$en {
 	late final Translations$editor$toolbar$en toolbar = Translations$editor$toolbar$en.internal(_root);
 	late final Translations$editor$pens$en pens = Translations$editor$pens$en.internal(_root);
 	late final Translations$editor$penOptions$en penOptions = Translations$editor$penOptions$en.internal(_root);
+	late final Translations$editor$eraserOptions$en eraserOptions = Translations$editor$eraserOptions$en.internal(_root);
 	late final Translations$editor$colors$en colors = Translations$editor$colors$en.internal(_root);
 	late final Translations$editor$imageOptions$en imageOptions = Translations$editor$imageOptions$en.internal(_root);
 	late final Translations$editor$selectionBar$en selectionBar = Translations$editor$selectionBar$en.internal(_root);
@@ -314,6 +375,11 @@ class Translations$editor$en {
 	late final Translations$editor$versionTooNew$en versionTooNew = Translations$editor$versionTooNew$en.internal(_root);
 	late final Translations$editor$quill$en quill = Translations$editor$quill$en.internal(_root);
 	late final Translations$editor$hud$en hud = Translations$editor$hud$en.internal(_root);
+	late final Translations$editor$customizeToolbar$en customizeToolbar = Translations$editor$customizeToolbar$en.internal(_root);
+	late final Translations$editor$floatingBar$en floatingBar = Translations$editor$floatingBar$en.internal(_root);
+	late final Translations$editor$otherTools$en otherTools = Translations$editor$otherTools$en.internal(_root);
+	late final Translations$editor$canvasTools$en canvasTools = Translations$editor$canvasTools$en.internal(_root);
+	late final Translations$editor$mouse$en mouse = Translations$editor$mouse$en.internal(_root);
 
 	/// en: 'Pages'
 	String get pages => 'Pages';
@@ -325,25 +391,182 @@ class Translations$editor$en {
 	String get needsToSaveBeforeExiting => 'Saving your changes… You can safely exit the editor when it\'s done';
 }
 
-// Path: home.tabs
-class Translations$home$tabs$en {
-	Translations$home$tabs$en.internal(this._root);
+// Path: higan
+class Translations$higan$en {
+	Translations$higan$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
 
-	/// en: 'Home'
-	String get home => 'Home';
+	/// en: 'Recent'
+	String get recent => 'Recent';
 
-	/// en: 'Browse'
-	String get browse => 'Browse';
+	/// en: 'Folders'
+	String get folders => 'Folders';
 
 	/// en: 'Whiteboard'
 	String get whiteboard => 'Whiteboard';
 
 	/// en: 'Settings'
 	String get settings => 'Settings';
+
+	/// en: 'Library'
+	String get library => 'Library';
+
+	/// en: 'Gallery'
+	String get gallery => 'Gallery';
+
+	/// en: 'List'
+	String get list => 'List';
+
+	/// en: 'New note'
+	String get newNote => 'New note';
+
+	/// en: '(one) {$n note} (other) {$n notes}'
+	String notesCount({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} note',
+		other: '${n} notes',
+	);
+
+	/// en: '(one) {$n page} (other) {$n pages}'
+	String pagesCount({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} page',
+		other: '${n} pages',
+	);
+
+	/// en: '(one) {$n folder} (other) {$n folders}'
+	String foldersCount({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} folder',
+		other: '${n} folders',
+	);
+
+	/// en: 'Notes'
+	String get looseNotes => 'Notes';
+
+	/// en: 'Saved'
+	String get saved => 'Saved';
+
+	/// en: 'Saving'
+	String get saving => 'Saving';
+
+	/// en: 'page $n / $total'
+	String pageOf({required Object n, required Object total}) => 'page ${n} / ${total}';
+
+	/// en: 'Appearance'
+	String get appearance => 'Appearance';
+
+	late final Translations$higan$theme$en theme = Translations$higan$theme$en.internal(_root);
+	late final Translations$higan$pages$en pages = Translations$higan$pages$en.internal(_root);
+	late final Translations$higan$gallerySize$en gallerySize = Translations$higan$gallerySize$en.internal(_root);
+	late final Translations$higan$emptyFolder$en emptyFolder = Translations$higan$emptyFolder$en.internal(_root);
+
+	/// en: 'Back'
+	String get back => 'Back';
+
+	late final Translations$higan$time$en time = Translations$higan$time$en.internal(_root);
+	late final Translations$higan$sync$en sync = Translations$higan$sync$en.internal(_root);
+}
+
+// Path: ai
+class Translations$ai$en {
+	Translations$ai$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Ask AI'
+	String get askAi => 'Ask AI';
+
+	/// en: 'Ask about this note'
+	String get menuTitle => 'Ask about this note';
+
+	late final Translations$ai$actions$en actions = Translations$ai$actions$en.internal(_root);
+
+	/// en: 'Sign in to an AI account in Settings → AI accounts to use AI.'
+	String get signInToUse => 'Sign in to an AI account in Settings → AI accounts to use AI.';
+
+	/// en: 'No AI account yet'
+	String get noAccount => 'No AI account yet';
+
+	/// en: 'An AI account has a problem'
+	String get accountProblem => 'An AI account has a problem';
+
+	/// en: 'Open Settings'
+	String get openSettings => 'Open Settings';
+
+	/// en: 'Nothing I can read here.'
+	String get nothingToRead => 'Nothing I can read here.';
+
+	/// en: 'Your note'
+	String get yourNote => 'Your note';
+
+	/// en: 'You wrote'
+	String get youWrote => 'You wrote';
+
+	/// en: 'Type what you wrote'
+	String get typeReading => 'Type what you wrote';
+
+	/// en: 'Fix what it read'
+	String get editReading => 'Fix what it read';
+
+	/// en: 'Ask again'
+	String get askAgain => 'Ask again';
+
+	/// en: 'Re-reading…'
+	String get rereading => 'Re-reading…';
+
+	/// en: 'Thinking…'
+	String get working => 'Thinking…';
+
+	/// en: 'Drawing…'
+	String get drawing => 'Drawing…';
+
+	/// en: 'Searching…'
+	String get searching => 'Searching…';
+
+	/// en: 'Made by $provider · $model. It can be wrong.'
+	String madeBy({required Object provider, required Object model}) => 'Made by ${provider} · ${model}. It can be wrong.';
+
+	/// en: 'Found by $provider · $model'
+	String foundBy({required Object provider, required Object model}) => 'Found by ${provider} · ${model}';
+
+	/// en: 'Suggested by $provider · $model'
+	String suggestedBy({required Object provider, required Object model}) => 'Suggested by ${provider} · ${model}';
+
+	/// en: 'Copy'
+	String get copy => 'Copy';
+
+	/// en: 'Copied'
+	String get copied => 'Copied';
+
+	/// en: 'Add to page'
+	String get addToPage => 'Add to page';
+
+	/// en: 'Close'
+	String get close => 'Close';
+
+	/// en: 'Try again'
+	String get tryAgain => 'Try again';
+
+	/// en: 'Nothing to graph here.'
+	String get nothingToGraph => 'Nothing to graph here.';
+
+	/// en: 'Couldn't graph this.'
+	String get couldNotGraph => 'Couldn\'t graph this.';
+
+	/// en: 'Couldn't draw this. Try again.'
+	String get couldNotDraw => 'Couldn\'t draw this. Try again.';
+
+	/// en: 'Something went wrong.'
+	String get failed => 'Something went wrong.';
+
+	late final Translations$ai$route$en route = Translations$ai$route$en.internal(_root);
+	late final Translations$ai$web$en web = Translations$ai$web$en.internal(_root);
+	late final Translations$ai$accounts$en accounts = Translations$ai$accounts$en.internal(_root);
+	late final Translations$ai$google$en google = Translations$ai$google$en.internal(_root);
+	late final Translations$ai$actionsSettings$en actionsSettings = Translations$ai$actionsSettings$en.internal(_root);
 }
 
 // Path: home.titles
@@ -583,22 +806,28 @@ class Translations$home$sort$en {
 	String get lastModifiedOldToNew => 'Edited (Oldest first)';
 }
 
-// Path: home.layout
-class Translations$home$layout$en {
-	Translations$home$layout$en.internal(this._root);
+// Path: home.menu
+class Translations$home$menu$en {
+	Translations$home$menu$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
 
-	/// en: 'Layout'
-	String get layout => 'Layout';
+	/// en: 'Open'
+	String get open => 'Open';
 
-	/// en: 'Masonry grid'
-	String get masonryGrid => 'Masonry grid';
+	/// en: 'Select'
+	String get select => 'Select';
 
-	/// en: 'Simple grid'
-	String get simpleGrid => 'Simple grid';
+	/// en: 'Deselect'
+	String get deselect => 'Deselect';
+
+	/// en: 'Export as PDF'
+	String get exportPdf => 'Export as PDF';
+
+	/// en: 'Export as SBA'
+	String get exportSba => 'Export as SBA';
 }
 
 // Path: sentry.consent
@@ -609,8 +838,8 @@ class Translations$sentry$consent$en {
 
 	// Translations
 
-	/// en: 'Help improve Saber?'
-	String get title => 'Help improve Saber?';
+	/// en: 'Help improve nts?'
+	String get title => 'Help improve nts?';
 
 	late final Translations$sentry$consent$description$en description = Translations$sentry$consent$description$en.internal(_root);
 	late final Translations$sentry$consent$answers$en answers = Translations$sentry$consent$answers$en.internal(_root);
@@ -666,8 +895,8 @@ class Translations$settings$prefLabels$en {
 	/// en: 'Atkinson Hyperlegible font'
 	String get hyperlegibleFont => 'Atkinson Hyperlegible font';
 
-	/// en: 'Check for Saber updates'
-	String get shouldCheckForUpdates => 'Check for Saber updates';
+	/// en: 'Check for nts updates'
+	String get shouldCheckForUpdates => 'Check for nts updates';
 
 	/// en: 'Faster updates'
 	String get shouldAlwaysAlertForUpdates => 'Faster updates';
@@ -723,8 +952,8 @@ class Translations$settings$prefLabels$en {
 	/// en: 'Auto straighten lines'
 	String get autoStraightenLines => 'Auto straighten lines';
 
-	/// en: 'Custom Saber folder'
-	String get customDataDir => 'Custom Saber folder';
+	/// en: 'Custom nts folder'
+	String get customDataDir => 'Custom nts folder';
 
 	/// en: 'Error reporting'
 	String get sentry => 'Error reporting';
@@ -741,8 +970,8 @@ class Translations$settings$prefDescriptions$en {
 	/// en: 'Increases legibility for users with low vision'
 	String get hyperlegibleFont => 'Increases legibility for users with low vision';
 
-	/// en: '(Not recommended) Allow Saber to connect to servers with self-signed/untrusted certificates'
-	String get allowInsecureConnections => '(Not recommended) Allow Saber to connect to servers with self-signed/untrusted certificates';
+	/// en: '(Not recommended) Allow nts to connect to servers with self-signed/untrusted certificates'
+	String get allowInsecureConnections => '(Not recommended) Allow nts to connect to servers with self-signed/untrusted certificates';
 
 	/// en: 'For e-ink displays'
 	String get preferGreyscale => 'For e-ink displays';
@@ -752,6 +981,12 @@ class Translations$settings$prefDescriptions$en {
 
 	/// en: 'Automatically switches back to the pen after using the eraser'
 	String get disableEraserAfterUse => 'Automatically switches back to the pen after using the eraser';
+
+	/// en: 'Pause at the end of a stroke to turn it into a line, circle or other shape'
+	String get holdToSnapShape => 'Pause at the end of a stroke to turn it into a line, circle or other shape';
+
+	/// en: 'Scribble over ink with a pen to erase it'
+	String get scribbleToErase => 'Scribble over ink with a pen to erase it';
 
 	/// en: 'Larger images will be compressed'
 	String get maxImageSize => 'Larger images will be compressed';
@@ -920,8 +1155,8 @@ class Translations$login$ncLoginStep$en {
 	/// en: 'Choose where you want to store your data:'
 	String get whereToStoreData => 'Choose where you want to store your data:';
 
-	/// en: 'Saber's Nextcloud server'
-	String get saberNcServer => 'Saber\'s Nextcloud server';
+	/// en: 'nts's Nextcloud server'
+	String get saberNcServer => 'nts\'s Nextcloud server';
 
 	/// en: 'Other Nextcloud server'
 	String get otherNcServer => 'Other Nextcloud server';
@@ -929,8 +1164,8 @@ class Translations$login$ncLoginStep$en {
 	/// en: 'Server URL'
 	String get serverUrl => 'Server URL';
 
-	/// en: 'Login with Saber'
-	String get loginWithSaber => 'Login with Saber';
+	/// en: 'Login with nts'
+	String get loginWithSaber => 'Login with nts';
 
 	/// en: 'Login with Nextcloud'
 	String get loginWithNextcloud => 'Login with Nextcloud';
@@ -949,8 +1184,8 @@ class Translations$login$encLoginStep$en {
 	/// en: 'To protect your data, please enter your encryption password:'
 	String get enterEncPassword => 'To protect your data, please enter your encryption password:';
 
-	/// en: 'New to Saber? Just enter a new encryption password.'
-	String get newToSaber => 'New to Saber? Just enter a new encryption password.';
+	/// en: 'New to nts? Just enter a new encryption password.'
+	String get newToSaber => 'New to nts? Just enter a new encryption password.';
 
 	/// en: 'Encryption password'
 	String get encPassword => 'Encryption password';
@@ -1012,8 +1247,8 @@ class Translations$profile$faq$1$en {
 	/// en: 'How do I change my Nextcloud password?'
 	String get q => 'How do I change my Nextcloud password?';
 
-	/// en: 'Go to your server website and log in. Then go to Settings > Security > Change password. You'll need to log out and log back in to Saber after changing your password.'
-	String get a => 'Go to your server website and log in. Then go to Settings > Security > Change password. You\'ll need to log out and log back in to Saber after changing your password.';
+	/// en: 'Go to your server website and log in. Then go to Settings > Security > Change password. You'll need to log out and log back in to nts after changing your password.'
+	String get a => 'Go to your server website and log in. Then go to Settings > Security > Change password. You\'ll need to log out and log back in to nts after changing your password.';
 }
 
 // Path: profile.faq.2
@@ -1027,8 +1262,8 @@ class Translations$profile$faq$2$en {
 	/// en: 'How do I change my encryption password?'
 	String get q => 'How do I change my encryption password?';
 
-	/// en: '0. Make sure syncing is complete (see the sync progress on the home screen). 1. Log out of Saber. 2. Go to your server website and delete your 'Saber' folder. This will delete all your notes from the server. 3. Log back in to Saber. You can choose a new encryption password when logging in. 4. Don't forget to log out and log back in to Saber on your other devices too.'
-	String get a => '0. Make sure syncing is complete (see the sync progress on the home screen).\n1. Log out of Saber.\n2. Go to your server website and delete your \'Saber\' folder. This will delete all your notes from the server.\n3. Log back in to Saber. You can choose a new encryption password when logging in.\n4. Don\'t forget to log out and log back in to Saber on your other devices too.';
+	/// en: '0. Make sure syncing is complete (see the sync progress on the home screen). 1. Log out of nts. 2. Go to your server website and delete your 'Saber' folder. This will delete all your notes from the server. 3. Log back in to nts. You can choose a new encryption password when logging in. 4. Don't forget to log out and log back in to nts on your other devices too.'
+	String get a => '0. Make sure syncing is complete (see the sync progress on the home screen).\n1. Log out of nts.\n2. Go to your server website and delete your \'Saber\' folder. This will delete all your notes from the server.\n3. Log back in to nts. You can choose a new encryption password when logging in.\n4. Don\'t forget to log out and log back in to nts on your other devices too.';
 }
 
 // Path: profile.faq.3
@@ -1042,8 +1277,8 @@ class Translations$profile$faq$3$en {
 	/// en: 'How can I delete my account?'
 	String get q => 'How can I delete my account?';
 
-	/// en: 'Tap on the "Delete account" button above, and login if needed. If you are using the official Saber server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion. If you are using a third party server, there might not be an option to delete your account: you'll need to consult the server's privacy policy for more information.'
-	String get a => 'Tap on the "${_root.profile.quickLinks.deleteAccount}" button above, and login if needed.\nIf you are using the official Saber server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion.\nIf you are using a third party server, there might not be an option to delete your account: you\'ll need to consult the server\'s privacy policy for more information.';
+	/// en: 'Tap on the "Delete account" button above, and login if needed. If you are using the official nts server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion. If you are using a third party server, there might not be an option to delete your account: you'll need to consult the server's privacy policy for more information.'
+	String get a => 'Tap on the "${_root.profile.quickLinks.deleteAccount}" button above, and login if needed.\nIf you are using the official nts server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion.\nIf you are using a third party server, there might not be an option to delete your account: you\'ll need to consult the server\'s privacy policy for more information.';
 }
 
 // Path: editor.toolbar
@@ -1125,6 +1360,24 @@ class Translations$editor$penOptions$en {
 
 	/// en: 'Size'
 	String get size => 'Size';
+}
+
+// Path: editor.eraserOptions
+class Translations$editor$eraserOptions$en {
+	Translations$editor$eraserOptions$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Whole line'
+	String get wholeLine => 'Whole line';
+
+	/// en: 'Partial'
+	String get partial => 'Partial';
+
+	/// en: 'Eraser size'
+	String get size => 'Eraser size';
 }
 
 // Path: editor.colors
@@ -1336,8 +1589,8 @@ class Translations$editor$versionTooNew$en {
 
 	// Translations
 
-	/// en: 'This note was edited using a newer version of Saber'
-	String get title => 'This note was edited using a newer version of Saber';
+	/// en: 'This note was edited using a newer version of nts'
+	String get title => 'This note was edited using a newer version of nts';
 
 	/// en: 'Editing this note may result in some information being lost. Do you want to ignore this and edit it anyway?'
 	String get subtitle => 'Editing this note may result in some information being lost. Do you want to ignore this and edit it anyway?';
@@ -1383,6 +1636,542 @@ class Translations$editor$hud$en {
 
 	/// en: 'Lock panning to horizontal or vertical'
 	String get lockAxisAlignedPan => 'Lock panning to horizontal or vertical';
+}
+
+// Path: editor.customizeToolbar
+class Translations$editor$customizeToolbar$en {
+	Translations$editor$customizeToolbar$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Customize toolbar'
+	String get customize => 'Customize toolbar';
+
+	/// en: 'Toolbar'
+	String get title => 'Toolbar';
+
+	/// en: 'In the toolbar'
+	String get inToolbar => 'In the toolbar';
+
+	/// en: 'Drag to reorder'
+	String get reorder => 'Drag to reorder';
+
+	/// en: 'Reset to basics'
+	String get resetToBasics => 'Reset to basics';
+
+	/// en: 'Switch a button on to add it to the toolbar.'
+	String get hint => 'Switch a button on to add it to the toolbar.';
+
+	/// en: 'Remove from toolbar'
+	String get removeFromToolbar => 'Remove from toolbar';
+
+	late final Translations$editor$customizeToolbar$categories$en categories = Translations$editor$customizeToolbar$categories$en.internal(_root);
+	late final Translations$editor$customizeToolbar$tools$en tools = Translations$editor$customizeToolbar$tools$en.internal(_root);
+}
+
+// Path: editor.floatingBar
+class Translations$editor$floatingBar$en {
+	Translations$editor$floatingBar$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Drag to move, double-tap to reset'
+	String get move => 'Drag to move, double-tap to reset';
+
+	/// en: 'Minimize'
+	String get minimize => 'Minimize';
+
+	/// en: 'Restore'
+	String get restore => 'Restore';
+
+	/// en: 'Reset position'
+	String get resetPosition => 'Reset position';
+}
+
+// Path: editor.otherTools
+class Translations$editor$otherTools$en {
+	Translations$editor$otherTools$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Copy'
+	String get copy => 'Copy';
+
+	/// en: 'Cut'
+	String get cut => 'Cut';
+
+	/// en: 'Paste'
+	String get paste => 'Paste';
+
+	/// en: 'Screenshot selection'
+	String get screenshot => 'Screenshot selection';
+
+	/// en: 'Copy image'
+	String get copyImage => 'Copy image';
+
+	/// en: 'Save image'
+	String get saveImage => 'Save image';
+
+	/// en: 'Image copied'
+	String get imageCopied => 'Image copied';
+
+	/// en: 'Handwriting to text'
+	String get handwriting => 'Handwriting to text';
+
+	/// en: 'Copy as text'
+	String get copyAsText => 'Copy as text';
+
+	/// en: 'Convert to text'
+	String get convertToText => 'Convert to text';
+
+	/// en: 'Copied “$text”'
+	String textCopied({required Object text}) => 'Copied “${text}”';
+
+	/// en: 'No handwriting found'
+	String get noHandwriting => 'No handwriting found';
+
+	/// en: 'Couldn't open the camera. Allow nts to use it in Settings.'
+	String get cameraFailed => 'Couldn\'t open the camera. Allow nts to use it in Settings.';
+
+	/// en: 'Couldn't read the handwriting'
+	String get handwritingFailed => 'Couldn\'t read the handwriting';
+
+	/// en: 'Pen favorites'
+	String get penFavorites => 'Pen favorites';
+
+	/// en: 'Save pen as favorite'
+	String get saveFavorite => 'Save pen as favorite';
+
+	/// en: 'Remove favorite'
+	String get removeFavorite => 'Remove favorite';
+
+	/// en: 'Camera'
+	String get camera => 'Camera';
+}
+
+// Path: editor.canvasTools
+class Translations$editor$canvasTools$en {
+	Translations$editor$canvasTools$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Tape'
+	String get tape => 'Tape';
+
+	/// en: 'Fill'
+	String get fill => 'Fill';
+
+	/// en: 'Brush pen'
+	String get brushPen => 'Brush pen';
+
+	/// en: 'Calligraphy pen'
+	String get calligraphyPen => 'Calligraphy pen';
+
+	/// en: 'Nib angle $angle°'
+	String nibAngle({required Object angle}) => 'Nib angle ${angle}°';
+
+	/// en: 'Hold to snap shapes'
+	String get holdToSnapShape => 'Hold to snap shapes';
+
+	/// en: 'Scribble to erase'
+	String get scribbleToErase => 'Scribble to erase';
+
+	/// en: 'Insert space'
+	String get insertSpace => 'Insert space';
+
+	/// en: 'Ruler'
+	String get ruler => 'Ruler';
+
+	/// en: 'Freehand'
+	String get lassoFreehand => 'Freehand';
+
+	/// en: 'Rectangle'
+	String get lassoRectangle => 'Rectangle';
+
+	/// en: 'Add link'
+	String get addLink => 'Add link';
+
+	/// en: 'Edit link'
+	String get editLink => 'Edit link';
+
+	/// en: 'example.com, name@example.com or'
+	String get linkHint => 'example.com, name@example.com or';
+
+	/// en: 'Enter a web address, an email address, or'
+	String get invalidLink => 'Enter a web address, an email address, or';
+
+	/// en: 'Remove link'
+	String get removeLink => 'Remove link';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Couldn't open $url'
+	String couldNotOpenLink({required Object url}) => 'Couldn\'t open ${url}';
+}
+
+// Path: editor.mouse
+class Translations$editor$mouse$en {
+	Translations$editor$mouse$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Select all on this page'
+	String get selectAll => 'Select all on this page';
+}
+
+// Path: higan.theme
+class Translations$higan$theme$en {
+	Translations$higan$theme$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Theme'
+	String get label => 'Theme';
+
+	/// en: 'Night'
+	String get night => 'Night';
+
+	/// en: 'Paper'
+	String get paper => 'Paper';
+
+	/// en: 'System'
+	String get system => 'System';
+}
+
+// Path: higan.pages
+class Translations$higan$pages$en {
+	Translations$higan$pages$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Pages'
+	String get label => 'Pages';
+
+	/// en: 'Paper'
+	String get paper => 'Paper';
+
+	/// en: 'Black'
+	String get black => 'Black';
+
+	/// en: 'Black turns pages dark and adjusts your ink so it stays readable'
+	String get description => 'Black turns pages dark and adjusts your ink so it stays readable';
+}
+
+// Path: higan.gallerySize
+class Translations$higan$gallerySize$en {
+	Translations$higan$gallerySize$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Gallery size'
+	String get label => 'Gallery size';
+
+	/// en: 'How big notes and folders are in Recent and Folders'
+	String get description => 'How big notes and folders are in Recent and Folders';
+
+	/// en: 'XS'
+	String get xs => 'XS';
+
+	/// en: 'S'
+	String get s => 'S';
+
+	/// en: 'M'
+	String get m => 'M';
+
+	/// en: 'L'
+	String get l => 'L';
+
+	/// en: 'XL'
+	String get xl => 'XL';
+}
+
+// Path: higan.emptyFolder
+class Translations$higan$emptyFolder$en {
+	Translations$higan$emptyFolder$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'This folder is empty'
+	String get title => 'This folder is empty';
+
+	/// en: 'Add a note or a folder to begin.'
+	String get body => 'Add a note or a folder to begin.';
+}
+
+// Path: higan.time
+class Translations$higan$time$en {
+	Translations$higan$time$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Just now'
+	String get justNow => 'Just now';
+
+	/// en: '${n}m ago'
+	String minutesAgo({required Object n}) => '${n}m ago';
+
+	/// en: '${n}h ago'
+	String hoursAgo({required Object n}) => '${n}h ago';
+
+	/// en: 'Yesterday'
+	String get yesterday => 'Yesterday';
+}
+
+// Path: higan.sync
+class Translations$higan$sync$en {
+	Translations$higan$sync$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'iCloud · synced'
+	String get synced => 'iCloud · synced';
+
+	/// en: 'On this device'
+	String get localOnly => 'On this device';
+
+	/// en: 'iCloud · reconnect'
+	String get reconnect => 'iCloud · reconnect';
+}
+
+// Path: ai.actions
+class Translations$ai$actions$en {
+	Translations$ai$actions$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final Translations$ai$actions$explainExample$en explainExample = Translations$ai$actions$explainExample$en.internal(_root);
+	late final Translations$ai$actions$paragraph$en paragraph = Translations$ai$actions$paragraph$en.internal(_root);
+	late final Translations$ai$actions$graph$en graph = Translations$ai$actions$graph$en.internal(_root);
+	late final Translations$ai$actions$illustration$en illustration = Translations$ai$actions$illustration$en.internal(_root);
+	late final Translations$ai$actions$video$en video = Translations$ai$actions$video$en.internal(_root);
+	late final Translations$ai$actions$source$en source = Translations$ai$actions$source$en.internal(_root);
+}
+
+// Path: ai.route
+class Translations$ai$route$en {
+	Translations$ai$route$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: '$provider is signed out.'
+	String signedOut({required Object provider}) => '${provider} is signed out.';
+
+	/// en: '$provider isn't available here.'
+	String unavailable({required Object provider}) => '${provider} isn\'t available here.';
+
+	/// en: 'This account isn't available.'
+	String get noAccount => 'This account isn\'t available.';
+
+	/// en: '$provider has no model for this.'
+	String noModel({required Object provider}) => '${provider} has no model for this.';
+}
+
+// Path: ai.web
+class Translations$ai$web$en {
+	Translations$ai$web$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Search'
+	String get search => 'Search';
+
+	/// en: 'Search for'
+	String get query => 'Search for';
+
+	/// en: 'Open'
+	String get open => 'Open';
+
+	/// en: 'Nothing found. Try other words.'
+	String get noResults => 'Nothing found. Try other words.';
+
+	/// en: 'Links open in your browser.'
+	String get opensOutside => 'Links open in your browser.';
+
+	/// en: 'Found with YouTube search'
+	String get foundWithYouTube => 'Found with YouTube search';
+
+	/// en: 'From memory, not a web search, so some links may not exist.'
+	String get fromMemory => 'From memory, not a web search, so some links may not exist.';
+}
+
+// Path: ai.accounts
+class Translations$ai$accounts$en {
+	Translations$ai$accounts$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'AI accounts'
+	String get title => 'AI accounts';
+
+	/// en: 'The circled part of a page goes to the account an action uses, only when you pick that action. nts never sees your passwords.'
+	String get help => 'The circled part of a page goes to the account an action uses, only when you pick that action. nts never sees your passwords.';
+
+	/// en: 'Sign in'
+	String get signIn => 'Sign in';
+
+	/// en: 'Sign out'
+	String get signOut => 'Sign out';
+
+	/// en: 'Signing in…'
+	String get signingIn => 'Signing in…';
+
+	/// en: 'Signed in'
+	String get signedIn => 'Signed in';
+
+	/// en: 'Signed in · $who'
+	String signedInAs({required Object who}) => 'Signed in · ${who}';
+
+	/// en: 'Not signed in'
+	String get notSignedIn => 'Not signed in';
+
+	/// en: 'Check again'
+	String get checkAgain => 'Check again';
+
+	/// en: 'Mac only'
+	String get macOnly => 'Mac only';
+
+	/// en: 'Your ChatGPT account and plan. Pictures need Plus or higher.'
+	String get chatgptHint => 'Your ChatGPT account and plan. Pictures need Plus or higher.';
+
+	/// en: 'Your own Claude Code on this Mac, with your Claude plan.'
+	String get claudeHint => 'Your own Claude Code on this Mac, with your Claude plan.';
+
+	/// en: 'Not available'
+	String get unavailable => 'Not available';
+
+	/// en: 'Problem'
+	String get problem => 'Problem';
+
+	/// en: 'Sign out of Claude Code?'
+	String get claudeSignOutTitle => 'Sign out of Claude Code?';
+
+	/// en: 'This signs Claude Code out on this Mac, also in Terminal.'
+	String get claudeSignOutBody => 'This signs Claude Code out on this Mac, also in Terminal.';
+
+	/// en: 'Gemini and YouTube search through your own Google Cloud project, on its free tier.'
+	String get googleHint => 'Gemini and YouTube search through your own Google Cloud project, on its free tier.';
+
+	/// en: 'Use a code instead'
+	String get useCode => 'Use a code instead';
+
+	late final Translations$ai$accounts$deviceCode$en deviceCode = Translations$ai$accounts$deviceCode$en.internal(_root);
+}
+
+// Path: ai.google
+class Translations$ai$google$en {
+	Translations$ai$google$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Set up Google'
+	String get title => 'Set up Google';
+
+	/// en: 'Not set up'
+	String get notSetUp => 'Not set up';
+
+	/// en: 'Google sign-in goes through your own Google Cloud project, so it stays free. It takes about 15 minutes, once.'
+	String get body => 'Google sign-in goes through your own Google Cloud project, so it stays free. It takes about 15 minutes, once.';
+
+	/// en: 'At console.cloud.google.com, create a project.'
+	String get step1 => 'At console.cloud.google.com, create a project.';
+
+	/// en: 'In APIs & Services, enable "Generative Language API" and "YouTube Data API v3".'
+	String get step2 => 'In APIs & Services, enable "Generative Language API" and "YouTube Data API v3".';
+
+	/// en: 'In Google Auth platform, set the audience to External, then publish the app so its status is In production. When you sign in, Google will say it hasn't verified this app. It's your own project, so tap Advanced, then Continue.'
+	String get step3 => 'In Google Auth platform, set the audience to External, then publish the app so its status is In production. When you sign in, Google will say it hasn\'t verified this app. It\'s your own project, so tap Advanced, then Continue.';
+
+	/// en: 'In Clients, create an OAuth client of type iOS with the bundle ID com.mehmetbisen.nts.'
+	String get step4 => 'In Clients, create an OAuth client of type iOS with the bundle ID com.mehmetbisen.nts.';
+
+	/// en: 'Copy the client ID and the project ID below. Leave billing off to stay on the free tier.'
+	String get step5 => 'Copy the client ID and the project ID below. Leave billing off to stay on the free tier.';
+
+	/// en: 'Open Google Cloud Console'
+	String get openConsole => 'Open Google Cloud Console';
+
+	/// en: 'OAuth client ID'
+	String get clientId => 'OAuth client ID';
+
+	/// en: 'Project ID'
+	String get projectId => 'Project ID';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Change setup'
+	String get change => 'Change setup';
+
+	/// en: 'This doesn't look like an OAuth client ID. It ends in .apps.googleusercontent.com.'
+	String get invalidClientId => 'This doesn\'t look like an OAuth client ID. It ends in .apps.googleusercontent.com.';
+
+	/// en: 'A project ID has 6 to 30 lowercase letters, digits and hyphens.'
+	String get invalidProjectId => 'A project ID has 6 to 30 lowercase letters, digits and hyphens.';
+
+	/// en: 'Saving a different client ID signs Google out.'
+	String get changeSignsOut => 'Saving a different client ID signs Google out.';
+}
+
+// Path: ai.actionsSettings
+class Translations$ai$actionsSettings$en {
+	Translations$ai$actionsSettings$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'AI actions'
+	String get title => 'AI actions';
+
+	/// en: 'Which account and model each action uses. Automatic uses the first signed-in account that can do it.'
+	String get help => 'Which account and model each action uses. Automatic uses the first signed-in account that can do it.';
+
+	/// en: 'Automatic'
+	String get automatic => 'Automatic';
+
+	/// en: 'Now uses $provider'
+	String automaticUses({required Object provider}) => 'Now uses ${provider}';
+
+	/// en: 'No account signed in yet'
+	String get automaticNone => 'No account signed in yet';
+
+	/// en: 'may cost extra'
+	String get mayCostExtra => 'may cost extra';
+
+	/// en: 'picture'
+	String get picture => 'picture';
 }
 
 // Path: sentry.consent.description
@@ -1478,8 +2267,8 @@ class Translations$login$ncLoginStep$loginFlow$en {
 
 	// Translations
 
-	/// en: 'Please authorize Saber to access your Nextcloud account'
-	String get pleaseAuthorize => 'Please authorize Saber to access your Nextcloud account';
+	/// en: 'Please authorize nts to access your Nextcloud account'
+	String get pleaseAuthorize => 'Please authorize nts to access your Nextcloud account';
 
 	/// en: 'Please follow the prompts in the Nextcloud interface'
 	String get followPrompts => 'Please follow the prompts in the Nextcloud interface';
@@ -1514,8 +2303,8 @@ class Translations$login$encLoginStep$encFaq$1$en {
 	/// en: 'I haven't set an encryption password yet. Where do I get it?'
 	String get q => 'I haven\'t set an encryption password yet. Where do I get it?';
 
-	/// en: 'Choose a new encryption password and enter it above. Saber will generate your encryption keys from this password automatically.'
-	String get a => 'Choose a new encryption password and enter it above.\nSaber will generate your encryption keys from this password automatically.';
+	/// en: 'Choose a new encryption password and enter it above. nts will generate your encryption keys from this password automatically.'
+	String get a => 'Choose a new encryption password and enter it above.\nnts will generate your encryption keys from this password automatically.';
 }
 
 // Path: login.encLoginStep.encFaq.2
@@ -1585,4 +2374,172 @@ class Translations$editor$menu$bgPatterns$en {
 
 	/// en: 'Cornell'
 	String get cornell => 'Cornell';
+}
+
+// Path: editor.customizeToolbar.categories
+class Translations$editor$customizeToolbar$categories$en {
+	Translations$editor$customizeToolbar$categories$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Write'
+	String get write => 'Write';
+
+	/// en: 'Erase and select'
+	String get eraseAndSelect => 'Erase and select';
+
+	/// en: 'Insert'
+	String get insert => 'Insert';
+
+	/// en: 'View'
+	String get view => 'View';
+
+	/// en: 'Actions'
+	String get actions => 'Actions';
+}
+
+// Path: editor.customizeToolbar.tools
+class Translations$editor$customizeToolbar$tools$en {
+	Translations$editor$customizeToolbar$tools$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Pen'
+	String get pen => 'Pen';
+
+	/// en: 'Eraser'
+	String get eraser => 'Eraser';
+
+	/// en: 'Custom color'
+	String get colorPicker => 'Custom color';
+
+	/// en: 'Draw with finger'
+	String get fingerDrawing => 'Draw with finger';
+
+	/// en: 'Fullscreen'
+	String get fullscreen => 'Fullscreen';
+
+	/// en: 'Export'
+	String get export => 'Export';
+
+	/// en: 'Page options'
+	String get pageOptions => 'Page options';
+}
+
+// Path: ai.actions.explainExample
+class Translations$ai$actions$explainExample$en {
+	Translations$ai$actions$explainExample$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Explain with an example'
+	String get title => 'Explain with an example';
+
+	/// en: 'A clearer explanation, with one example'
+	String get description => 'A clearer explanation, with one example';
+}
+
+// Path: ai.actions.paragraph
+class Translations$ai$actions$paragraph$en {
+	Translations$ai$actions$paragraph$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Explain in a paragraph'
+	String get title => 'Explain in a paragraph';
+
+	/// en: 'What the note is actually saying'
+	String get description => 'What the note is actually saying';
+}
+
+// Path: ai.actions.graph
+class Translations$ai$actions$graph$en {
+	Translations$ai$actions$graph$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Make a graph'
+	String get title => 'Make a graph';
+
+	/// en: 'Plot the formula or numbers in the note'
+	String get description => 'Plot the formula or numbers in the note';
+}
+
+// Path: ai.actions.illustration
+class Translations$ai$actions$illustration$en {
+	Translations$ai$actions$illustration$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Make an illustration'
+	String get title => 'Make an illustration';
+
+	/// en: 'A drawing of the main idea'
+	String get description => 'A drawing of the main idea';
+}
+
+// Path: ai.actions.video
+class Translations$ai$actions$video$en {
+	Translations$ai$actions$video$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Find a video'
+	String get title => 'Find a video';
+
+	/// en: 'A video that explains the same thing'
+	String get description => 'A video that explains the same thing';
+}
+
+// Path: ai.actions.source
+class Translations$ai$actions$source$en {
+	Translations$ai$actions$source$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Find a source'
+	String get title => 'Find a source';
+
+	/// en: 'Web pages about the same thing'
+	String get description => 'Web pages about the same thing';
+}
+
+// Path: ai.accounts.deviceCode
+class Translations$ai$accounts$deviceCode$en {
+	Translations$ai$accounts$deviceCode$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Sign in with a code'
+	String get title => 'Sign in with a code';
+
+	/// en: 'Open the page, sign in to ChatGPT, and enter this code. Code sign-in must be on in ChatGPT → Settings → Security.'
+	String get body => 'Open the page, sign in to ChatGPT, and enter this code. Code sign-in must be on in ChatGPT → Settings → Security.';
+
+	/// en: 'Open page'
+	String get open => 'Open page';
+
+	/// en: 'Copy code'
+	String get copy => 'Copy code';
+
+	/// en: 'Waiting for you…'
+	String get waiting => 'Waiting for you…';
 }

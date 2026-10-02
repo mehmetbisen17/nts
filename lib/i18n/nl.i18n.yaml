@@ -3,11 +3,6 @@ common:
   continueBtn: Volgende
   cancel: Stop
 home:
-  tabs:
-    home: Thuis
-    browse: Bladeren
-    whiteboard: Whiteboard
-    settings: Instellingen
   titles:
     home: Recente notities
     browse: Bladeren
@@ -20,10 +15,8 @@ home:
   create:
     newNote: Nieuwe notitie
     importNote: Importeer notitie
-  welcome: Welkom bij Saber
+  welcome: Welkom bij nts
   invalidFormat: Deze software werkt niet met het geselecteerde bestand. Selecteer een sbn, sbn2, sba of pdf bestand.
-  noFiles: Geen bestand gevonden
-  noPreviewAvailable: Geen voorbeeld beschikbaar
   createNewNote: Klik het plus icoon om een nieuwe notitie te maken
   backFolder: Ga terug naar de vorige map
   newFolder:
@@ -75,13 +68,9 @@ home:
     nameZToA(OUTDATED): Naam (A-Z)
     lastModifiedNewToOld(OUTDATED): Geredigeerd (Nieuwste eerst)
     lastModifiedOldToNew(OUTDATED): Geredigeerd (Oudste eerst)
-  layout:
-    layout(OUTDATED): Lay-out
-    masonryGrid(OUTDATED): Metselwerkraster
-    simpleGrid(OUTDATED): Eenvoudig raster
 sentry:
   consent:
-    title: Help Saber verbeteren?
+    title: Help nts verbeteren?
     description:
       question: Automatisch fouten rapporteren? Dit helpt sneller fouten vinden.
       scope: Het rapport kan informatie over uw apparaat bevatten.
@@ -125,11 +114,11 @@ settings:
     autosave: Automatisch opslaan
     shapeRecognitionDelay: Vorm herkenning vertraging
     autoStraightenLines: Automatisch lijnen recht maken
-    customDataDir: Aangepaste Saber map
+    customDataDir: Aangepaste nts map
     sentry: Fouten rapportering
   prefDescriptions:
     hyperlegibleFont: Verbetert leesbaarheid voor gebruikers met weinig zicht
-    allowInsecureConnections: (Niet aangeraden) Laat Saber met zelf getekende servers verbinden
+    allowInsecureConnections: (Niet aangeraden) Laat nts met zelf getekende servers verbinden
     preferGreyscale: Voor e-ink schermen
     autoClearWhiteboardOnExit: Maakt het whiteboard leeg nadat de app is verlaten
     disableEraserAfterUse: Automatisch terug gaan naar schrijven na gum gebruik
@@ -170,7 +159,7 @@ settings:
     title: Instelling terug zetten?
     button: Terugzetten
   resyncEverything: Alles hersynchroniseren
-  openDataDir: Saber map openen
+  openDataDir: nts map openen
   customDataDir:
     cancel: Stop
     select: Selecteer
@@ -199,18 +188,18 @@ login:
     loggedIn: Ingelogd met Nextcloud
   ncLoginStep:
     whereToStoreData: "Kies welke opslag te gebruiken:"
-    saberNcServer: Saber's Nextcloud server
+    saberNcServer: nts' Nextcloud server
     otherNcServer: Andere Nextcloud server
     serverUrl: Server URL
-    loginWithSaber: Inloggen met Saber
+    loginWithSaber: Inloggen met nts
     loginWithNextcloud: Inloggen met Nextcloud
     loginFlow:
-      pleaseAuthorize: Autoriseer Saber bij je Nextcloud account
+      pleaseAuthorize: Autoriseer nts bij je Nextcloud account
       followPrompts: Volg de instructies op de Nextcloud pagina
       browserDidntOpen: Is de login pagina niet geopend? Klik hier
   encLoginStep:
     enterEncPassword: "Om uw gegevens te beschermen, geef hier uw versleutelingswachtwoord op:"
-    newToSaber: Nieuw bij Saber? Bedenk gewoon een nieuw wachtwoord.
+    newToSaber: Nieuw bij nts? Bedenk gewoon een nieuw wachtwoord.
     encPassword: Versleutelingswachtwoord
     encFaqTitle: Vaak gevraagd
     wrongEncPassword: Ontsleuteling gefaald met gegeven wachtwoord, probeer opnieuw.
@@ -224,7 +213,7 @@ login:
     - q: Ik heb nog geen versleutelingswachtwoord gebruikt, waar krijg ik deze?
       a: |-
         Kies een nieuw versleutelingswachtwoord en voer hem hierboven in.
-        Saber zal automatisch versleutelingssleutels maken van dit wachtwoord.
+        nts zal automatisch versleutelingssleutels maken van dit wachtwoord.
     - q: Kan ik hetzelfde wachtwoord als my Nextcloud wachtwoord gebruiken?
       a: Ja, maar houd er rekening mee dat het makkelijker is voor de serverbeheerder of iemand anders om toegang te krijgen tot je notities als ze toegang krijgen tot je Nextcloud-account.
 profile:
@@ -240,23 +229,23 @@ profile:
   - q: Ben ik mijn notities kwijt als ik uitlog?
     a: Nee. Je notities blijven zowel op je apparaat als op de server staan. Ze worden pas gesynchroniseerd met de server als je weer inlogt. Zorg dat de synchronisatie voltooid is voordat je uitlogt, zodat je geen data verliest (zie de synchronisatievoortgang op het startscherm).
   - q: Hoe verander ik mijn Nextcloud wachtwoord?
-    a: Ga naar de website van je server en log in. Ga dan naar Instellingen > Beveiliging > Wachtwoord wijzigen. Je moet uitloggen en weer inloggen op Saber nadat je je wachtwoord hebt veranderd.
+    a: Ga naar de website van je server en log in. Ga dan naar Instellingen > Beveiliging > Wachtwoord wijzigen. Je moet uitloggen en weer inloggen op nts nadat je je wachtwoord hebt veranderd.
   - q: Hoe verander ik mijn versleutelingswachtwoord?
     a: |-
       0. Zorg dat de synchronisatie voltooid is (zie de voortgang van synchronisatie op het startscherm).
-      1. Log uit bij Saber.
+      1. Log uit bij nts.
       2. Ga naar de website van je server en verwijder je 'Saber'-map. Dit verwijdert al je notities van de server.
-      3. Log weer in op Saber. Je kunt een nieuw encryptiewachtwoord kiezen bij het inloggen.
-      4. Vergeet niet uit te loggen en weer in te loggen op Saber op je andere apparaten.
+      3. Log weer in op nts. Je kunt een nieuw encryptiewachtwoord kiezen bij het inloggen.
+      4. Vergeet niet uit te loggen en weer in te loggen op nts op je andere apparaten.
   - q: Hoe kan ik mijn account verwijderen?
     a: |-
       Tik op de knop "@:profile.quickLinks.deleteAccount" hierboven en log in indien nodig.
-      Als je de officiële Saber-server gebruikt, wordt je account na een periode van 1 week verwijderd. Je kunt me in deze periode op adilhanney@disroot.org contacteren om de verwijdering te annuleren.
+      Als je de officiële nts-server gebruikt, wordt je account na een periode van 1 week verwijderd. Je kunt me in deze periode op adilhanney@disroot.org contacteren om de verwijdering te annuleren.
       Als je een server van derden gebruikt, is er mogelijk geen optie om je account te verwijderen: je moet het privacybeleid van de server raadplegen voor meer informatie.
   quotaUsageUncapped(OUTDATED): Je gebruikt $used
 appInfo:
   licenseNotice: |-
-    Saber  Copyright © 2022-$buildYear  Adil Hanney
+    nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.
   debug: DEBUG
   sponsorButton: Klik hier om mij te sponsoren of om meer opslag te kopen
@@ -360,7 +349,7 @@ editor:
     watchingServer: Je bent momenteel aan het synchroniseren met updates van de server. Bewerken is uitgeschakeld in deze modus.
     corrupted: Notitie is niet geladen. Het kan corrupt zijn of nog steeds aan het downloaden zijn.
   versionTooNew:
-    title: Deze notitie is gemaakt met een nieuwere versie van Saber
+    title: Deze notitie is gemaakt met een nieuwere versie van nts
     subtitle: Het bewerken van deze notitie kan ertoe leiden dat sommige informatie verloren gaat. Wil je dit negeren en toch bewerken?
     allowEditing: Veranderen toestaan
   quill:

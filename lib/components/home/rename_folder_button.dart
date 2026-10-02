@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/components/theming/adaptive_text_field.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/home/new_folder_dialog.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/adaptive_text_field.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class RenameFolderButton extends StatelessWidget {
   const new({
@@ -21,22 +24,31 @@ class RenameFolderButton extends StatelessWidget {
     return IconButton(
       padding: .zero,
       tooltip: t.home.renameFolder.renameFolder,
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return _RenameFolderDialog(
-              folderName: folderName,
-              doesFolderExist: doesFolderExist,
-              renameFolder: renameFolder,
-            );
-          },
-        );
-      },
-      icon: const Icon(Icons.edit_square),
+      onPressed: () => showRenameFolderDialog(
+        context,
+        folderName: folderName,
+        doesFolderExist: doesFolderExist,
+        renameFolder: renameFolder,
+      ),
+      icon: const Icon(Symbols.edit, weight: 300),
     );
   }
 }
+
+/// Asks for a new name for [folderName], then calls [renameFolder].
+Future<void> showRenameFolderDialog(
+  BuildContext context, {
+  required String folderName,
+  required bool Function(String) doesFolderExist,
+  required Future<void> Function(String newName) renameFolder,
+}) => showDialog(
+  context: context,
+  builder: (context) => _RenameFolderDialog(
+    folderName: folderName,
+    doesFolderExist: doesFolderExist,
+    renameFolder: renameFolder,
+  ),
+);
 
 class _RenameFolderDialog extends StatefulWidget {
   const new({
@@ -83,14 +95,18 @@ class _RenameFolderDialogState extends State<_RenameFolderDialog> {
       content: Form(
         key: _formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: AdaptiveTextField(
+        child: DialogFieldKeys(
           controller: _controller,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.done,
-          focusOrder: const NumericFocusOrder(1),
-          placeholder: t.home.renameFolder.folderName,
-          prefixIcon: const Icon(Icons.edit_square),
-          validator: validateFolderName,
+          onSubmit: submit,
+          child: AdaptiveTextField(
+            controller: _controller,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,
+            focusOrder: const NumericFocusOrder(1),
+            placeholder: t.home.renameFolder.folderName,
+            prefixIcon: const Icon(Symbols.edit, weight: 300),
+            validator: validateFolderName,
+          ),
         ),
       ),
       actions: [
@@ -98,20 +114,23 @@ class _RenameFolderDialogState extends State<_RenameFolderDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
+          textStyle: TextStyle(color: context.higan.text),
           child: Text(t.common.cancel),
         ),
         CupertinoDialogAction(
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-            if (_controller.text != widget.folderName) {
-              await widget.renameFolder(_controller.text);
-            }
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-          },
+          onPressed: submit,
           child: Text(t.home.renameFolder.rename),
         ),
       ],
     );
+  }
+
+  Future<void> submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_controller.text != widget.folderName) {
+      await widget.renameFolder(_controller.text);
+    }
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 }

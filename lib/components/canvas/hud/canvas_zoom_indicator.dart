@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart' hide TransformationController;
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
 
 class CanvasZoomIndicator extends StatelessWidget {
   const new({super.key, required this.scale, required this.resetZoom});
@@ -8,18 +10,24 @@ class CanvasZoomIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    return InkWell(
+    final c = context.higan;
+    return HiganTapTarget(
       onTap: resetZoom,
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface.withValues(alpha: 0.5),
-          borderRadius: const .all(.circular(16)),
-        ),
-        padding: const .all(5),
-        child: Text(
-          '${scale.toStringAsFixed(1)}x',
-          style: TextStyle(color: colorScheme.onSurface),
+      child: Material(
+        color: c.glass,
+        shape: StadiumBorder(side: BorderSide(color: c.hairlineStrong)),
+        clipBehavior: .antiAlias,
+        child: InkWell(
+          onTap: resetZoom,
+          child: Container(
+            height: 32,
+            alignment: .center,
+            padding: const .symmetric(horizontal: 12),
+            child: Text(
+              '${scale.toStringAsFixed(1)}x',
+              style: HiganText.label(context, color: c.text),
+            ),
+          ),
         ),
       ),
     );

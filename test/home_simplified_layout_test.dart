@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
-import 'package:saber/components/home/syncing_button.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/sentry/_sentry_init_foss.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/home/home.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/sentry/_sentry_init_foss.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/home/home.dart';
 
 import 'screenshot_goldens_test.dart';
 import 'utils/test_mock_channel_handlers.dart';
-import 'utils/test_user.dart';
 
 void main() {
   group('simplifiedHomeLayout', () {
@@ -20,10 +18,7 @@ void main() {
     disableSentryForTesting();
 
     FlavorConfig.setup();
-    SyncingButton.debugForceButtonActive = true;
 
-    stows.lastStorageQuota.value = TestUser.getQuota();
-    stows.username.value = 'myusername';
     stows.sentryConsent.value = .granted;
     stows.homeLayout.value = .simpleGrid;
 

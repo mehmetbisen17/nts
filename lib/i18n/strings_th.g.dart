@@ -16,7 +16,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsTh({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.th,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -25,7 +25,8 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
 
 	/// Metadata for the translations of <th>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final TranslationsTh _root = this; // ignore: unused_field
 
@@ -64,14 +65,11 @@ class _Translations$home$th extends Translations$home$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$home$tabs$th tabs = _Translations$home$tabs$th._(_root);
 	@override late final _Translations$home$titles$th titles = _Translations$home$titles$th._(_root);
 	@override late final _Translations$home$tooltips$th tooltips = _Translations$home$tooltips$th._(_root);
 	@override late final _Translations$home$create$th create = _Translations$home$create$th._(_root);
-	@override String get welcome => 'ยินดีต้อนรับสู่เซเบอร์';
+	@override String get welcome => 'ยินดีต้อนรับสู่nts';
 	@override String get invalidFormat => 'ไฟล์ที่คุณเลือกไม่รองรับ โปรดเลือกไฟล์ประเภท sbn, sbn2, sba หรือ pdf แทน';
-	@override String get noFiles => 'ไม่พบไฟล์';
-	@override String get noPreviewAvailable => 'ไม่มีภาพตัวอย่าง';
 	@override String get createNewNote => 'แตะปุ่ม + เพื่อสร้างบันทึกใหม่';
 	@override String get backFolder => 'กลับไปยังโฟลเดอร์ก่อนหน้า';
 	@override late final _Translations$home$newFolder$th newFolder = _Translations$home$newFolder$th._(_root);
@@ -82,7 +80,6 @@ class _Translations$home$th extends Translations$home$en {
 	@override late final _Translations$home$renameFolder$th renameFolder = _Translations$home$renameFolder$th._(_root);
 	@override late final _Translations$home$deleteFolder$th deleteFolder = _Translations$home$deleteFolder$th._(_root);
 	@override late final _Translations$home$sort$th sort = _Translations$home$sort$th._(_root);
-	@override late final _Translations$home$layout$th layout = _Translations$home$layout$th._(_root);
 }
 
 // Path: sentry
@@ -117,7 +114,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	];
 	@override late final _Translations$settings$reset$th reset = _Translations$settings$reset$th._(_root);
 	@override String get resyncEverything => 'ซิงค์ทุกอย่างใหม่';
-	@override String get openDataDir => 'เปิดโฟลเดอร์ Saber';
+	@override String get openDataDir => 'เปิดโฟลเดอร์ nts';
 	@override late final _Translations$settings$customDataDir$th customDataDir = _Translations$settings$customDataDir$th._(_root);
 	@override String get autosaveDisabled => 'เคย';
 	@override String get shapeRecognitionDisabled => 'เคย';
@@ -189,7 +186,7 @@ class _Translations$appInfo$th extends Translations$appInfo$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String licenseNotice({required Object buildYear}) => 'สงวนลิขสิทธิ์ Saber © 2022-${buildYear} Adil Hanney\nโปรแกรมนี้ไม่มีการรับประกันใดๆ ทั้งสิ้น นี่คือซอฟต์แวร์ฟรี และคุณสามารถแจกจ่ายต่อได้ภายใต้เงื่อนไขบางประการ';
+	@override String licenseNotice({required Object buildYear}) => 'สงวนลิขสิทธิ์ nts (modified from Saber) © 2022-${buildYear} Adil Hanney\nโปรแกรมนี้ไม่มีการรับประกันใดๆ ทั้งสิ้น นี่คือซอฟต์แวร์ฟรี และคุณสามารถแจกจ่ายต่อได้ภายใต้เงื่อนไขบางประการ';
 	@override String get debug => 'แก้ไขข้อผิดพลาด';
 	@override String get sponsorButton => 'คลิกที่นี่เพื่อสนับสนุนฉัน หรือซื้อพื้นที่จัดเก็บเพิ่มเติม';
 	@override String get licenseButton => 'คลิกที่นี่เพื่อดูข้อมูลใบอนุญาตเพิ่มเติม';
@@ -230,19 +227,6 @@ class _Translations$editor$th extends Translations$editor$en {
 	@override String get pages => 'หน้า';
 	@override String get untitled => 'ไม่มีชื่อ';
 	@override String get needsToSaveBeforeExiting => 'กำลังบันทึกการเปลี่ยนแปลง… คุณสามารถออกจากโปรแกรมแก้ไขได้อย่างปลอดภัยเมื่อเสร็จสิ้น';
-}
-
-// Path: home.tabs
-class _Translations$home$tabs$th extends Translations$home$tabs$en {
-	_Translations$home$tabs$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => 'หน้าแรก';
-	@override String get browse => 'เรียกดู';
-	@override String get whiteboard => 'ไวท์บอร์ด';
-	@override String get settings => 'ตั้งค่า';
 }
 
 // Path: home.titles
@@ -386,18 +370,6 @@ class _Translations$home$sort$th extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => 'แก้ไข (เก่าสุดก่อน)';
 }
 
-// Path: home.layout
-class _Translations$home$layout$th extends Translations$home$layout$en {
-	_Translations$home$layout$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => 'เลย์เอาต์';
-	@override String get masonryGrid => 'ตารางแบบก่ออิฐ';
-	@override String get simpleGrid => 'ตารางง่ายๆ';
-}
-
 // Path: sentry.consent
 class _Translations$sentry$consent$th extends Translations$sentry$consent$en {
 	_Translations$sentry$consent$th._(TranslationsTh root) : this._root = root, super.internal(root);
@@ -405,7 +377,7 @@ class _Translations$sentry$consent$th extends Translations$sentry$consent$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'ช่วยปรับปรุง Saber ได้ไหม?';
+	@override String get title => 'ช่วยปรับปรุง nts ได้ไหม?';
 	@override late final _Translations$sentry$consent$description$th description = _Translations$sentry$consent$description$th._(_root);
 	@override late final _Translations$sentry$consent$answers$th answers = _Translations$sentry$consent$answers$th._(_root);
 }
@@ -437,7 +409,7 @@ class _Translations$settings$prefLabels$th extends Translations$settings$prefLab
 	@override String get layoutSize => 'ประเภทเค้าโครง';
 	@override String get customAccentColor => 'กำหนดสีเน้นเอง';
 	@override String get hyperlegibleFont => 'แบบอักษร Atkinson Hyperlegible';
-	@override String get shouldCheckForUpdates => 'ตรวจสอบอัปเดต Saber';
+	@override String get shouldCheckForUpdates => 'ตรวจสอบอัปเดต nts';
 	@override String get shouldAlwaysAlertForUpdates => 'อัปเดตเร็วขึ้น';
 	@override String get allowInsecureConnections => 'อนุญาตเชื่อมต่อที่ไม่ปลอดภัย';
 	@override String get editorToolbarAlignment => 'ตำแหน่งแถบเครื่องมือ';
@@ -468,7 +440,7 @@ class _Translations$settings$prefDescriptions$th extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'เพิ่มความชัดเจนในการอ่านสำหรับผู้ใช้ที่มีสายตาเลือนราง';
-	@override String get allowInsecureConnections => '(ไม่แนะนำ) อนุญาตให้ Saber เชื่อมต่อกับเซิร์ฟเวอร์ที่มีใบรับรองด้วยตนเอง/ไม่น่าเชื่อถือ';
+	@override String get allowInsecureConnections => '(ไม่แนะนำ) อนุญาตให้ nts เชื่อมต่อกับเซิร์ฟเวอร์ที่มีใบรับรองด้วยตนเอง/ไม่น่าเชื่อถือ';
 	@override String get preferGreyscale => 'สำหรับแสดงผลอี-อิงค์';
 	@override String get autoClearWhiteboardOnExit => 'ล้างกระดานไวท์บอร์ดหลังจากที่คุณออกจากแอป';
 	@override String get disableEraserAfterUse => 'สลับกลับไปใช้ปากกาโดยอัตโนมัติหลังจากใช้ยางลบเสร็จ';
@@ -579,10 +551,10 @@ class _Translations$login$ncLoginStep$th extends Translations$login$ncLoginStep$
 
 	// Translations
 	@override String get whereToStoreData => 'เลือกตำแหน่งที่ต้องการจัดเก็บข้อมูล:';
-	@override String get saberNcServer => 'เซิร์ฟเวอร์ Nextcloud ของ Saber';
+	@override String get saberNcServer => 'เซิร์ฟเวอร์ Nextcloud ของ nts';
 	@override String get otherNcServer => 'เซิร์ฟเวอร์ Nextcloud อื่นๆ';
 	@override String get serverUrl => 'URL เซิร์ฟเวอร์';
-	@override String get loginWithSaber => 'เข้าสู่ระบบด้วย Saber';
+	@override String get loginWithSaber => 'เข้าสู่ระบบด้วย nts';
 	@override String get loginWithNextcloud => 'เข้าสู่ระบบด้วย Nextcloud';
 	@override late final _Translations$login$ncLoginStep$loginFlow$th loginFlow = _Translations$login$ncLoginStep$loginFlow$th._(_root);
 }
@@ -595,7 +567,7 @@ class _Translations$login$encLoginStep$th extends Translations$login$encLoginSte
 
 	// Translations
 	@override String get enterEncPassword => 'เพื่อปกป้องข้อมูลของคุณ โปรดป้อนรหัสผ่านเข้ารหัสของคุณ:';
-	@override String get newToSaber => 'เพิ่งเคยใช้ Saber ใช่ไหม? เพียงแค่ป้อนรหัสผ่านเข้ารหัสใหม่';
+	@override String get newToSaber => 'เพิ่งเคยใช้ nts ใช่ไหม? เพียงแค่ป้อนรหัสผ่านเข้ารหัสใหม่';
 	@override String get encPassword => 'เข้ารหัส รหัสผ่าน';
 	@override String get encFaqTitle => 'คำถามที่พบบ่อย';
 	@override String get wrongEncPassword => 'ถอดรหัสล้มเหลวด้วยรหัสผ่านที่ให้มา โปรดลองป้อนรหัสผ่านอีกครั้ง';
@@ -637,7 +609,7 @@ class _Translations$profile$faq$1$th extends Translations$profile$faq$1$en {
 
 	// Translations
 	@override String get q => 'ฉันจะเปลี่ยนรหัสผ่าน Nextcloud ของฉันได้อย่างไร?';
-	@override String get a => 'เข้าไปที่เว็บไซต์เซิร์ฟเวอร์ของคุณแล้วล็อกอิน จากนั้นไปที่ การตั้งค่า > ความปลอดภัย > เปลี่ยนรหัสผ่าน คุณจะต้องล็อกเอาต์แล้วล็อกอินกลับเข้าไปใน Saber อีกครั้งหลังจากเปลี่ยนรหัสผ่านเสร็จแล้ว';
+	@override String get a => 'เข้าไปที่เว็บไซต์เซิร์ฟเวอร์ของคุณแล้วล็อกอิน จากนั้นไปที่ การตั้งค่า > ความปลอดภัย > เปลี่ยนรหัสผ่าน คุณจะต้องล็อกเอาต์แล้วล็อกอินกลับเข้าไปใน nts อีกครั้งหลังจากเปลี่ยนรหัสผ่านเสร็จแล้ว';
 }
 
 // Path: profile.faq.2
@@ -648,7 +620,7 @@ class _Translations$profile$faq$2$th extends Translations$profile$faq$2$en {
 
 	// Translations
 	@override String get q => 'ฉันจะเปลี่ยนรหัสผ่านเข้ารหัสได้อย่างไร?';
-	@override String get a => '0. ตรวจสอบให้แน่ใจว่าการซิงค์เสร็จสมบูรณ์แล้ว (ดูความคืบหน้าการซิงค์บนหน้าจอหลัก)\n1. ออกจากระบบ Saber\n2. ไปที่เว็บไซต์เซิร์ฟเวอร์ของคุณและลบโฟลเดอร์ \'Saber\' การทำเช่นนี้จะลบโน้ตทั้งหมดของคุณออกจากเซิร์ฟเวอร์\n3. เข้าสู่ระบบ Saber อีกครั้ง คุณสามารถเลือกรหัสผ่านการเข้ารหัสใหม่ได้เมื่อเข้าสู่ระบบ\n4. อย่าลืมออกจากระบบและเข้าสู่ระบบ Saber บนอุปกรณ์อื่นๆ ของคุณ';
+	@override String get a => '0. ตรวจสอบให้แน่ใจว่าการซิงค์เสร็จสมบูรณ์แล้ว (ดูความคืบหน้าการซิงค์บนหน้าจอหลัก)\n1. ออกจากระบบ nts\n2. ไปที่เว็บไซต์เซิร์ฟเวอร์ของคุณและลบโฟลเดอร์ \'Saber\' การทำเช่นนี้จะลบโน้ตทั้งหมดของคุณออกจากเซิร์ฟเวอร์\n3. เข้าสู่ระบบ nts อีกครั้ง คุณสามารถเลือกรหัสผ่านการเข้ารหัสใหม่ได้เมื่อเข้าสู่ระบบ\n4. อย่าลืมออกจากระบบและเข้าสู่ระบบ nts บนอุปกรณ์อื่นๆ ของคุณ';
 }
 
 // Path: profile.faq.3
@@ -659,7 +631,7 @@ class _Translations$profile$faq$3$th extends Translations$profile$faq$3$en {
 
 	// Translations
 	@override String get q => 'ฉันจะลบบัญชีของฉันได้อย่างไร?';
-	@override String get a => 'แตะที่ปุ่ม "${_root.profile.quickLinks.deleteAccount}" ด้านบน แล้วล็อกอินหากจำเป็น\nหากคุณใช้เซิร์ฟเวอร์ Saber อย่างเป็นทางการ บัญชีของคุณจะถูกลบหลังจาก 1 สัปดาห์ คุณสามารถติดต่อได้ที่ adilhanney@disroot.org ในช่วงเวลานี้เพื่อยกเลิกการลบ\nหากคุณใช้เซิร์ฟเวอร์ของบุคคลที่สาม อาจไม่มีตัวเลือกในการลบบัญชีของคุณ คุณจะต้องตรวจสอบนโยบายความเป็นส่วนตัวของเซิร์ฟเวอร์เพื่อดูข้อมูลเพิ่มเติม';
+	@override String get a => 'แตะที่ปุ่ม "${_root.profile.quickLinks.deleteAccount}" ด้านบน แล้วล็อกอินหากจำเป็น\nหากคุณใช้เซิร์ฟเวอร์ nts อย่างเป็นทางการ บัญชีของคุณจะถูกลบหลังจาก 1 สัปดาห์ คุณสามารถติดต่อได้ที่ adilhanney@disroot.org ในช่วงเวลานี้เพื่อยกเลิกการลบ\nหากคุณใช้เซิร์ฟเวอร์ของบุคคลที่สาม อาจไม่มีตัวเลือกในการลบบัญชีของคุณ คุณจะต้องตรวจสอบนโยบายความเป็นส่วนตัวของเซิร์ฟเวอร์เพื่อดูข้อมูลเพิ่มเติม';
 }
 
 // Path: editor.toolbar
@@ -812,7 +784,7 @@ class _Translations$editor$versionTooNew$th extends Translations$editor$versionT
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'บันทึกนี้ได้รับการแก้ไขโดยใช้ Saber เวอร์ชันใหม่กว่า';
+	@override String get title => 'บันทึกนี้ได้รับการแก้ไขโดยใช้ nts เวอร์ชันใหม่กว่า';
 	@override String get subtitle => 'การแก้ไขบันทึกนี้อาจทำให้ข้อมูลบางส่วนสูญหาย คุณต้องการเพิกเฉยต่อคำเตือนนี้และแก้ไขต่อไปหรือไม่?';
 	@override String get allowEditing => 'อนุญาตให้แก้ไข';
 }
@@ -903,7 +875,7 @@ class _Translations$login$ncLoginStep$loginFlow$th extends Translations$login$nc
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String get pleaseAuthorize => 'โปรดอนุญาตให้ Saber เข้าถึงบัญชี Nextcloud ของคุณ';
+	@override String get pleaseAuthorize => 'โปรดอนุญาตให้ nts เข้าถึงบัญชี Nextcloud ของคุณ';
 	@override String get followPrompts => 'โปรดทำตามคำแนะนำในหน้าจอ Nextcloud';
 	@override String get browserDidntOpen => 'หน้าเข้าสู่ระบบไม่เปิดใช่ไหม? คลิกที่นี่';
 }
@@ -927,7 +899,7 @@ class _Translations$login$encLoginStep$encFaq$1$th extends Translations$login$en
 
 	// Translations
 	@override String get q => 'ฉันยังไม่ได้ตั้งรหัสผ่านสำหรับการเข้ารหัส ฉันจะหารหัสผ่านได้จากที่ไหน?';
-	@override String get a => 'เลือกรหัสผ่านเข้ารหัสใหม่และป้อนลงในช่องด้านบน Saber\nจะสร้างคีย์เข้ารหัสของคุณจากรหัสผ่านนี้โดยอัตโนมัติ';
+	@override String get a => 'เลือกรหัสผ่านเข้ารหัสใหม่และป้อนลงในช่องด้านบน nts\nจะสร้างคีย์เข้ารหัสของคุณจากรหัสผ่านนี้โดยอัตโนมัติ';
 }
 
 // Path: login.encLoginStep.encFaq.2

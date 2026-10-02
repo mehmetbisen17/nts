@@ -1,14 +1,16 @@
 import 'dart:math';
 
 import 'package:defer_pointer/defer_pointer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:saber/components/canvas/canvas_image_dialog.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/data/extensions/change_notifier_extensions.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/canvas/canvas_image_dialog.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/data/extensions/change_notifier_extensions.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class CanvasImage extends StatefulHookWidget {
   new({
@@ -59,6 +61,12 @@ class _CanvasImageState extends State<CanvasImage> {
     }
 
     _active = value;
+    // For Delete and Escape (see [_onKey])
+    if (value) {
+      _focusNode.requestFocus();
+    } else if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+    }
 
     if (mounted) {
       try {
@@ -70,6 +78,25 @@ class _CanvasImageState extends State<CanvasImage> {
   }
 
   Brightness imageBrightness = .light;
+
+  final _focusNode = FocusNode(debugLabel: 'CanvasImage', skipTraversal: true);
+
+  /// Delete or Backspace deletes the active image, Escape deselects it.
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    if (!active || event is KeyUpEvent) return .ignored;
+    switch (event.logicalKey) {
+      case LogicalKeyboardKey.delete || LogicalKeyboardKey.backspace:
+        final onDelete = widget.image.onDeleteImage;
+        if (onDelete == null) return .ignored;
+        active = false;
+        onDelete(widget.image);
+      case LogicalKeyboardKey.escape:
+        active = false;
+      default:
+        return .ignored;
+    }
+    return .handled;
+  }
 
   Rect panStartRect = .zero;
   Offset panStartPosition = .zero;
@@ -100,104 +127,116 @@ class _CanvasImageState extends State<CanvasImage> {
     useListenable(widget.image);
     if (widget.readOnly) active = false;
 
-    final currentBrightness = widget.image.invertible
-        ? Theme.brightnessOf(context)
-        : Brightness.light;
-
-    if (stows.editorAutoInvert.value && currentBrightness != imageBrightness) {
-      imageBrightness = currentBrightness;
-    }
+    imageBrightness = widget.image.invertible && InnerCanvas.invertOf(context)
+        ? .dark
+        : .light;
 
     final Widget unpositioned = IgnorePointer(
       ignoring: widget.readOnly,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          MouseRegion(
-            cursor: active ? SystemMouseCursors.grab : MouseCursor.defer,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                active = !active;
-              },
-              onLongPress: active ? showModal : null,
-              onSecondaryTap: active ? showModal : null,
-              onPanStart: active
-                  ? (details) {
-                      panStartRect = widget.image.dstRect;
-                    }
-                  : null,
-              onPanUpdate: active
-                  ? (details) {
-                      setState(() {
-                        final fivePercent = min(
-                          widget.pageSize.width * 0.05,
-                          widget.pageSize.height * 0.05,
-                        );
-                        widget.image.dstRect = .fromLTWH(
-                          (widget.image.dstRect.left + details.delta.dx)
-                              .clamp(
-                                fivePercent - widget.image.dstRect.width,
-                                widget.pageSize.width - fivePercent,
-                              )
-                              .toDouble(),
-                          (widget.image.dstRect.top + details.delta.dy)
-                              .clamp(
-                                fivePercent - widget.image.dstRect.height,
-                                widget.pageSize.height - fivePercent,
-                              )
-                              .toDouble(),
-                          widget.image.dstRect.width,
-                          widget.image.dstRect.height,
-                        );
-                      });
-                    }
-                  : null,
-              onPanEnd: active
-                  ? (details) {
-                      if (panStartRect == widget.image.dstRect) return;
-                      widget.image.onMoveImage?.call(
-                        widget.image,
-                        .fromLTRB(
-                          widget.image.dstRect.left - panStartRect.left,
-                          widget.image.dstRect.top - panStartRect.top,
-                          widget.image.dstRect.right - panStartRect.right,
-                          widget.image.dstRect.bottom - panStartRect.bottom,
-                        ),
-                      );
-                      panStartRect = .zero;
-                    }
-                  : null,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: active ? colorScheme.onSurface : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
-                child: Center(
-                  child: SizedBox(
-                    width: widget.isBackground
-                        ? widget.pageSize.width
-                        : max(
+      child: Focus(
+        focusNode: _focusNode,
+        onKeyEvent: _onKey,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            MouseRegion(
+              cursor: active ? SystemMouseCursors.grab : MouseCursor.defer,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  // Control-click is a right-click on a Mac
+                  if (defaultTargetPlatform == .macOS &&
+                      HardwareKeyboard.instance.isControlPressed) {
+                    active = true;
+                    return showModal();
+                  }
+                  active = !active;
+                },
+                onLongPress: active ? showModal : null,
+                // Like a right-click in Finder: select it, then its menu
+                onSecondaryTap: () {
+                  active = true;
+                  showModal();
+                },
+                onPanStart: active
+                    ? (details) {
+                        panStartRect = widget.image.dstRect;
+                      }
+                    : null,
+                onPanUpdate: active
+                    ? (details) {
+                        setState(() {
+                          final fivePercent = min(
+                            widget.pageSize.width * 0.05,
+                            widget.pageSize.height * 0.05,
+                          );
+                          widget.image.dstRect = .fromLTWH(
+                            (widget.image.dstRect.left + details.delta.dx)
+                                .clamp(
+                                  fivePercent - widget.image.dstRect.width,
+                                  widget.pageSize.width - fivePercent,
+                                )
+                                .toDouble(),
+                            (widget.image.dstRect.top + details.delta.dy)
+                                .clamp(
+                                  fivePercent - widget.image.dstRect.height,
+                                  widget.pageSize.height - fivePercent,
+                                )
+                                .toDouble(),
                             widget.image.dstRect.width,
-                            CanvasImage.minImageSize,
-                          ),
-                    height: widget.isBackground
-                        ? widget.pageSize.height
-                        : max(
                             widget.image.dstRect.height,
-                            CanvasImage.minImageSize,
+                          );
+                        });
+                      }
+                    : null,
+                onPanEnd: active
+                    ? (details) {
+                        if (panStartRect == widget.image.dstRect) return;
+                        widget.image.onMoveImage?.call(
+                          widget.image,
+                          .fromLTRB(
+                            widget.image.dstRect.left - panStartRect.left,
+                            widget.image.dstRect.top - panStartRect.top,
+                            widget.image.dstRect.right - panStartRect.right,
+                            widget.image.dstRect.bottom - panStartRect.bottom,
                           ),
-                    child: SizedOverflowBox(
-                      size: widget.image.srcRect.size,
-                      child: Transform.translate(
-                        offset: -widget.image.srcRect.topLeft,
-                        child: widget.image.buildImageWidget(
-                          context: context,
-                          overrideBoxFit: widget.overrideBoxFit,
-                          isBackground: widget.isBackground,
-                          invert: imageBrightness == .dark,
+                        );
+                        panStartRect = .zero;
+                      }
+                    : null,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: active
+                          ? colorScheme.onSurface
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: SizedBox(
+                      width: widget.isBackground
+                          ? widget.pageSize.width
+                          : max(
+                              widget.image.dstRect.width,
+                              CanvasImage.minImageSize,
+                            ),
+                      height: widget.isBackground
+                          ? widget.pageSize.height
+                          : max(
+                              widget.image.dstRect.height,
+                              CanvasImage.minImageSize,
+                            ),
+                      child: SizedOverflowBox(
+                        size: widget.image.srcRect.size,
+                        child: Transform.translate(
+                          offset: -widget.image.srcRect.topLeft,
+                          child: widget.image.buildImageWidget(
+                            context: context,
+                            overrideBoxFit: widget.overrideBoxFit,
+                            isBackground: widget.isBackground,
+                            invert: imageBrightness == .dark,
+                          ),
                         ),
                       ),
                     ),
@@ -205,21 +244,21 @@ class _CanvasImageState extends State<CanvasImage> {
                 ),
               ),
             ),
-          ),
-          if (widget.selected) // tint image if selected
-            ColoredBox(color: colorScheme.primary.withValues(alpha: 0.5)),
-          if (!widget.readOnly)
-            for (double x = -20; x <= 20; x += 20)
-              for (double y = -20; y <= 20; y += 20)
-                if (x != 0 || y != 0) // ignore (0,0)
-                  _CanvasImageResizeHandle(
-                    active: active,
-                    position: Offset(x, y),
-                    image: widget.image,
-                    parent: this,
-                    afterDrag: () => setState(() {}),
-                  ),
-        ],
+            if (widget.selected) // tint image if selected
+              ColoredBox(color: colorScheme.primary.withValues(alpha: 0.5)),
+            if (!widget.readOnly)
+              for (double x = -20; x <= 20; x += 20)
+                for (double y = -20; y <= 20; y += 20)
+                  if (x != 0 || y != 0) // ignore (0,0)
+                    _CanvasImageResizeHandle(
+                      active: active,
+                      position: Offset(x, y),
+                      image: widget.image,
+                      parent: this,
+                      afterDrag: () => setState(() {}),
+                    ),
+          ],
+        ),
       ),
     );
 
@@ -254,6 +293,7 @@ class _CanvasImageState extends State<CanvasImage> {
   void dispose() {
     widget.image.loadOut();
     CanvasImage.activeListener.removeListener(disableActive);
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -306,15 +346,13 @@ class _CanvasImageResizeHandle extends StatelessWidget {
           cursor: () {
             if (!active) return MouseCursor.defer;
 
-            if (position.dx == 0 && position.dy < 0)
-              return SystemMouseCursors.resizeUp;
-            if (position.dx == 0 && position.dy > 0)
-              return SystemMouseCursors.resizeDown;
-            if (position.dx < 0 && position.dy == 0)
-              return SystemMouseCursors.resizeLeft;
-            if (position.dx > 0 && position.dy == 0)
-              return SystemMouseCursors.resizeRight;
+            if (position.dx == 0) return SystemMouseCursors.resizeUpDown;
+            if (position.dy == 0) return SystemMouseCursors.resizeLeftRight;
 
+            // A Mac has no diagonal resize cursors, like the lasso's handles
+            if (defaultTargetPlatform == .macOS) {
+              return SystemMouseCursors.grab;
+            }
             if (position.dx < 0 && position.dy < 0)
               return SystemMouseCursors.resizeUpLeft;
             if (position.dx < 0 && position.dy > 0)

@@ -6,24 +6,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/nextcloud/saber_syncer.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/settings/settings_row.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:sbn/font_fallbacks.dart';
 
 class SettingsDirectorySelector extends StatelessWidget {
   const new({
     super.key,
     required this.title,
-    required this.icon,
     this.afterChange,
     this.isUnsupported = true,
   });
 
   final String title;
-  final IconData icon;
   final ValueChanged<Color?>? afterChange;
   final bool isUnsupported;
 
@@ -44,31 +42,14 @@ class SettingsDirectorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onPressed(context),
-      child: ListTile(
-        contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-        leading: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          child: Icon(icon, key: ValueKey(icon)),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle:
-                stows.customDataDir.value != stows.customDataDir.defaultValue
-                ? FontStyle.italic
-                : null,
-          ),
-        ),
-        subtitle: ValueListenableBuilder(
-          valueListenable: stows.customDataDir,
-          builder: (context, _, _) => Text(
-            FileManager.documentsDirectory,
-            style: const TextStyle(fontSize: 13),
-          ),
-        ),
+    return ValueListenableBuilder(
+      valueListenable: stows.customDataDir,
+      builder: (context, customDataDir, _) => SettingsRow(
+        title: title,
+        subtitle: FileManager.documentsDirectory,
+        modified: customDataDir != stows.customDataDir.defaultValue,
+        showChevron: true,
+        onTap: () => onPressed(context),
       ),
     );
   }
@@ -80,13 +61,11 @@ class DirectorySelector extends StatefulWidget {
     required this.title,
     required this.initialDirectory,
     this.mustBeEmpty = true,
-    this.mustBeDoneSyncing = true,
   });
 
   final String title;
   final String initialDirectory;
   final bool mustBeEmpty;
-  final bool mustBeDoneSyncing;
 
   @override
   State<DirectorySelector> createState() => _DirectorySelectorState();
@@ -144,10 +123,6 @@ class _DirectorySelectorState extends State<DirectorySelector> {
     final colorScheme = ColorScheme.of(context);
 
     final emptyError = widget.mustBeEmpty && !_isEmpty;
-    final syncingError =
-        widget.mustBeDoneSyncing &&
-        (syncer.uploader.numPending > 0 || syncer.downloader.numPending > 0);
-    final anyErrors = emptyError || syncingError;
 
     return AdaptiveAlertDialog(
       title: Text(widget.title),
@@ -183,11 +158,6 @@ class _DirectorySelectorState extends State<DirectorySelector> {
               t.settings.customDataDir.mustBeEmpty,
               style: TextStyle(color: colorScheme.error),
             ),
-          if (syncingError)
-            Text(
-              t.settings.customDataDir.mustBeDoneSyncing,
-              style: TextStyle(color: colorScheme.error),
-            ),
         ],
       ),
       actions: [
@@ -197,7 +167,7 @@ class _DirectorySelectorState extends State<DirectorySelector> {
         ),
         CupertinoDialogAction(
           isDefaultAction: true,
-          onPressed: anyErrors ? null : _onConfirm,
+          onPressed: emptyError ? null : _onConfirm,
           child: Text(t.settings.customDataDir.select),
         ),
       ],

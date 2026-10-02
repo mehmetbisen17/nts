@@ -1,5 +1,5 @@
-name: saber
-description: A cross-platform libre notes app
+name: nts
+description: nts — a notes app for Mac and iPad
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -72,6 +72,8 @@ dependencies:
   pdf: ^3.8.4
   share_plus: ^13.3.0
   file_picker: ^13.0.0
+  # The camera tool (iOS and Android)
+  image_picker: ^1.2.3
   android_file_picker:
 
   regexed_validator: ^2.0.0+1
@@ -206,12 +208,13 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icon/icon.svg
+    - assets/icon/icon.png
     - assets/images/
     - assets/google_fonts/Atkinson_Hyperlegible_Next/OFL.txt
     - assets/google_fonts/Dekko/OFL.txt
     - assets/google_fonts/Fira_Mono/OFL.txt
     - assets/google_fonts/Neucha/OFL.txt
+    - assets/fonts/geist/OFL.txt
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -239,6 +242,20 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
   fonts:
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/geist/Geist-Light.ttf
+          weight: 300
+        - asset: assets/fonts/geist/Geist-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/geist/Geist-Medium.ttf
+          weight: 500
+    - family: GeistMono
+      fonts:
+        - asset: assets/fonts/geist/GeistMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/geist/GeistMono-Medium.ttf
+          weight: 500
     - family: AtkinsonHyperlegibleNext
       fonts:
         - asset: assets/google_fonts/Atkinson_Hyperlegible_Next/AtkinsonHyperlegibleNext-Regular.ttf
@@ -274,13 +291,13 @@ flutter:
     - shaders/pencil.frag
 
 
-# ./scripts/generate_icons.sh
+# Icons are derived from assets/icon/nts_master.png (see scripts/generate_icons.sh)
 icons_launcher:
   image_path: "assets/icon/icon.png"
   platforms:
     android:
       enable: true
-      adaptive_background_color: "#ffc800"
+      adaptive_background_color: "#f8f7f3"
       adaptive_foreground_image: "assets/icon/icon_maskable.png"
       adaptive_monochrome_image: "assets/icon/icon_monochrome.png"
     ios:

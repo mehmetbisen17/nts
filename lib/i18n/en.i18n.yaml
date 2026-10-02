@@ -2,12 +2,8 @@ common:
   done: Done
   continueBtn: Continue
   cancel: Cancel
+  savePhotoFailed: Couldn't save the image to Photos. Allow nts to add photos in Settings.
 home:
-  tabs:
-    home: Home
-    browse: Browse
-    whiteboard: Whiteboard
-    settings: Settings
   titles:
     home: Recent notes
     browse: Browse
@@ -20,10 +16,8 @@ home:
   create:
     newNote: New note
     importNote: Import note
-  welcome: Welcome to Saber
+  welcome: Welcome to nts
   invalidFormat: The file you selected is not supported. Please select an sbn, sbn2, sba, or pdf file.
-  noFiles: No files found
-  noPreviewAvailable: No preview available
   createNewNote: Tap the + button to create a new note
   backFolder: Go back to the previous folder
   newFolder:
@@ -75,13 +69,16 @@ home:
     nameZToA: Name (Z-A)
     lastModifiedNewToOld: Edited (Newest first)
     lastModifiedOldToNew: Edited (Oldest first)
-  layout:
-    layout: Layout
-    masonryGrid: Masonry grid
-    simpleGrid: Simple grid
+  # Right-click menu on notes and folders (home, mouse)
+  menu:
+    open: Open
+    select: Select
+    deselect: Deselect
+    exportPdf: Export as PDF
+    exportSba: Export as SBA
 sentry:
   consent:
-    title: Help improve Saber?
+    title: Help improve nts?
     description:
       question: Would you like to automatically report unexpected errors? This helps me identify and fix issues faster.
       scope: The reports may contain information about the error and your device. I've made every effort to filter out personal data but some may remain.
@@ -106,7 +103,7 @@ settings:
     layoutSize: Layout type
     customAccentColor: Custom accent color
     hyperlegibleFont: Atkinson Hyperlegible font
-    shouldCheckForUpdates: Check for Saber updates
+    shouldCheckForUpdates: Check for nts updates
     shouldAlwaysAlertForUpdates: Faster updates
     allowInsecureConnections: Allow insecure connections
     editorToolbarAlignment: Toolbar position
@@ -125,14 +122,16 @@ settings:
     autosave: Auto-save
     shapeRecognitionDelay: Shape recognition delay
     autoStraightenLines: Auto straighten lines
-    customDataDir: Custom Saber folder
+    customDataDir: Custom nts folder
     sentry: Error reporting
   prefDescriptions:
     hyperlegibleFont: Increases legibility for users with low vision
-    allowInsecureConnections: (Not recommended) Allow Saber to connect to servers with self-signed/untrusted certificates
+    allowInsecureConnections: (Not recommended) Allow nts to connect to servers with self-signed/untrusted certificates
     preferGreyscale: For e-ink displays
     autoClearWhiteboardOnExit: Clears the whiteboard after you exit the app
     disableEraserAfterUse: Automatically switches back to the pen after using the eraser
+    holdToSnapShape: Pause at the end of a stroke to turn it into a line, circle or other shape
+    scribbleToErase: Scribble over ink with a pen to erase it
     maxImageSize: Larger images will be compressed
     hideFingerDrawing:
       shown: Prevents accidental toggling
@@ -170,7 +169,7 @@ settings:
     title: Reset this setting?
     button: Reset
   resyncEverything: Resync everything
-  openDataDir: Open Saber folder
+  openDataDir: Open nts folder
   customDataDir:
     cancel: Cancel
     select: Select
@@ -179,11 +178,29 @@ settings:
     unsupported: This feature is currently only for developers. Using it will likely result in data loss.
   autosaveDisabled: Never
   shapeRecognitionDisabled: Never
+icloud:
+  title: iCloud
+  connectICloud: Connect iCloud
+  connect: Connect
+  changeFolder: Change folder
+  reconnect: Reconnect
+  refresh: Refresh from iCloud
+  savingTo: Saving to $folder
+  notInICloud: This folder isn't in iCloud Drive, so it won't sync
+  notConnected: Not connected — notes are only on this device
+  needsReconnect: Reconnect your iCloud folder
+  help: Pick or create a folder in iCloud Drive (for example 'nts'). Use the same folder on your Mac and iPad.
+  banner: Connect iCloud to sync notes between your devices
+  connected: Connected. Your notes now save to iCloud Drive.
+  connectedNotICloud: Connected, but this folder isn't in iCloud Drive, so your notes won't sync.
+  failed: Couldn't connect to the iCloud folder.
+  stillDownloading: This note is still downloading from iCloud. Try again in a moment.
+  savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
 logs:
   logs: Logs
   viewLogs: View logs
   debuggingInfo: Logs contain information useful for debugging and development
-  noLogs: No logs here!
+  noLogs: No logs yet
   useTheApp: Logs will appear here as you use the app
 login:
   title: Login
@@ -199,18 +216,18 @@ login:
     loggedIn: Logged in with Nextcloud
   ncLoginStep:
     whereToStoreData: "Choose where you want to store your data:"
-    saberNcServer: Saber's Nextcloud server
+    saberNcServer: nts's Nextcloud server
     otherNcServer: Other Nextcloud server
     serverUrl: Server URL
-    loginWithSaber: Login with Saber
+    loginWithSaber: Login with nts
     loginWithNextcloud: Login with Nextcloud
     loginFlow:
-      pleaseAuthorize: Please authorize Saber to access your Nextcloud account
+      pleaseAuthorize: Please authorize nts to access your Nextcloud account
       followPrompts: Please follow the prompts in the Nextcloud interface
       browserDidntOpen: Login page didn't open? Click here
   encLoginStep:
     enterEncPassword: "To protect your data, please enter your encryption password:"
-    newToSaber: New to Saber? Just enter a new encryption password.
+    newToSaber: New to nts? Just enter a new encryption password.
     encPassword: Encryption password
     encFaqTitle: Frequently asked questions
     wrongEncPassword: Decryption failed with the provided password. Please try entering it again.
@@ -224,7 +241,7 @@ login:
     - q: I haven't set an encryption password yet. Where do I get it?
       a: |-
         Choose a new encryption password and enter it above.
-        Saber will generate your encryption keys from this password automatically.
+        nts will generate your encryption keys from this password automatically.
     - q: Can I use the same password as my Nextcloud account?
       a: Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.
 profile:
@@ -241,22 +258,22 @@ profile:
   - q: Will I lose my notes if I log out?
     a: No. Your notes will remain both on your device and on the server. They won't be synced with the server until you log back in. Make sure syncing is complete before logging out so you don't lose any data (see the sync progress on the home screen).
   - q: How do I change my Nextcloud password?
-    a: Go to your server website and log in. Then go to Settings > Security > Change password. You'll need to log out and log back in to Saber after changing your password.
+    a: Go to your server website and log in. Then go to Settings > Security > Change password. You'll need to log out and log back in to nts after changing your password.
   - q: How do I change my encryption password?
     a: |-
       0. Make sure syncing is complete (see the sync progress on the home screen).
-      1. Log out of Saber.
+      1. Log out of nts.
       2. Go to your server website and delete your 'Saber' folder. This will delete all your notes from the server.
-      3. Log back in to Saber. You can choose a new encryption password when logging in.
-      4. Don't forget to log out and log back in to Saber on your other devices too.
+      3. Log back in to nts. You can choose a new encryption password when logging in.
+      4. Don't forget to log out and log back in to nts on your other devices too.
   - q: How can I delete my account?
     a: |-
       Tap on the "@:profile.quickLinks.deleteAccount" button above, and login if needed.
-      If you are using the official Saber server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion.
+      If you are using the official nts server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion.
       If you are using a third party server, there might not be an option to delete your account: you'll need to consult the server's privacy policy for more information.
 appInfo:
   licenseNotice: |-
-    Saber  Copyright © 2022-$buildYear  Adil Hanney
+    nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.
   debug: DEBUG
   sponsorButton: Tap here to sponsor me or buy more storage
@@ -289,6 +306,10 @@ editor:
     laserPointer: Laser pointer
   penOptions:
     size: Size
+  eraserOptions:
+    wholeLine: Whole line
+    partial: Partial
+    size: Eraser size
   colors:
     colorPicker: Color picker
     customBrightnessHue: Custom $b $h
@@ -360,7 +381,7 @@ editor:
     watchingServer: You are currently watching for updates on the server. Editing is disabled in this mode.
     corrupted: Failed to load note. It may be corrupted or still being downloaded.
   versionTooNew:
-    title: This note was edited using a newer version of Saber
+    title: This note was edited using a newer version of nts
     subtitle: Editing this note may result in some information being lost. Do you want to ignore this and edit it anyway?
     allowEditing: Allow editing
   quill:
@@ -372,6 +393,238 @@ editor:
     lockSingleFingerPan: Disable single-finger panning
     unlockAxisAlignedPan: Unlock panning to horizontal or vertical
     lockAxisAlignedPan: Lock panning to horizontal or vertical
+  customizeToolbar:
+    customize: Customize toolbar
+    title: Toolbar
+    inToolbar: In the toolbar
+    reorder: Drag to reorder
+    resetToBasics: Reset to basics
+    hint: Switch a button on to add it to the toolbar.
+    removeFromToolbar: Remove from toolbar
+    categories:
+      write: Write
+      eraseAndSelect: Erase and select
+      insert: Insert
+      view: View
+      actions: Actions
+    tools:
+      pen: Pen
+      eraser: Eraser
+      colorPicker: Custom color
+      fingerDrawing: Draw with finger
+      fullscreen: Fullscreen
+      export: Export
+      pageOptions: Page options
+  floatingBar:
+    move: Drag to move, double-tap to reset
+    minimize: Minimize
+    restore: Restore
+    resetPosition: Reset position
+  otherTools:
+    copy: Copy
+    cut: Cut
+    paste: Paste
+    screenshot: Screenshot selection
+    copyImage: Copy image
+    saveImage: Save image
+    imageCopied: Image copied
+    handwriting: Handwriting to text
+    copyAsText: Copy as text
+    convertToText: Convert to text
+    textCopied: Copied “$text”
+    noHandwriting: No handwriting found
+    cameraFailed: Couldn't open the camera. Allow nts to use it in Settings.
+    handwritingFailed: Couldn't read the handwriting
+    penFavorites: Pen favorites
+    saveFavorite: Save pen as favorite
+    removeFavorite: Remove favorite
+    camera: Camera
+  canvasTools:
+    tape: Tape
+    fill: Fill
+    brushPen: Brush pen
+    calligraphyPen: Calligraphy pen
+    nibAngle: Nib angle $angle°
+    holdToSnapShape: Hold to snap shapes
+    scribbleToErase: Scribble to erase
+    insertSpace: Insert space
+    ruler: Ruler
+    lassoFreehand: Freehand
+    lassoRectangle: Rectangle
+    addLink: Add link
+    editLink: Edit link
+    linkHint: example.com, name@example.com or #page=2
+    invalidLink: Enter a web address, an email address, or #page= and a page number
+    removeLink: Remove link
+    save: Save
+    couldNotOpenLink: Couldn't open $url
+  mouse:
+    selectAll: Select all on this page
   pages: Pages
   untitled: Untitled
   needsToSaveBeforeExiting: Saving your changes… You can safely exit the editor when it's done
+higan:
+  recent: Recent
+  folders: Folders
+  whiteboard: Whiteboard
+  settings: Settings
+  library: Library
+  gallery: Gallery
+  list: List
+  newNote: New note
+  notesCount:
+    one: $n note
+    other: $n notes
+  pagesCount:
+    one: $n page
+    other: $n pages
+  foldersCount:
+    one: $n folder
+    other: $n folders
+  looseNotes: Notes
+  saved: Saved
+  saving: Saving
+  pageOf: page $n / $total
+  appearance: Appearance
+  theme:
+    label: Theme
+    night: Night
+    paper: Paper
+    system: System
+  pages:
+    label: Pages
+    paper: Paper
+    black: Black
+    description: Black turns pages dark and adjusts your ink so it stays readable
+  gallerySize:
+    label: Gallery size
+    description: How big notes and folders are in Recent and Folders
+    xs: XS
+    s: S
+    m: M
+    l: L
+    xl: XL
+  emptyFolder:
+    title: This folder is empty
+    body: Add a note or a folder to begin.
+  back: Back
+  time:
+    justNow: Just now
+    minutesAgo: ${n}m ago
+    hoursAgo: ${n}h ago
+    yesterday: Yesterday
+  sync:
+    synced: iCloud · synced
+    localOnly: On this device
+    reconnect: iCloud · reconnect
+ai:
+  askAi: Ask AI
+  menuTitle: Ask about this note
+  actions:
+    explainExample:
+      title: Explain with an example
+      description: A clearer explanation, with one example
+    paragraph:
+      title: Explain in a paragraph
+      description: What the note is actually saying
+    graph:
+      title: Make a graph
+      description: Plot the formula or numbers in the note
+    illustration:
+      title: Make an illustration
+      description: A drawing of the main idea
+    video:
+      title: Find a video
+      description: A video that explains the same thing
+    source:
+      title: Find a source
+      description: Web pages about the same thing
+  signInToUse: Sign in to an AI account in Settings → AI accounts to use AI.
+  noAccount: No AI account yet
+  accountProblem: An AI account has a problem
+  openSettings: Open Settings
+  nothingToRead: Nothing I can read here.
+  yourNote: Your note
+  youWrote: You wrote
+  typeReading: Type what you wrote
+  editReading: Fix what it read
+  askAgain: Ask again
+  rereading: Re-reading…
+  working: Thinking…
+  drawing: Drawing…
+  searching: Searching…
+  madeBy: Made by $provider · $model. It can be wrong.
+  foundBy: Found by $provider · $model
+  suggestedBy: Suggested by $provider · $model
+  copy: Copy
+  copied: Copied
+  addToPage: Add to page
+  close: Close
+  tryAgain: Try again
+  nothingToGraph: Nothing to graph here.
+  couldNotGraph: Couldn't graph this.
+  couldNotDraw: Couldn't draw this. Try again.
+  failed: Something went wrong.
+  route:
+    signedOut: $provider is signed out.
+    unavailable: $provider isn't available here.
+    noAccount: This account isn't available.
+    noModel: $provider has no model for this.
+  web:
+    search: Search
+    query: Search for
+    open: Open
+    noResults: Nothing found. Try other words.
+    opensOutside: Links open in your browser.
+    foundWithYouTube: Found with YouTube search
+    fromMemory: From memory, not a web search, so some links may not exist.
+  accounts:
+    title: AI accounts
+    help: The circled part of a page goes to the account an action uses, only when you pick that action. nts never sees your passwords.
+    signIn: Sign in
+    signOut: Sign out
+    signingIn: Signing in…
+    signedIn: Signed in
+    signedInAs: Signed in · $who
+    notSignedIn: Not signed in
+    checkAgain: Check again
+    macOnly: Mac only
+    chatgptHint: Your ChatGPT account and plan. Pictures need Plus or higher.
+    claudeHint: Your own Claude Code on this Mac, with your Claude plan.
+    unavailable: Not available
+    problem: Problem
+    claudeSignOutTitle: Sign out of Claude Code?
+    claudeSignOutBody: This signs Claude Code out on this Mac, also in Terminal.
+    googleHint: Gemini and YouTube search through your own Google Cloud project, on its free tier.
+    useCode: Use a code instead
+    deviceCode:
+      title: Sign in with a code
+      body: Open the page, sign in to ChatGPT, and enter this code. Code sign-in must be on in ChatGPT → Settings → Security.
+      open: Open page
+      copy: Copy code
+      waiting: Waiting for you…
+  google:
+    title: Set up Google
+    notSetUp: Not set up
+    body: Google sign-in goes through your own Google Cloud project, so it stays free. It takes about 15 minutes, once.
+    step1: At console.cloud.google.com, create a project.
+    step2: In APIs & Services, enable "Generative Language API" and "YouTube Data API v3".
+    step3: In Google Auth platform, set the audience to External, then publish the app so its status is In production. When you sign in, Google will say it hasn't verified this app. It's your own project, so tap Advanced, then Continue.
+    step4: In Clients, create an OAuth client of type iOS with the bundle ID com.mehmetbisen.nts.
+    step5: Copy the client ID and the project ID below. Leave billing off to stay on the free tier.
+    openConsole: Open Google Cloud Console
+    clientId: OAuth client ID
+    projectId: Project ID
+    save: Save
+    change: Change setup
+    invalidClientId: This doesn't look like an OAuth client ID. It ends in .apps.googleusercontent.com.
+    invalidProjectId: A project ID has 6 to 30 lowercase letters, digits and hyphens.
+    changeSignsOut: Saving a different client ID signs Google out.
+  actionsSettings:
+    title: AI actions
+    help: Which account and model each action uses. Automatic uses the first signed-in account that can do it.
+    automatic: Automatic
+    automaticUses: Now uses $provider
+    automaticNone: No account signed in yet
+    mayCostExtra: may cost extra
+    picture: picture

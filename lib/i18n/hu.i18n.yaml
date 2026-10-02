@@ -3,11 +3,6 @@ common:
   continueBtn: Folytatás
   cancel: Mégse
 home:
-  tabs:
-    home: Kezdőlap
-    browse: Böngészés
-    whiteboard: Tábla
-    settings: Beállítások
   titles:
     home: Legutóbbi jegyzetek
     browse: Böngészés
@@ -20,10 +15,8 @@ home:
   create:
     newNote: Új jegyzet
     importNote: Jegyzet importálása
-  welcome: Üdvözli a Saber
+  welcome: Üdvözli az nts
   invalidFormat: A kiválasztott fájl nem támogatott. Kérjük, válasszon egy sbn, sbn2, sba vagy pdf fájlt.
-  noFiles: Nem található fájl
-  noPreviewAvailable: Nincs elérhető előnézet
   createNewNote: Kattintson a + gombra egy új jegyzet létrehozásához
   backFolder: Vissza az előző mappához
   newFolder:
@@ -75,13 +68,9 @@ home:
     nameZToA(OUTDATED): Név (A-Z)
     lastModifiedNewToOld(OUTDATED): Szerkesztett (Legújabb előre)
     lastModifiedOldToNew(OUTDATED): "Szerkesztett (Időrendben: legidősebb először)"
-  layout:
-    layout(OUTDATED): Elrendezés
-    masonryGrid(OUTDATED): Murvai rács
-    simpleGrid(OUTDATED): Egyszerű rács
 sentry:
   consent:
-    title: Segít a Saber fejlesztésében?
+    title: Segít az nts fejlesztésében?
     description:
       question: Szeretné automatikusan jelenteni a váratlan hibákat? Ez segít a problémák gyorsabb azonosításában és javításában.
       scope: A jelentések tartalmazhatnak információkat a hibáról és az eszközéről. Minden tőlem telhetőt megtettem a személyes adatok kiszűrésére, de előfordulhat, hogy néhány mégis megmarad.
@@ -106,7 +95,7 @@ settings:
     layoutSize: Elrendezési mód
     customAccentColor: Egyéni hangsúlyszín
     hyperlegibleFont: Atkinson Hyperlegible betűtípus
-    shouldCheckForUpdates: Automatikusan ellenőrzi a Saber frissítéseket
+    shouldCheckForUpdates: Automatikusan ellenőrzi az nts frissítéseket
     shouldAlwaysAlertForUpdates: Gyorsabb értesítések a frissítésekről
     allowInsecureConnections: Nem biztonságos kapcsolatok engedélyezése
     editorToolbarAlignment: A szerkesztő eszköztár igazítása
@@ -125,11 +114,11 @@ settings:
     autosave: Automatikus mentés
     shapeRecognitionDelay: Alakfelismerés késleltetése
     autoStraightenLines: Vonalak automatikus kiegyenesítése
-    customDataDir: Egyéni Saber mappa
+    customDataDir: Egyéni nts mappa
     sentry: Hibajelentés
   prefDescriptions:
     hyperlegibleFont: Az Atkinson Hyperlegible növeli az olvashatóságot a gyengén látók számára
-    allowInsecureConnections: (Nem ajánlott) Engedélyezi, hogy a Saber ön-aláírt vagy nem megbízható tanúsítványokat használó szerverekhez csatlakozzon
+    allowInsecureConnections: (Nem ajánlott) Engedélyezi, hogy az nts ön-aláírt vagy nem megbízható tanúsítványokat használó szerverekhez csatlakozzon
     preferGreyscale: E-tinta kijelzőkhöz
     autoClearWhiteboardOnExit: A tábla törlésre kerül, amikor kilép az alkalmazásból
     disableEraserAfterUse: Automatikusan visszavált a tollra, miután a radírt használta
@@ -170,7 +159,7 @@ settings:
     title: Visszaállítsa ezt a beállítást?
     button: Visszaállítás
   resyncEverything: Minden újraszinkronizálása
-  openDataDir: Saber mappa megnyitása
+  openDataDir: nts mappa megnyitása
   customDataDir:
     cancel: Mégse
     select: Kiválasztás
@@ -199,18 +188,18 @@ login:
     loggedIn: Bejelentkezve a Nextclouddal
   ncLoginStep:
     whereToStoreData: "Válassza ki, hol szeretné tárolni az adatait:"
-    saberNcServer: A Saber Nextcloud szervere
+    saberNcServer: Az nts Nextcloud szervere
     otherNcServer: Másik Nextcloud szerver
     serverUrl: Szerver URL
-    loginWithSaber: Bejelentkezés Saber-rel
+    loginWithSaber: Bejelentkezés nts-sel
     loginWithNextcloud: Bejelentkezés Nextcloud-dal
     loginFlow:
-      pleaseAuthorize: Kérjük, engedélyezze a Saber számára a Nextcloud-fiókjához való hozzáférést
+      pleaseAuthorize: Kérjük, engedélyezze az nts számára a Nextcloud-fiókjához való hozzáférést
       followPrompts: Kérjük, kövesse a Nextcloud felületén megjelenő utasításokat
       browserDidntOpen: Nem nyílt meg a bejelentkezési oldal? Kattintson ide
   encLoginStep:
     enterEncPassword: "Az adatai védelme érdekében kérjük, adja meg a titkosítási jelszavát:"
-    newToSaber: Először használja a Saber-t? Adjon meg egy új titkosítási jelszót.
+    newToSaber: Először használja az nts-t? Adjon meg egy új titkosítási jelszót.
     encPassword: Titkosítási jelszó
     encFaqTitle: Gyakran ismételt kérdések
     wrongEncPassword: A megadott jelszóval a visszafejtés nem sikerült. Kérjük, próbálja meg újra megadni.
@@ -224,7 +213,7 @@ login:
     - q: Még nem állítottam be titkosítási jelszót. Hol szerezhetem meg?
       a: |-
         Válasszon egy új titkosítási jelszót, és adja meg fent.
-        A Saber automatikusan létrehozza a titkosítási kulcsokat ebből a jelszóból.
+        Az nts automatikusan létrehozza a titkosítási kulcsokat ebből a jelszóból.
     - q: Használhatom ugyanazt a jelszót, mint a Nextcloud-fiókomhoz?
       a: Igen, de fontos figyelembe venni, hogy így a szerver adminisztrátora vagy más személy könnyebben hozzáférhet a jegyzeteihez, ha hozzájut a Nextcloud-fiókjához.
 profile:
@@ -240,23 +229,23 @@ profile:
   - q: Elveszítem a jegyzeteimet, ha kijelentkezem?
     a: Nem. A jegyzetei mind az eszközén, mind a szerveren megmaradnak. A szerverrel csak akkor lesznek szinkronizálva, ha újra bejelentkezik. Mielőtt kijelentkezik, győződjön meg arról, hogy a szinkronizálás befejeződött, különben adatvesztés történhet (a kezdőképernyőn látható a szinkronizálás állapota).
   - q: Hogyan változtatom meg a Nextcloud jelszavamat?
-    a: Nyissa meg a szerver weboldalát, és jelentkezzen be. Ezután menjen a Beállítások > Biztonság > Jelszó módosítása menüpontra. A jelszó módosítása után ki kell jelentkeznie a Saberből, majd újra be kell jelentkeznie.
+    a: Nyissa meg a szerver weboldalát, és jelentkezzen be. Ezután menjen a Beállítások > Biztonság > Jelszó módosítása menüpontra. A jelszó módosítása után ki kell jelentkeznie az nts-ből, majd újra be kell jelentkeznie.
   - q: Hogyan változtatom meg a titkosítási jelszavamat?
     a: |-
       0. Győződjön meg arról, hogy a szinkronizálás befejeződött (a szinkronizálás állapotát a kezdőképernyőn láthatja).
-      1. Jelentkezzen ki a Saberből.
+      1. Jelentkezzen ki az nts-ből.
       2. Nyissa meg a szerver weboldalát, és törölje a „Saber” mappát. Ez minden jegyzetét törli a szerverről.
-      3. Jelentkezzen be újra a Saberbe. Bejelentkezéskor új titkosítási jelszót választhat.
-      4. Ne felejtkezzen el kijelentkezni, majd újra bejelentkezni a Saberbe a többi eszközén is.
+      3. Jelentkezzen be újra az nts-be. Bejelentkezéskor új titkosítási jelszót választhat.
+      4. Ne felejtkezzen el kijelentkezni, majd újra bejelentkezni az nts-be a többi eszközén is.
   - q: Hogyan törölhetem a fiókomat?
     a: |-
       Koppintson a fenti „@:profile.quickLinks.deleteAccount” gombra, és szükség esetén jelentkezzen be.
-      Ha a hivatalos Saber szervert használja, a fiókja 1 hetes türelmi idő után törlésre kerül. Ebben az időszakban a törlés visszavonásához vegye fel a kapcsolatot a következő e-mail címen: adilhanney@disroot.org.
+      Ha a hivatalos nts szervert használja, a fiókja 1 hetes türelmi idő után törlésre kerül. Ebben az időszakban a törlés visszavonásához vegye fel a kapcsolatot a következő e-mail címen: adilhanney@disroot.org.
       Ha harmadik féltől származó szervert használ, előfordulhat, hogy nincs lehetőség a fiók törlésére: további információért tekintse meg a szerver adatvédelmi szabályzatát.
   quotaUsageUncapped(OUTDATED): Használod a $used-t
 appInfo:
   licenseNotice: |-
-    Saber Copyright © 2022-$buildYear Adil Hanney
+    nts (modified from Saber) Copyright © 2022-$buildYear Adil Hanney
     Ez a program nem tartalmaz semmilyen garanciát. Ez egy szabad szoftver, és bizonyos feltételek mellett szabadon terjeszthető.
   debug: DEBUG
   sponsorButton: Ide kattintva támogathat engem vagy vásárolhat több tárhelyet
@@ -360,7 +349,7 @@ editor:
     watchingServer: Jelenleg a szerver frissítéseit figyeli. Ebben a módban a szerkesztés le van tiltva.
     corrupted: Nem sikerült betölteni a jegyzetet. Lehet, hogy sérült, vagy még letöltés alatt áll.
   versionTooNew:
-    title: Ez a jegyzet a Saber egy újabb verziójával lett szerkesztve
+    title: Ez a jegyzet az nts egy újabb verziójával lett szerkesztve
     subtitle: A jegyzet szerkesztése bizonyos információk elvesztését eredményezheti. Szeretné ezt figyelmen kívül hagyni, és mégis szerkeszteni?
     allowEditing: Szerkesztés engedélyezése
   quill:

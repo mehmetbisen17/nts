@@ -5,18 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
+import 'package:nts/components/canvas/canvas.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/pencil_shader.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/editor/editor_exporter.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/tools/laser_pointer.dart';
+import 'package:nts/data/tools/stroke_properties.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:path/path.dart' as p;
-import 'package:saber/components/canvas/canvas.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/components/canvas/pencil_shader.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/data/editor/editor_exporter.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/tools/laser_pointer.dart';
-import 'package:saber/data/tools/stroke_properties.dart';
-import 'package:saber/i18n/strings.g.dart';
 
 import 'utils/test_mock_channel_handlers.dart';
 
@@ -121,6 +122,12 @@ void main() {
         });
 
         testGoldens('(Dark)', (tester) async {
+          // "Pages: Black": dark mode inverts the page.
+          stows.editorAutoInvert.value = true;
+          addTearDown(
+            () => stows.editorAutoInvert.value =
+                stows.editorAutoInvert.defaultValue,
+          );
           await tester.runAsync(
             () => _precacheImages(
               context: tester.binding.rootElement!,

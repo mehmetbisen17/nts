@@ -1,16 +1,15 @@
 #!/usr/bin/env dart
 
-// Run `dart scripts/translate_changelogs.dart` to generate the changelogs.
+// Run `dart scripts/translate_missing_translations.dart` to fill in missing i18n strings.
 
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:saber/data/locales.dart';
+import 'package:nts/data/locales.dart';
 import 'package:yaml/yaml.dart';
 
-import 'src/fix_spelling.dart';
 import 'src/lms_translator.dart';
 
 final translator = LmsTranslator.create();
@@ -113,12 +112,7 @@ Future<String> translateString(String localeCode, String english) async {
   final localeName = localeNames[localeCode];
   print('  Translating into $localeName ($localeCode): $short');
 
-  final translatedText = (await translator).translate(
-    english,
-    to: '$localeName ($localeCode)',
-  );
-
-  return fixSpelling(translatedText);
+  return (await translator).translate(english, to: '$localeName ($localeCode)');
 }
 
 var errorOccurredInTranslatingTree = false;

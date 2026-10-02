@@ -6,17 +6,19 @@ import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:logging/logging.dart';
+import 'package:nts/components/home/sort_button.dart';
+import 'package:nts/data/file_manager/sandbox_migration.dart';
+import 'package:nts/data/icloud/icloud_storage.dart';
+import 'package:nts/data/nextcloud/saber_syncer.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:saber/components/home/sort_button.dart';
-import 'package:saber/data/nextcloud/saber_syncer.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -79,8 +81,18 @@ class FileManager {
   static Future<String> getDocumentsDirectory() async =>
       stows.customDataDir.value ?? await getDefaultDocumentsDirectory();
 
-  static Future<String> getDefaultDocumentsDirectory() async =>
-      '${(await getApplicationDocumentsDirectory()).path}/$appRootDirectoryPrefix';
+  /// Local folder is named after the app ("nts"); the remote sync folder
+  /// keeps [appRootDirectoryPrefix] ('Saber') for server compatibility.
+  ///
+  /// The unsandboxed Mac app keeps it in Application Support, like it was in
+  /// its sandbox container: ~/Documents would ask for permission (again
+  /// after every ad-hoc signed rebuild) and may be synced by iCloud.
+  static Future<String> getDefaultDocumentsDirectory() async {
+    final parent = SandboxMigration.isUnsandboxedMac
+        ? await getApplicationSupportDirectory()
+        : await getApplicationDocumentsDirectory();
+    return '${parent.path}/nts';
+  }
 
   static Future<void> migrateDataDir() async {
     final oldDir = Directory(documentsDirectory);
@@ -145,12 +157,244 @@ class FileManager {
     }
   }
 
+  /// Moves everything in [oldDir] into [newDir] without overwriting anything.
+  ///
+  /// If a name is already taken in [newDir], the moved note keeps both copies
+  /// by getting a " (from this device)" suffix, together with its assets:
+  /// `a.sbn2`, `a.sbn2.0`, `a.sbn2.p` become `a (from this device).sbn2`, ...
+  ///
+  /// Hidden files (e.g. iCloud placeholders like `.a.sbn2.icloud`) stay in
+  /// [oldDir]. A file only leaves [oldDir] by a rename, or by being deleted
+  /// after it was fully copied. Throws on the first file that can't be moved,
+  /// leaving the rest in [oldDir].
+  ///
+  /// With [copy], files are copied instead and [oldDir] is left as it was.
+  /// A copy can be repeated: files already in [newDir] under the same name
+  /// with the same bytes (e.g. from an interrupted copy) are skipped, not
+  /// copied again under another name. A file that can't be copied is
+  /// skipped too, and returned.
+  static Future<List<String>> mergeDirContents({
+    required Directory oldDir,
+    required Directory newDir,
+    bool copy = false,
+  }) async {
+    if (!oldDir.existsSync()) return const [];
+    await newDir.create(recursive: true);
+    final oldPath = oldDir.resolveSymbolicLinksSync();
+    final newPath = newDir.resolveSymbolicLinksSync();
+    if (FileSystemEntity.identicalSync(oldPath, newPath)) return const [];
+    if (p.isWithin(oldPath, newPath) || p.isWithin(newPath, oldPath)) {
+      throw FileSystemException(
+        'The new folder can\'t be inside the old one or vice versa',
+        newPath,
+      );
+    }
+
+    final dirs = <String>[], otherFiles = <String>[];
+    // Note name (e.g. `dir/a`) -> its files' suffixes (`.sbn2`, `.sbn2.0`...)
+    final notes = <String, List<String>>{};
+    await for (final entity in Directory(
+      oldPath,
+    ).list(recursive: true, followLinks: false)) {
+      final relative = p.relative(entity.path, from: oldPath);
+      if (p.split(relative).any((part) => part.startsWith('.'))) continue;
+      if (entity is Directory) {
+        dirs.add(relative);
+      } else if (_noteFileRegex.firstMatch(relative) case final match?) {
+        final name = match.group(1)!;
+        (notes[name] ??= []).add(relative.substring(name.length));
+      } else {
+        otherFiles.add(relative);
+      }
+    }
+
+    for (final dir in dirs) {
+      await Directory(p.join(newPath, dir)).create(recursive: true);
+    }
+    final failed = <String>[];
+    Future<void> merge(
+      String name,
+      List<String> suffixes, {
+      required bool isNote,
+    }) async {
+      try {
+        await _mergeFiles(
+          oldPath,
+          newPath,
+          name,
+          suffixes,
+          isNote: isNote,
+          copy: copy,
+        );
+      } on FileSystemException catch (e) {
+        if (!copy) rethrow;
+        log.warning('Couldn\'t copy $name: $e');
+        failed.add(name);
+      }
+    }
+
+    for (final MapEntry(key: name, value: suffixes) in notes.entries) {
+      await merge(name, suffixes, isNote: true);
+    }
+    for (final file in otherFiles) {
+      final name = p.withoutExtension(file);
+      await merge(name, [file.substring(name.length)], isNote: false);
+    }
+    if (copy) return failed;
+
+    // Remove the emptied folders, deepest first.
+    // A non-recursive delete fails (and is skipped) if anything is left.
+    dirs.sort((a, b) => b.length.compareTo(a.length));
+    for (final dir in dirs) {
+      try {
+        await Directory(p.join(oldPath, dir)).delete();
+      } on FileSystemException {
+        // not empty, e.g. a hidden file was left behind
+      }
+    }
+    return const [];
+  }
+
+  /// Matches a note or one of its assets, e.g. `a.sbn2` or `a.sbn2.0`.
+  /// Group 1 is the note name without the extension.
+  static final _noteFileRegex = RegExp(r'^(.*)\.sbn2?(\.[\dp]+)?$');
+
+  /// Moves `oldPath/name{suffix}` for each of [suffixes] into [newPath],
+  /// renaming [name] if any of them (or, for notes, any note with that name)
+  /// already exists there.
+  static Future<void> _mergeFiles(
+    String oldPath,
+    String newPath,
+    String name,
+    List<String> suffixes, {
+    required bool isNote,
+    bool copy = false,
+  }) async {
+    bool isTaken(String newName) => [
+      for (final suffix in suffixes) '$newName$suffix',
+      if (isNote) ...[
+        '$newName${Editor.extension}',
+        '$newName${Editor.extensionOldJson}',
+      ],
+    ].any((relative) => _existsOrInICloud(p.join(newPath, relative)));
+
+    if (copy) {
+      final all = suffixes;
+      suffixes = [
+        for (final suffix in all)
+          if (!_sameBytes(
+            p.join(oldPath, '$name$suffix'),
+            p.join(newPath, '$name$suffix'),
+          ))
+            suffix,
+      ];
+      if (suffixes.isEmpty) return; // copied before
+      // Copied in part before (the note itself goes last): the rest under
+      // the same name, unless another note has it
+      if (isTaken(name)) suffixes = all;
+    }
+
+    var newName = name;
+    for (var i = 1; isTaken(newName); i++) {
+      newName = '$name (from this device${i == 1 ? '' : ' $i'})';
+    }
+
+    // The note itself moves last: if this is interrupted, [newPath] has no
+    // note with this name yet, so a retry moves the rest under the same name.
+    for (final suffix in suffixes.sortedBy<num>(
+      (suffix) => assetFileRegex.hasMatch(suffix) ? 0 : 1,
+    )) {
+      await _moveOrCopyFile(
+        File(p.join(oldPath, '$name$suffix')),
+        p.join(newPath, '$newName$suffix'),
+        copy: copy,
+      );
+      if (newName != name) {
+        await _renameReferences('/$name$suffix', '/$newName$suffix');
+      }
+    }
+  }
+
+  static bool _sameBytes(String a, String b) {
+    final (fileA, fileB) = (File(a), File(b));
+    if (!fileB.existsSync() || fileA.lengthSync() != fileB.lengthSync()) {
+      return false;
+    }
+    return const ListEquality<int>().equals(
+      fileA.readAsBytesSync(),
+      fileB.readAsBytesSync(),
+    );
+  }
+
+  static bool _existsOrInICloud(String path) =>
+      FileSystemEntity.typeSync(path, followLinks: false) !=
+          FileSystemEntityType.notFound ||
+      File(iCloudPlaceholderPath(path)).existsSync();
+
+  /// iOS stands in for iCloud files that aren't downloaded yet with hidden
+  /// placeholders, e.g. `dir/.a.sbn2.icloud` for `dir/a.sbn2`.
+  static String iCloudPlaceholderPath(String path) =>
+      p.join(p.dirname(path), '.${p.basename(path)}.icloud');
+
+  /// Moves (or with [copy], copies) [file] to [newPath], which must not
+  /// exist yet.
+  static Future<void> _moveOrCopyFile(
+    File file,
+    String newPath, {
+    bool copy = false,
+  }) async {
+    await Directory(p.dirname(newPath)).create(recursive: true);
+    if (!copy) {
+      try {
+        await file.rename(newPath);
+        return;
+      } on FileSystemException {
+        // e.g. across volumes: copy, and only delete the original once copied
+      }
+    }
+    final copied = await file.copy(newPath);
+    if (copied.lengthSync() != file.lengthSync()) {
+      await copied.delete();
+      throw FileSystemException('Failed to copy file', file.path);
+    }
+    if (!copy) await file.delete();
+  }
+
+  /// Switches the app to [newDirectory], which should already contain
+  /// the notes (see [mergeDirContents]).
+  static Future<void> changeDocumentsDirectory(String newDirectory) async {
+    documentsDirectory = newDirectory;
+    await watchRootDirectory();
+    await broadcastRescan();
+  }
+
+  /// Makes file lists reload, e.g. after iCloud downloaded new files.
+  /// Sends one event per folder since some listeners only refresh
+  /// for events inside the folder they show.
+  static Future<void> broadcastRescan() async {
+    final rootDir = getRootDirectory();
+    if (!rootDir.existsSync()) return;
+    broadcastFileWrite(.write, '/');
+    await for (final entity in rootDir.list(recursive: true)) {
+      if (entity is! Directory) continue;
+      final path = entity.path.substring(documentsDirectory.length);
+      if (path.split('/').any((part) => part.startsWith('.'))) continue;
+      broadcastFileWrite(.write, path);
+    }
+  }
+
+  static StreamSubscription<FileSystemEvent>? _rootDirectoryWatcher;
+
   @visibleForTesting
   static Future<void> watchRootDirectory() async {
+    unawaited(_rootDirectoryWatcher?.cancel());
+    _rootDirectoryWatcher = null;
     final rootDir = Directory(documentsDirectory);
     await rootDir.create(recursive: true);
     if (Platform.isIOS) return;
-    rootDir.watch(recursive: true).listen((event) {
+    _rootDirectoryWatcher = rootDir.watch(recursive: true).listen((event) {
+      // e.g. `.DS_Store` or iCloud's temporary files
+      if (p.basename(event.path).startsWith('.')) return;
       final FileOperationType type = switch (event.type) {
         FileSystemEvent.delete => .delete,
         FileSystemEvent.create => .write,
@@ -300,15 +544,20 @@ class FileManager {
 
     if (Platform.isAndroid || Platform.isIOS) {
       if (isImage) {
-        // request permission
-        final permissionGranted = await _requestPhotosPermission();
-        // save image to gallery
-        if (permissionGranted) {
-          await SaverGallery.saveImage(
-            Uint8List.fromList(bytes),
-            fileName: fileName,
-            albumPath: 'Saber',
-            skipIfExists: true,
+        final messenger = ScaffoldMessenger.maybeOf(context);
+        final saved =
+            await _requestPhotosPermission() &&
+            (await SaverGallery.saveImage(
+              Uint8List.fromList(bytes),
+              fileName: fileName,
+              // An album needs full Photos access on iOS; saving into the
+              // library only needs the add-only access we ask for
+              albumPath: Platform.isIOS ? null : 'nts',
+              skipIfExists: true,
+            )).isSuccess;
+        if (!saved) {
+          messenger?.showSnackBar(
+            SnackBar(content: Text(t.common.savePhotoFailed)),
           );
         }
       } else {
@@ -394,6 +643,16 @@ class FileManager {
 
     if (fromPath == toPath) return toPath;
 
+    // Find the assets first: a note must never be moved without some of them
+    final assets = alsoMoveAssets && !assetFileRegex.hasMatch(fromPath)
+        ? _findAssets(fromPath)
+        : const <String>[];
+    if (assets.any((asset) => !doesFileExist('$fromPath.$asset'))) {
+      // An asset is only an iCloud placeholder, which can't be moved
+      unawaited(ICloudStorage.refresh());
+      throw FileSystemException(t.icloud.stillDownloading, fromPath);
+    }
+
     final fromFile = getFile(fromPath);
     final toFile = getFile(toPath);
     await _createFileDirectory(toPath);
@@ -410,33 +669,14 @@ class FileManager {
     broadcastFileWrite(FileOperationType.delete, fromPath);
     broadcastFileWrite(FileOperationType.write, toPath);
 
-    if (alsoMoveAssets && !assetFileRegex.hasMatch(fromPath)) {
-      final assets = <String>[];
-      for (int assetNumber = 0; true; assetNumber++) {
-        final assetFile = getFile('$fromPath.$assetNumber');
-        if (assetFile.existsSync()) {
-          assets.add('$assetNumber');
-        } else {
-          break;
-        }
-      }
-      {
-        const assetNumber = 'p';
-        final assetFile = getFile('$fromPath.$assetNumber');
-        if (assetFile.existsSync()) {
-          assets.add(assetNumber);
-        }
-      }
-
-      await Future.wait([
-        for (final assetNumber in assets)
-          moveFile(
-            '$fromPath.$assetNumber',
-            '$toPath.$assetNumber',
-            replaceExistingFile: replaceExistingFile,
-          ),
-      ]);
-    }
+    await Future.wait([
+      for (final asset in assets)
+        moveFile(
+          '$fromPath.$asset',
+          '$toPath.$asset',
+          replaceExistingFile: replaceExistingFile,
+        ),
+    ]);
 
     return toPath;
   }
@@ -458,24 +698,27 @@ class FileManager {
     broadcastFileWrite(FileOperationType.delete, filePath);
 
     if (alsoDeleteAssets && !assetFileRegex.hasMatch(filePath)) {
-      final assets = <int>[];
-      for (int assetNumber = 0; true; assetNumber++) {
-        final assetFile = getFile('$filePath.$assetNumber');
-        if (assetFile.existsSync()) {
-          assets.add(assetNumber);
-        } else {
-          break;
-        }
-      }
-
-      final previewFile = getFile('$filePath.p');
       await Future.wait([
-        for (final assetNumber in assets)
-          deleteFile('$filePath.$assetNumber', alsoDeleteAssets: false),
-        if (previewFile.existsSync())
-          deleteFile('$filePath.p', alsoDeleteAssets: false),
+        for (final asset in _findAssets(filePath)) ...[
+          deleteFile('$filePath.$asset', alsoDeleteAssets: false),
+          // or its placeholder if iCloud hasn't downloaded it yet
+          deleteFile(
+            iCloudPlaceholderPath('$filePath.$asset'),
+            alsoUpload: false,
+            alsoDeleteAssets: false,
+          ),
+        ],
       ]);
     }
+  }
+
+  /// The asset suffixes (`0`, `1`, ..., `p`) of the note at [filePath],
+  /// including assets that iCloud hasn't downloaded yet.
+  static List<String> _findAssets(String filePath) {
+    bool exists(String asset) =>
+        doesFileExist('$filePath.$asset') ||
+        doesFileExist(iCloudPlaceholderPath('$filePath.$asset'));
+    return [for (var i = 0; exists('$i'); i++) '$i', if (exists('p')) 'p'];
   }
 
   static Future removeUnusedAssets(
@@ -582,6 +825,9 @@ class FileManager {
         .map((FileSystemEntity entity) {
           final filePath = entity.path.substring(documentsDirectory.length);
 
+          // skip hidden files, e.g. iCloud placeholders like `.a.sbn2.icloud`
+          if (p.basename(filePath).startsWith('.')) return null;
+
           // directories don't need any further processing
           if (entity is Directory) return filePath;
 
@@ -683,11 +929,19 @@ class FileManager {
 
   static Future<List<String>> getRecentlyAccessed() async {
     if (!stows.recentFiles.loaded) await stows.recentFiles.waitUntilRead();
-    // Delete entries for files that have been deleted outside of Saber
+    // Delete entries for files that have been deleted outside of the app,
+    // but not for files that are only missing because the notes folder
+    // needs reconnecting or iCloud hasn't downloaded them yet.
+    final canForget = ICloudStorage.state.value != .needsReconnect;
     for (final file in stows.recentFiles.value.toList()) {
-      if (!doesFileExist(file)) _removeReferences(file);
+      if (canForget &&
+          !doesFileExist(file) &&
+          !doesFileExist(iCloudPlaceholderPath(file))) {
+        _removeReferences(file);
+      }
     }
     return stows.recentFiles.value
+        .where(doesFileExist)
         .map((String filePath) {
           if (filePath.endsWith(Editor.extension)) {
             return filePath.substring(
@@ -734,8 +988,10 @@ class FileManager {
     assert(parentPath.endsWith('/'));
 
     final DateTime now = DateTime.now();
+    // Include the time so notes made offline on different devices
+    // don't get the same name, which iCloud Drive would split up.
     final String filePath =
-        '$parentPath${DateFormat("yy-MM-dd").format(now)} '
+        '$parentPath${DateFormat("yy-MM-dd HH.mm.ss").format(now)} '
         '${t.editor.untitled}';
 
     return await suffixFilePathToMakeItUnique(filePath);
@@ -777,10 +1033,14 @@ class FileManager {
       intendedExtension ??= Editor.extension;
     }
 
+    // A note that iCloud hasn't downloaded yet also takes the name
+    bool isTaken(String path) =>
+        doesFileExist(path) || doesFileExist(iCloudPlaceholderPath(path));
+
     int i = 1;
     while (true) {
-      if (!doesFileExist(newFilePath + Editor.extension) &&
-          !doesFileExist(newFilePath + Editor.extensionOldJson))
+      if (!isTaken(newFilePath + Editor.extension) &&
+          !isTaken(newFilePath + Editor.extensionOldJson))
         break;
       if (newFilePath + Editor.extension == currentPath) break;
       if (newFilePath + Editor.extensionOldJson == currentPath) break;

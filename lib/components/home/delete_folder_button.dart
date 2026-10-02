@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class DeleteFolderButton extends StatelessWidget {
   const new({
@@ -20,20 +22,32 @@ class DeleteFolderButton extends StatelessWidget {
     return IconButton(
       padding: .zero,
       tooltip: t.home.deleteFolder.deleteFolder,
-      onPressed: () async {
-        await showDialog(
-          context: context,
-          builder: (context) => _DeleteFolderDialog(
-            folderName: folderName,
-            deleteFolder: deleteFolder,
-            isFolderEmpty: isFolderEmpty,
-          ),
-        );
-      },
-      icon: const Icon(Icons.delete_forever),
+      onPressed: () => showDeleteFolderDialog(
+        context,
+        folderName: folderName,
+        deleteFolder: deleteFolder,
+        isFolderEmpty: isFolderEmpty,
+      ),
+      icon: const Icon(Symbols.delete, weight: 300),
     );
   }
 }
+
+/// Asks to confirm (and whether to delete the notes inside), then calls
+/// [deleteFolder].
+Future<void> showDeleteFolderDialog(
+  BuildContext context, {
+  required String folderName,
+  required Future<void> Function(String) deleteFolder,
+  required Future<bool> Function(String) isFolderEmpty,
+}) => showDialog(
+  context: context,
+  builder: (context) => _DeleteFolderDialog(
+    folderName: folderName,
+    deleteFolder: deleteFolder,
+    isFolderEmpty: isFolderEmpty,
+  ),
+);
 
 class _DeleteFolderDialog extends StatefulWidget {
   const new({
@@ -89,6 +103,7 @@ class _DeleteFolderDialogState extends State<_DeleteFolderDialog> {
       actions: [
         CupertinoDialogAction(
           onPressed: () => Navigator.of(context).pop(),
+          textStyle: TextStyle(color: context.higan.text),
           child: Text(t.common.cancel),
         ),
         CupertinoDialogAction(
@@ -99,6 +114,7 @@ class _DeleteFolderDialogState extends State<_DeleteFolderDialog> {
                 }
               : null,
           isDestructiveAction: true,
+          textStyle: TextStyle(color: context.higan.higanText),
           child: Text(t.home.deleteFolder.delete),
         ),
       ],

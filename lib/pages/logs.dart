@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logging/logging.dart';
-import 'package:saber/components/theming/adaptive_icon.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:sbn/font_fallbacks.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 final logsHistory = _LogsHistory();
 
@@ -22,10 +21,12 @@ class _LogsHistory extends ChangeNotifier {
 
   void freeze() {
     _frozenHistory = List.unmodifiable(_history);
+    notifyListeners();
   }
 
   void unfreeze() {
     _frozenHistory = null;
+    notifyListeners();
   }
 
   void add(LogRecord record) {
@@ -41,122 +42,98 @@ class _LogsHistory extends ChangeNotifier {
 }
 
 class const LogsPage({super.key}) extends StatelessWidget {
+  void _copy() {
+    final buffer = StringBuffer();
+    for (final record in logsHistory.history) {
+      buffer.write(record.level.name);
+      buffer.write(' at ');
+      buffer.writeln(record.time);
+      buffer.writeln(record.message);
+      if (record.error != null) buffer.writeln(record.error);
+      if (record.stackTrace != null) buffer.writeln(record.stackTrace);
+      buffer.writeln();
+    }
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final gutter = MediaQuery.sizeOf(context).width < 600
+        ? HiganSpace.gutterPhone
+        : HiganSpace.gutterTablet;
     return Scaffold(
-      body: ListenableBuilder(
-        listenable: logsHistory,
-        builder: (context, _) {
-          final theme = Theme.of(context);
-          final colorScheme = theme.colorScheme;
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                collapsedHeight: kToolbarHeight,
-                expandedHeight: 200,
-                pinned: true,
-                scrolledUnderElevation: 1,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    t.logs.logs,
-                    style: TextStyle(color: colorScheme.onSurface),
-                  ),
-                  centerTitle: false,
-                  titlePadding: const EdgeInsetsDirectional.only(
-                    start: 16,
-                    bottom: 16,
-                  ),
-                ),
-                actions: [
-                  if (logsHistory.isFrozen)
-                    IconButton(
-                      icon: const AdaptiveIcon(
-                        icon: Icons.play_arrow,
-                        cupertinoIcon: CupertinoIcons.play_arrow,
-                      ),
-                      onPressed: logsHistory.unfreeze,
-                    )
-                  else
-                    IconButton(
-                      icon: const AdaptiveIcon(
-                        icon: Icons.pause,
-                        cupertinoIcon: CupertinoIcons.pause,
-                      ),
-                      onPressed: logsHistory.freeze,
-                    ),
-                  IconButton(
-                    icon: const AdaptiveIcon(
-                      icon: Icons.copy,
-                      cupertinoIcon: CupertinoIcons.doc_on_clipboard,
-                    ),
-                    onPressed: logsHistory.history.isEmpty
-                        ? null
-                        : () {
-                            final buffer = StringBuffer();
-                            for (final record in logsHistory.history) {
-                              buffer.write(record.level.name);
-                              buffer.write(' at ');
-                              buffer.writeln(record.time);
-                              buffer.writeln(record.message);
-                              if (record.error != null)
-                                buffer.writeln(record.error);
-                              if (record.stackTrace != null)
-                                buffer.writeln(record.stackTrace);
-                              buffer.writeln();
-                            }
-                            Clipboard.setData(
-                              ClipboardData(text: buffer.toString()),
-                            );
-                          },
-                  ),
-                ],
-              ),
-              if (logsHistory.history.isEmpty)
-                SliverFillRemaining(
-                  child: Padding(
-                    padding: const .all(16),
+      body: SafeArea(
+        bottom: false,
+        child: ListenableBuilder(
+          listenable: logsHistory,
+          builder: (context, _) {
+            final history = logsHistory.history;
+            return CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: .fromLTRB(gutter, 20, gutter, HiganSpace.l),
+                  sliver: SliverToBoxAdapter(
                     child: Column(
-                      mainAxisAlignment: .center,
+                      crossAxisAlignment: .start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/images/undraw_detailed_analysis_re_tk6j.svg',
-                          width: 300,
-                          height: 300 * 570 / 925.49161,
-                          excludeFromSemantics: true,
+                        Row(
+                          spacing: HiganSpace.s,
+                          children: [
+                            if (Navigator.canPop(context))
+                              HiganCircleButton(
+                                icon: Symbols.chevron_left,
+                                tooltip: t.higan.back,
+                                onPressed: () => Navigator.maybePop(context),
+                              ),
+                            const Spacer(),
+                            if (logsHistory.isFrozen)
+                              HiganCircleButton(
+                                icon: Symbols.play_arrow,
+                                onPressed: logsHistory.unfreeze,
+                              )
+                            else
+                              HiganCircleButton(
+                                icon: Symbols.pause,
+                                onPressed: logsHistory.freeze,
+                              ),
+                            HiganCircleButton(
+                              icon: Symbols.content_copy,
+                              tooltip: MaterialLocalizations.of(context)
+                                  .copyButtonLabel,
+                              onPressed: history.isEmpty ? null : _copy,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 64),
-                        Text(
-                          t.logs.noLogs,
-                          style: TextStyle(
-                            color: colorScheme.onSurface,
-                            fontSize: 24,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          t.logs.useTheApp,
-                          style: TextStyle(color: colorScheme.onSurface),
-                        ),
+                        const SizedBox(height: HiganSpace.xl),
+                        HiganTitle(t.logs.logs),
                       ],
                     ),
                   ),
-                )
-              else
-                SliverList.builder(
-                  itemCount: logsHistory.history.length,
-                  itemBuilder: (context, index) {
-                    if (index < 0 || index >= logsHistory.history.length) {
-                      return const SizedBox();
-                    }
-                    return _LogsItem(
-                      record: logsHistory
-                          .history[logsHistory.history.length - 1 - index],
-                    );
-                  },
                 ),
-            ],
-          );
-        },
+                if (history.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    // A still lily: this page is for debugging.
+                    child: HiganEmptyState(
+                      title: t.logs.noLogs,
+                      body: t.logs.useTheApp,
+                      animate: false,
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: .fromLTRB(gutter, 0, gutter, 60),
+                    sliver: SliverList.builder(
+                      itemCount: history.length,
+                      itemBuilder: (context, index) => _LogsItem(
+                        record: history[history.length - 1 - index],
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -169,68 +146,57 @@ class _LogsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const hPadding = 16.0;
-    const vPadding = 8.0;
-    return Column(
-      crossAxisAlignment: .start,
-      children: [
-        const SizedBox(height: vPadding),
-        Padding(
-          padding: const .symmetric(horizontal: hPadding),
-          child: _LogLevel(level: record.level),
-        ),
-        Padding(
-          padding: const .symmetric(horizontal: hPadding),
-          child: Text(record.message),
-        ),
-        if (record.stackTrace != null)
-          ColoredBox(
-            color: const Color(0xCC000000),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                record.stackTrace.toString(),
-                style: const TextStyle(
-                  fontFamily: 'FiraMono',
-                  fontFamilyFallback: saberMonoFontFallbacks,
-                  fontSize: 11,
-                  color: Colors.white,
+    final c = context.higan;
+    final severe = record.level >= Level.SEVERE;
+    final dot = severe
+        ? c.higan
+        : record.level >= Level.WARNING
+        ? c.stamenMark
+        : c.textTertiary;
+    TextStyle mono(double size, Color color) => HiganText.label(
+      context,
+      size: size,
+      color: color,
+      tracking: 0,
+    ).copyWith(height: 1.5);
+
+    return Container(
+      padding: const .symmetric(vertical: 14),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: c.hairline)),
+      ),
+      child: Column(
+        crossAxisAlignment: .stretch,
+        spacing: 6,
+        children: [
+          Row(
+            spacing: HiganSpace.s,
+            children: [
+              SizedBox.square(
+                dimension: 6,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: dot, shape: .circle),
                 ),
               ),
-            ),
+              Flexible(
+                child: HiganLabel(
+                  '${record.level.name} · ${record.loggerName}',
+                  size: 10.5,
+                  color: severe ? c.higanText : c.textSecondary,
+                ),
+              ),
+            ],
           ),
-        const SizedBox(height: vPadding),
-      ],
-    );
-  }
-}
-
-class _LogLevel extends StatelessWidget {
-  const new({required this.level});
-
-  final Level level;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: switch (level) {
-          Level.SHOUT || Level.SEVERE => colorScheme.error,
-          Level.WARNING => colorScheme.tertiary,
-          _ => colorScheme.surfaceContainer,
-        },
-        borderRadius: const .all(.circular(2)),
-      ),
-      child: Text(
-        level.name,
-        style: TextStyle(
-          color: switch (level) {
-            Level.SHOUT || Level.SEVERE => colorScheme.onError,
-            Level.WARNING => colorScheme.onTertiary,
-            _ => colorScheme.onSurface,
-          },
-        ),
+          SelectableText(record.message, style: mono(12.5, c.text)),
+          if (record.stackTrace != null)
+            SingleChildScrollView(
+              scrollDirection: .horizontal,
+              child: Text(
+                record.stackTrace.toString().trimRight(),
+                style: mono(11, c.textSecondary),
+              ),
+            ),
+        ],
       ),
     );
   }

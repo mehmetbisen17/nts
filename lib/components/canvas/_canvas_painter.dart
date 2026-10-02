@@ -2,18 +2,19 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:nts/components/canvas/_circle_stroke.dart';
+import 'package:nts/components/canvas/_rectangle_stroke.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/extensions/color_extensions.dart';
+import 'package:nts/data/tools/highlighter.dart';
+import 'package:nts/data/tools/insert_space.dart';
+import 'package:nts/data/tools/laser_pointer.dart';
+import 'package:nts/data/tools/select.dart';
+import 'package:nts/data/tools/shape_pen.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:saber/components/canvas/_circle_stroke.dart';
-import 'package:saber/components/canvas/_rectangle_stroke.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/extensions/color_extensions.dart';
-import 'package:saber/data/tools/highlighter.dart';
-import 'package:saber/data/tools/laser_pointer.dart';
-import 'package:saber/data/tools/select.dart';
-import 'package:saber/data/tools/shape_pen.dart';
 
 class CanvasPainter extends CustomPainter {
   const new({
@@ -30,6 +31,7 @@ class CanvasPainter extends CustomPainter {
     required this.totalPages,
     required this.currentScale,
     required this.defaultTextStyle,
+    this.linkColor,
   });
 
   final bool invert;
@@ -45,6 +47,10 @@ class CanvasPainter extends CustomPainter {
   final double currentScale;
   final TextStyle defaultTextStyle;
 
+  /// The color of the marks on [EditorPage.links], or null to hide them
+  /// (e.g. in exports, where they wouldn't work).
+  final Color? linkColor;
+
   @override
   void paint(Canvas canvas, Size size) {
     final canvasRect = Offset.zero & size;
@@ -54,6 +60,8 @@ class CanvasPainter extends CustomPainter {
     for (final stroke in laserStrokes) _drawLaserStroke(canvas, stroke);
     _drawCurrentStroke(canvas);
     _drawDetectedShape(canvas);
+    _drawLinks(canvas);
+    _drawInsertSpace(canvas, size);
     _drawSelection(canvas);
     _drawPageIndicator(canvas, size);
   }
@@ -135,10 +143,21 @@ class CanvasPainter extends CustomPainter {
 
       late final shapePaint = Paint()
         ..color = paint.color
+        ..shader = paint.shader
+        ..maskFilter = paint.maskFilter
         ..style = .stroke
         ..strokeWidth = stroke.options.size;
 
-      if (stroke is CircleStroke) {
+      if (stroke.toolId == .tape && page.revealedTapes.contains(stroke)) {
+        // A revealed tape is just its outline
+        canvas.drawPath(
+          _selectPath(stroke),
+          Paint()
+            ..color = color.withValues(alpha: 0.8)
+            ..style = .stroke
+            ..strokeWidth = 1.5 / currentScale,
+        );
+      } else if (stroke is CircleStroke) {
         canvas.drawCircle(stroke.center, stroke.radius, shapePaint);
       } else if (stroke is RectangleStroke) {
         final strokeSize = stroke.options.size;
@@ -228,6 +247,43 @@ class CanvasPainter extends CustomPainter {
     }
   }
 
+  void _drawLinks(Canvas canvas) {
+    final color = linkColor;
+    if (color == null) return;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5 / currentScale;
+    final mark = 10 / currentScale;
+    for (final link in page.links) {
+      final rect = link.rect;
+      canvas.drawLine(rect.bottomLeft, rect.bottomRight, paint);
+      canvas.drawPath(
+        Path()
+          ..moveTo(rect.right - mark, rect.top)
+          ..lineTo(rect.right, rect.top)
+          ..lineTo(rect.right, rect.top + mark)
+          ..close(),
+        paint,
+      );
+    }
+  }
+
+  /// The line [InsertSpace] is dragging, and the space it adds or removes.
+  void _drawInsertSpace(Canvas canvas, Size size) {
+    final preview = InsertSpace.currentInsertSpace.preview;
+    if (preview == null || preview.pageIndex != pageIndex) return;
+    final from = preview.y, to = preview.y + preview.dy;
+    canvas.drawRect(
+      Rect.fromLTRB(0, min(from, to), size.width, max(from, to)),
+      Paint()..color = primaryColor.withValues(alpha: 0.08),
+    );
+    final line = Paint()
+      ..color = primaryColor
+      ..strokeWidth = 1.5 / currentScale;
+    canvas.drawLine(Offset(0, from), Offset(size.width, from), line);
+    canvas.drawLine(Offset(0, to), Offset(size.width, to), line);
+  }
+
   void _drawSelection(Canvas canvas) {
     if (currentSelection == null) return;
 
@@ -248,6 +304,39 @@ class CanvasPainter extends CustomPainter {
         ..strokeWidth = 3
         ..style = .stroke,
     );
+
+    _drawSelectionHandles(canvas);
+  }
+
+  /// Hairline bounds with handles to resize (corners) and rotate (top).
+  void _drawSelectionHandles(Canvas canvas) {
+    final select = Select.currentSelect;
+    final handles = select.handles;
+    final bounds = select.selectionBounds;
+    if (handles.isEmpty || bounds == null) return;
+
+    final radius = select.handleRadius;
+    final line = Paint()
+      ..color = primaryColor.withValues(alpha: 0.6)
+      ..style = .stroke
+      ..strokeWidth = radius / 10;
+    canvas.drawRect(bounds, line);
+    if (handles[SelectionHandle.rotate] case final rotate?) {
+      final edge = rotate.dy < bounds.top
+          ? bounds.topCenter
+          : bounds.bottomCenter;
+      canvas.drawLine(edge, rotate, line);
+    }
+
+    final fill = Paint()..color = invert ? Colors.black : Colors.white;
+    final border = Paint()
+      ..color = primaryColor
+      ..style = .stroke
+      ..strokeWidth = radius / 7;
+    for (final center in handles.values) {
+      canvas.drawCircle(center, radius * 0.45, fill);
+      canvas.drawCircle(center, radius * 0.45, border);
+    }
   }
 
   static const double _pageIndicatorFontSize = 20;
@@ -298,4 +387,33 @@ class CanvasPainter extends CustomPainter {
     < _zoomThreshold => stroke.lowQualityPath,
     _ => stroke.highQualityPath,
   };
+}
+
+/// Fills the closed strokes that have a [Stroke.fillColor].
+///
+/// It's a layer of its own, under the page's text and images,
+/// so a filled shape never hides anything.
+class CanvasFillPainter extends CustomPainter {
+  const new({super.repaint, required this.strokes, required this.invert});
+
+  final List<Stroke> strokes;
+  final bool invert;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+    for (final stroke in strokes) {
+      final color = stroke.fillColor;
+      if (color == null) continue;
+      canvas.drawPath(
+        stroke.fillPath,
+        paint..color = color.withInversion(invert),
+      );
+    }
+  }
+
+  /// [strokes] is changed in place (e.g. by undo) without always
+  /// notifying [repaint], and this is cheap.
+  @override
+  bool shouldRepaint(CanvasFillPainter oldDelegate) => true;
 }

@@ -16,7 +16,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsHe({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.he,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -25,7 +25,8 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
 
 	/// Metadata for the translations of <he>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final TranslationsHe _root = this; // ignore: unused_field
 
@@ -64,14 +65,11 @@ class _Translations$home$he extends Translations$home$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$home$tabs$he tabs = _Translations$home$tabs$he._(_root);
 	@override late final _Translations$home$titles$he titles = _Translations$home$titles$he._(_root);
 	@override late final _Translations$home$tooltips$he tooltips = _Translations$home$tooltips$he._(_root);
 	@override late final _Translations$home$create$he create = _Translations$home$create$he._(_root);
-	@override String get welcome => 'ברוך בואך אל Saber';
+	@override String get welcome => 'ברוך בואך אל nts';
 	@override String get invalidFormat => 'הקובץ שבחרת אינו נתמך. נא לבחור בקובץ sbn,‏ sbn2,‏ sba, או pdf.';
-	@override String get noFiles => 'לא נמצאו קבצים';
-	@override String get noPreviewAvailable => 'אין תצוגה מקדימה זמינה';
 	@override String get createNewNote => 'יש להקיש על הכפתור „+” בשביל ליצור פתק חדש';
 	@override String get backFolder => 'חזרה לתיקייה הקודמת';
 	@override late final _Translations$home$newFolder$he newFolder = _Translations$home$newFolder$he._(_root);
@@ -82,7 +80,6 @@ class _Translations$home$he extends Translations$home$en {
 	@override late final _Translations$home$renameFolder$he renameFolder = _Translations$home$renameFolder$he._(_root);
 	@override late final _Translations$home$deleteFolder$he deleteFolder = _Translations$home$deleteFolder$he._(_root);
 	@override late final _Translations$home$sort$he sort = _Translations$home$sort$he._(_root);
-	@override late final _Translations$home$layout$he layout = _Translations$home$layout$he._(_root);
 }
 
 // Path: sentry
@@ -117,7 +114,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	];
 	@override late final _Translations$settings$reset$he reset = _Translations$settings$reset$he._(_root);
 	@override String get resyncEverything => 'סנכרון מחדש של הכול';
-	@override String get openDataDir => 'פתיחת תיקיית Saber';
+	@override String get openDataDir => 'פתיחת תיקיית nts';
 	@override late final _Translations$settings$customDataDir$he customDataDir = _Translations$settings$customDataDir$he._(_root);
 	@override String get autosaveDisabled => 'אף פעם';
 	@override String get shapeRecognitionDisabled => 'אף פעם';
@@ -190,7 +187,7 @@ class _Translations$appInfo$he extends Translations$appInfo$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override String licenseNotice({required Object buildYear}) => 'Saber  כל הזכויות שמורות © 2022-${buildYear}  עַאדִל האני\nתוכנית זו מגיעה ללא כל אחריות. זוהי תוכנה חופשית ואפשר להפיץ אותה מחדש בתנאים מסוימים.';
+	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  כל הזכויות שמורות © 2022-${buildYear}  עַאדִל האני\nתוכנית זו מגיעה ללא כל אחריות. זוהי תוכנה חופשית ואפשר להפיץ אותה מחדש בתנאים מסוימים.';
 	@override String get debug => 'דִּיבָּג';
 	@override String get sponsorButton => 'אפשר להקיש כאן כדי לתת לי חסות או לקנות שטח אחסון נוסף';
 	@override String get licenseButton => 'אפשר להקיש כאן כדי להציג פרטי רישיון נוספים';
@@ -231,19 +228,6 @@ class _Translations$editor$he extends Translations$editor$en {
 	@override String get pages => 'עמודים';
 	@override String get untitled => 'חסר כותרת';
 	@override String get needsToSaveBeforeExiting => 'השינויים נשמרים… אפשר לצאת בבטחה מהעורך בעת סיום השמירה';
-}
-
-// Path: home.tabs
-class _Translations$home$tabs$he extends Translations$home$tabs$en {
-	_Translations$home$tabs$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => 'בית';
-	@override String get browse => 'עיון';
-	@override String get whiteboard => 'לוח מחיק';
-	@override String get settings => 'הגדרות';
 }
 
 // Path: home.titles
@@ -387,18 +371,6 @@ class _Translations$home$sort$he extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => 'עריכה אחרונה (הזמן הרחוק ביותר תחילה)';
 }
 
-// Path: home.layout
-class _Translations$home$layout$he extends Translations$home$layout$en {
-	_Translations$home$layout$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => 'פריסה';
-	@override String get masonryGrid => 'רשת בנייה';
-	@override String get simpleGrid => 'רשת פשוטה';
-}
-
 // Path: sentry.consent
 class _Translations$sentry$consent$he extends Translations$sentry$consent$en {
 	_Translations$sentry$consent$he._(TranslationsHe root) : this._root = root, super.internal(root);
@@ -406,7 +378,7 @@ class _Translations$sentry$consent$he extends Translations$sentry$consent$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'האם לעזור בשיפור Saber?';
+	@override String get title => 'האם לעזור בשיפור nts?';
 	@override late final _Translations$sentry$consent$description$he description = _Translations$sentry$consent$description$he._(_root);
 	@override late final _Translations$sentry$consent$answers$he answers = _Translations$sentry$consent$answers$he._(_root);
 }
@@ -438,7 +410,7 @@ class _Translations$settings$prefLabels$he extends Translations$settings$prefLab
 	@override String get layoutSize => 'סוג פריסה';
 	@override String get customAccentColor => 'צבע הדגשה מותאם אישית';
 	@override String get hyperlegibleFont => 'גופן Atkinson Hyperreadible';
-	@override String get shouldCheckForUpdates => 'לבדוק אם יש עדכונים ל־Saber';
+	@override String get shouldCheckForUpdates => 'לבדוק אם יש עדכונים ל־nts';
 	@override String get shouldAlwaysAlertForUpdates => 'עדכונים מהירים יותר';
 	@override String get allowInsecureConnections => 'לאפשר חיבורים לא מאובטחים';
 	@override String get editorToolbarAlignment => 'מיקום סרגל הכלים';
@@ -457,7 +429,7 @@ class _Translations$settings$prefLabels$he extends Translations$settings$prefLab
 	@override String get autosave => 'שמירה אוטומטית';
 	@override String get shapeRecognitionDelay => 'השהיה לפני זיהוי צורות';
 	@override String get autoStraightenLines => 'יישור קווים אוטומטי';
-	@override String get customDataDir => 'תיקייה מותאמת אישית ל־Saber';
+	@override String get customDataDir => 'תיקייה מותאמת אישית ל־nts';
 	@override String get sentry => 'דיווח על שגיאות';
 }
 
@@ -469,7 +441,7 @@ class _Translations$settings$prefDescriptions$he extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'מגביר את הקריאות למשתמשים עם ראייה לקויה';
-	@override String get allowInsecureConnections => '(לא מומלץ) לאפשר ל־Saber להתחבר לשרתים עם חתימה עצמית או תעודות שאינן מהימנות';
+	@override String get allowInsecureConnections => '(לא מומלץ) לאפשר ל־nts להתחבר לשרתים עם חתימה עצמית או תעודות שאינן מהימנות';
 	@override String get preferGreyscale => 'עבור תצוגות דיו אלקטרוני';
 	@override String get autoClearWhiteboardOnExit => 'מנקה את לוח הציור לאחר היציאה מהאפליקציה';
 	@override String get disableEraserAfterUse => 'מעבר אוטומטי חזרה לעט לאחר שימוש במחק';
@@ -580,10 +552,10 @@ class _Translations$login$ncLoginStep$he extends Translations$login$ncLoginStep$
 
 	// Translations
 	@override String get whereToStoreData => 'נא לבחור היכן ברצונך לאחסן את הנתונים:';
-	@override String get saberNcServer => 'שרת ה־Nextcloud של Saber';
+	@override String get saberNcServer => 'שרת ה־Nextcloud של nts';
 	@override String get otherNcServer => 'שרת Nextcloud אחר';
 	@override String get serverUrl => 'כתובת שרת';
-	@override String get loginWithSaber => 'התחברות עם Saber';
+	@override String get loginWithSaber => 'התחברות עם nts';
 	@override String get loginWithNextcloud => 'התחברות עם Nextcloud';
 	@override late final _Translations$login$ncLoginStep$loginFlow$he loginFlow = _Translations$login$ncLoginStep$loginFlow$he._(_root);
 }
@@ -596,7 +568,7 @@ class _Translations$login$encLoginStep$he extends Translations$login$encLoginSte
 
 	// Translations
 	@override String get enterEncPassword => 'לצורך הגנה על הנתונים שלך, נא להקליד את סיסמת ההצפנה שלך:';
-	@override String get newToSaber => 'פעם ראשונה ב־Saber? אפשר פשוט להקליד סיסמת הצפנה חדשה.';
+	@override String get newToSaber => 'פעם ראשונה ב־nts? אפשר פשוט להקליד סיסמת הצפנה חדשה.';
 	@override String get encPassword => 'סיסמת הצפנה';
 	@override String get encFaqTitle => 'שאלות ותשובות';
 	@override String get wrongEncPassword => 'פענוח ההצפנה עם הסיסמה שסופקה נכשל. נא לנסות להקליד אותה שוב.';
@@ -638,7 +610,7 @@ class _Translations$profile$faq$1$he extends Translations$profile$faq$1$en {
 
 	// Translations
 	@override String get q => 'איך לשנות את הסיסמה שלי ל־Nextcloud?';
-	@override String get a => 'עבור לאתר השרת שלך והתחבר. לאחר מכן עבור אל הגדרות > אבטחה > שנה סיסמה. תצטרך להתנתק ולהיכנס שוב ל-Saber לאחר שינוי הסיסמה שלך.';
+	@override String get a => 'עבור לאתר השרת שלך והתחבר. לאחר מכן עבור אל הגדרות > אבטחה > שנה סיסמה. תצטרך להתנתק ולהיכנס שוב ל-nts לאחר שינוי הסיסמה שלך.';
 }
 
 // Path: profile.faq.2
@@ -649,7 +621,7 @@ class _Translations$profile$faq$2$he extends Translations$profile$faq$2$en {
 
 	// Translations
 	@override String get q => 'איך אני משנה את הסיסמא המוצפנת שלי?';
-	@override String get a => '0. לוודא שהסנכרון הושלם (ניתן לראות את התקדמות הסנכרון במסך הבית).\n1. להתנתק מ־Saber.\n2. לעבור לאתר האינטרנט של השרת ולמחוק את תיקיית ‚Saber’ שלך. פעולה זו תמחק את כל הפתקים שלך מהשרת.\n3. להתחבר שוב אל Saber. אפשר לבחור סיסמת הצפנה חדשה בעת הכניסה.\n4. לא לשכוח להתנתק ולהתחבר שוב אל Saber גם במכשירים האחרים שלך.';
+	@override String get a => '0. לוודא שהסנכרון הושלם (ניתן לראות את התקדמות הסנכרון במסך הבית).\n1. להתנתק מ־nts.\n2. לעבור לאתר האינטרנט של השרת ולמחוק את תיקיית ‚Saber’ שלך. פעולה זו תמחק את כל הפתקים שלך מהשרת.\n3. להתחבר שוב אל nts. אפשר לבחור סיסמת הצפנה חדשה בעת הכניסה.\n4. לא לשכוח להתנתק ולהתחבר שוב אל nts גם במכשירים האחרים שלך.';
 }
 
 // Path: profile.faq.3
@@ -660,7 +632,7 @@ class _Translations$profile$faq$3$he extends Translations$profile$faq$3$en {
 
 	// Translations
 	@override String get q => 'איך אני יכול למחוק את החשבון שלי?';
-	@override String get a => 'יש להקיש על הכפתור „${_root.profile.quickLinks.deleteAccount}” ולהתחבר במידת הצורך.\nאם משתמשים בשרת הרשמי של Saber, החשבון שיוצרים יימחק לאחר תקופת חסד של שבוע. אפשר ליצור איתי קשר בכתובת adilhanney@disroot.org במהלך תקופה זו כדי לבטל את המחיקה.\nאם משתמשים בשרת צד שלישי, ייתכן שאין אפשרות למחוק את החשבון: יש לעיין במדיניות הפרטיות של השרת למידע נוסף.';
+	@override String get a => 'יש להקיש על הכפתור „${_root.profile.quickLinks.deleteAccount}” ולהתחבר במידת הצורך.\nאם משתמשים בשרת הרשמי של nts, החשבון שיוצרים יימחק לאחר תקופת חסד של שבוע. אפשר ליצור איתי קשר בכתובת adilhanney@disroot.org במהלך תקופה זו כדי לבטל את המחיקה.\nאם משתמשים בשרת צד שלישי, ייתכן שאין אפשרות למחוק את החשבון: יש לעיין במדיניות הפרטיות של השרת למידע נוסף.';
 }
 
 // Path: editor.toolbar
@@ -813,7 +785,7 @@ class _Translations$editor$versionTooNew$he extends Translations$editor$versionT
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'הערה זו נערכה באמצעות גרסה חדשה יותר של Saber';
+	@override String get title => 'הערה זו נערכה באמצעות גרסה חדשה יותר של nts';
 	@override String get subtitle => 'עריכת פתק זה עלולה לגרום לאיבוד מידע מסוים. להתעלם ולערוך בכל זאת?';
 	@override String get allowEditing => 'אפשר עריכה';
 }
@@ -905,7 +877,7 @@ class _Translations$login$ncLoginStep$loginFlow$he extends Translations$login$nc
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override String get pleaseAuthorize => 'נא לתת ל־Saber הרשאה לגשת לחשבון Nextcloud שלך';
+	@override String get pleaseAuthorize => 'נא לתת ל־nts הרשאה לגשת לחשבון Nextcloud שלך';
 	@override String get followPrompts => 'נא לעקוב אחר ההוראות הבאות בממשק של Nextcloud';
 	@override String get browserDidntOpen => 'עמוד ההתחברות לא נפתח? נא ללחוץ כאן';
 }
@@ -929,7 +901,7 @@ class _Translations$login$encLoginStep$encFaq$1$he extends Translations$login$en
 
 	// Translations
 	@override String get q => 'עדיין לא הגדרתי סיסמת הצפנה? היכן מקבלים אחת?';
-	@override String get a => 'נא לבחור סיסמת הצפנה חדשה ולהקליד אותה למעלה.\n‏Saber ייצור את מפתחות ההצפנה שלך באופן אוטומטי מסיסמה זו.';
+	@override String get a => 'נא לבחור סיסמת הצפנה חדשה ולהקליד אותה למעלה.\n‏nts ייצור את מפתחות ההצפנה שלך באופן אוטומטי מסיסמה זו.';
 }
 
 // Path: login.encLoginStep.encFaq.2

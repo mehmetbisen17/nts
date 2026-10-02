@@ -16,7 +16,7 @@ class TranslationsZhHansCn extends Translations with BaseTranslations<AppLocale,
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsZhHansCn({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.zhHansCn,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -25,7 +25,8 @@ class TranslationsZhHansCn extends Translations with BaseTranslations<AppLocale,
 		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
 
 	/// Metadata for the translations of <zh-Hans-CN>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final TranslationsZhHansCn _root = this; // ignore: unused_field
 
@@ -64,14 +65,11 @@ class Translations$home$zh_Hans_CN extends Translations$home$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override late final Translations$home$tabs$zh_Hans_CN tabs = Translations$home$tabs$zh_Hans_CN.internal(_root);
 	@override late final Translations$home$titles$zh_Hans_CN titles = Translations$home$titles$zh_Hans_CN.internal(_root);
 	@override late final Translations$home$tooltips$zh_Hans_CN tooltips = Translations$home$tooltips$zh_Hans_CN.internal(_root);
 	@override late final Translations$home$create$zh_Hans_CN create = Translations$home$create$zh_Hans_CN.internal(_root);
-	@override String get welcome => '欢迎使用 Saber';
+	@override String get welcome => '欢迎使用 nts';
 	@override String get invalidFormat => '不支持该文件。请选择 .sbn、.sbn2、.sba 或 .pdf 文件。';
-	@override String get noFiles => '未找到文件';
-	@override String get noPreviewAvailable => '无可用预览';
 	@override String get createNewNote => '点击 + 按钮新建一个笔记';
 	@override String get backFolder => '回到上一个文件夹';
 	@override late final Translations$home$newFolder$zh_Hans_CN newFolder = Translations$home$newFolder$zh_Hans_CN.internal(_root);
@@ -82,7 +80,6 @@ class Translations$home$zh_Hans_CN extends Translations$home$en {
 	@override late final Translations$home$renameFolder$zh_Hans_CN renameFolder = Translations$home$renameFolder$zh_Hans_CN.internal(_root);
 	@override late final Translations$home$deleteFolder$zh_Hans_CN deleteFolder = Translations$home$deleteFolder$zh_Hans_CN.internal(_root);
 	@override late final Translations$home$sort$zh_Hans_CN sort = Translations$home$sort$zh_Hans_CN.internal(_root);
-	@override late final Translations$home$layout$zh_Hans_CN layout = Translations$home$layout$zh_Hans_CN.internal(_root);
 }
 
 // Path: sentry
@@ -117,7 +114,7 @@ class Translations$settings$zh_Hans_CN extends Translations$settings$en {
 	];
 	@override late final Translations$settings$reset$zh_Hans_CN reset = Translations$settings$reset$zh_Hans_CN.internal(_root);
 	@override String get resyncEverything => '重新同步所有';
-	@override String get openDataDir => '打开 Saber 文件夹';
+	@override String get openDataDir => '打开 nts 文件夹';
 	@override late final Translations$settings$customDataDir$zh_Hans_CN customDataDir = Translations$settings$customDataDir$zh_Hans_CN.internal(_root);
 	@override String get autosaveDisabled => '禁用';
 	@override String get shapeRecognitionDisabled => '禁用';
@@ -190,7 +187,7 @@ class Translations$appInfo$zh_Hans_CN extends Translations$appInfo$en {
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String licenseNotice({required Object buildYear}) => 'Saber  版权所有 © 2022-${buildYear}  Adil Hanney\n本程序不附带任何担保。这是自由软件，您可以在特定条件下重新分发它。';
+	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  版权所有 © 2022-${buildYear}  Adil Hanney\n本程序不附带任何担保。这是自由软件，您可以在特定条件下重新分发它。';
 	@override String get debug => 'DEBUG';
 	@override String get sponsorButton => '点击此处赞助我或购买更多存储空间';
 	@override String get licenseButton => '点击此处查看更多许可证信息';
@@ -231,19 +228,6 @@ class Translations$editor$zh_Hans_CN extends Translations$editor$en {
 	@override String get pages => '页面';
 	@override String get untitled => '未命名';
 	@override String get needsToSaveBeforeExiting => '正在保存您的更改… 完成后您可以安全地退出编辑器';
-}
-
-// Path: home.tabs
-class Translations$home$tabs$zh_Hans_CN extends Translations$home$tabs$en {
-	Translations$home$tabs$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => '首页';
-	@override String get browse => '全部笔记';
-	@override String get whiteboard => '白板';
-	@override String get settings => '设置';
 }
 
 // Path: home.titles
@@ -387,18 +371,6 @@ class Translations$home$sort$zh_Hans_CN extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => '编辑（按最旧的排序）';
 }
 
-// Path: home.layout
-class Translations$home$layout$zh_Hans_CN extends Translations$home$layout$en {
-	Translations$home$layout$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => '布局';
-	@override String get masonryGrid => '砌体网格';
-	@override String get simpleGrid => '简单网格';
-}
-
 // Path: sentry.consent
 class Translations$sentry$consent$zh_Hans_CN extends Translations$sentry$consent$en {
 	Translations$sentry$consent$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -406,7 +378,7 @@ class Translations$sentry$consent$zh_Hans_CN extends Translations$sentry$consent
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => '帮助改进 Saber？';
+	@override String get title => '帮助改进 nts？';
 	@override late final Translations$sentry$consent$description$zh_Hans_CN description = Translations$sentry$consent$description$zh_Hans_CN.internal(_root);
 	@override late final Translations$sentry$consent$answers$zh_Hans_CN answers = Translations$sentry$consent$answers$zh_Hans_CN.internal(_root);
 }
@@ -438,7 +410,7 @@ class Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings$
 	@override String get layoutSize => '布局大小';
 	@override String get customAccentColor => '自定义主题色';
 	@override String get hyperlegibleFont => '易读字体';
-	@override String get shouldCheckForUpdates => '自动检查 Saber 更新';
+	@override String get shouldCheckForUpdates => '自动检查 nts 更新';
 	@override String get shouldAlwaysAlertForUpdates => '更快的更新提醒';
 	@override String get allowInsecureConnections => '允许不安全的连接';
 	@override String get editorToolbarAlignment => '编辑工具栏对齐方式';
@@ -457,7 +429,7 @@ class Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings$
 	@override String get autosave => '自动保存';
 	@override String get shapeRecognitionDelay => '形状识别延迟';
 	@override String get autoStraightenLines => '自动拉直线';
-	@override String get customDataDir => '自定义 Saber 文件夹';
+	@override String get customDataDir => '自定义 nts 文件夹';
 	@override String get sentry => '错误报告';
 }
 
@@ -469,7 +441,7 @@ class Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$set
 
 	// Translations
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible 字体为低视力读者提高易读性';
-	@override String get allowInsecureConnections => '（不推荐）允许 Saber 连接到具有自签名/不受信任证书的服务器';
+	@override String get allowInsecureConnections => '（不推荐）允许 nts 连接到具有自签名/不受信任证书的服务器';
 	@override String get preferGreyscale => '用于电子墨水显示器';
 	@override String get autoClearWhiteboardOnExit => '这将会同步到您的其他设备';
 	@override String get disableEraserAfterUse => '使用橡皮擦后自动切换回笔';
@@ -580,10 +552,10 @@ class Translations$login$ncLoginStep$zh_Hans_CN extends Translations$login$ncLog
 
 	// Translations
 	@override String get whereToStoreData => '选择数据存储位置：';
-	@override String get saberNcServer => 'Saber 的 Nextcloud 服务器';
+	@override String get saberNcServer => 'nts 的 Nextcloud 服务器';
 	@override String get otherNcServer => '其他 Nextcloud 服务器';
 	@override String get serverUrl => '服务器 URL';
-	@override String get loginWithSaber => '使用 Saber 登录';
+	@override String get loginWithSaber => '使用 nts 登录';
 	@override String get loginWithNextcloud => '使用 Nextcloud 登录';
 	@override late final Translations$login$ncLoginStep$loginFlow$zh_Hans_CN loginFlow = Translations$login$ncLoginStep$loginFlow$zh_Hans_CN.internal(_root);
 }
@@ -596,7 +568,7 @@ class Translations$login$encLoginStep$zh_Hans_CN extends Translations$login$encL
 
 	// Translations
 	@override String get enterEncPassword => '为了保护您的数据，请输入您的加密密码：';
-	@override String get newToSaber => 'Saber 新手？只需输入新的加密密码即可。';
+	@override String get newToSaber => 'nts 新手？只需输入新的加密密码即可。';
 	@override String get encPassword => '加密密码';
 	@override String get encFaqTitle => '常见问题解答';
 	@override String get wrongEncPassword => '使用提供的密码解密失败。请再次尝试输入。';
@@ -638,7 +610,7 @@ class Translations$profile$faq$1$zh_Hans_CN extends Translations$profile$faq$1$e
 
 	// Translations
 	@override String get q => '如何更改我的 Nextcloud 密码？';
-	@override String get a => '转到您的服务器网站并登录。然后转到设置 > 安全 > 更改密码。更改密码后，您需要注销并重新登录 Saber。';
+	@override String get a => '转到您的服务器网站并登录。然后转到设置 > 安全 > 更改密码。更改密码后，您需要注销并重新登录 nts。';
 }
 
 // Path: profile.faq.2
@@ -649,7 +621,7 @@ class Translations$profile$faq$2$zh_Hans_CN extends Translations$profile$faq$2$e
 
 	// Translations
 	@override String get q => '如何更改我的加密密码？';
-	@override String get a => '0. 请确保在注销前完成同步，以免丢失任何数据（在主屏幕上查看同步进度）。\n1.退出 Saber 登录。\n2.转到您的服务器网站并删除您的“Saber”文件夹。这将从服务器中删除您的所有笔记。\n3.重新登录 Saber。您可以在登录时选择一个新的加密密码。\n4.不要忘记在您的其他设备上注销并重新登录 Saber。';
+	@override String get a => '0. 请确保在注销前完成同步，以免丢失任何数据（在主屏幕上查看同步进度）。\n1.退出 nts 登录。\n2.转到您的服务器网站并删除您的“Saber”文件夹。这将从服务器中删除您的所有笔记。\n3.重新登录 nts。您可以在登录时选择一个新的加密密码。\n4.不要忘记在您的其他设备上注销并重新登录 nts。';
 }
 
 // Path: profile.faq.3
@@ -660,7 +632,7 @@ class Translations$profile$faq$3$zh_Hans_CN extends Translations$profile$faq$3$e
 
 	// Translations
 	@override String get q => '如何删除我的帐户？';
-	@override String get a => '点击上面的 "${_root.profile.quickLinks.deleteAccount}" 按钮，并在需要时登录。\n如果您使用的是官方 Saber 服务器，您的帐户将在 1 周的宽限期后被删除。在此期间，您可以通过 adilhanney@disroot.org 与我联系以取消删除。\n如果您使用的是第三方服务器，则可能没有删除帐户的选项：您需要咨询服务器的隐私政策以获取更多信息。';
+	@override String get a => '点击上面的 "${_root.profile.quickLinks.deleteAccount}" 按钮，并在需要时登录。\n如果您使用的是官方 nts 服务器，您的帐户将在 1 周的宽限期后被删除。在此期间，您可以通过 adilhanney@disroot.org 与我联系以取消删除。\n如果您使用的是第三方服务器，则可能没有删除帐户的选项：您需要咨询服务器的隐私政策以获取更多信息。';
 }
 
 // Path: editor.toolbar
@@ -813,7 +785,7 @@ class Translations$editor$versionTooNew$zh_Hans_CN extends Translations$editor$v
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => '此笔记使用新版 Saber 编辑而成';
+	@override String get title => '此笔记使用新版 nts 编辑而成';
 	@override String get subtitle => '编辑此笔记可能会导致某些信息丢失。您想忽略并编辑吗？';
 	@override String get allowEditing => '允许编辑';
 }
@@ -905,7 +877,7 @@ class Translations$login$ncLoginStep$loginFlow$zh_Hans_CN extends Translations$l
 	final TranslationsZhHansCn _root; // ignore: unused_field
 
 	// Translations
-	@override String get pleaseAuthorize => '请授权 Saber 访问您的 Nextcloud 帐户';
+	@override String get pleaseAuthorize => '请授权 nts 访问您的 Nextcloud 帐户';
 	@override String get followPrompts => '请按照 Nextcloud 界面中的提示操作';
 	@override String get browserDidntOpen => '登录页面没有打开？点击这里';
 }
@@ -929,7 +901,7 @@ class Translations$login$encLoginStep$encFaq$1$zh_Hans_CN extends Translations$l
 
 	// Translations
 	@override String get q => '我还没有设置加密密码。我在哪里可以买到它？';
-	@override String get a => '选择新的加密密码并在上面输入。\nSaber 将从此密码自动生成您的加密密钥。';
+	@override String get a => '选择新的加密密码并在上面输入。\nnts 将从此密码自动生成您的加密密钥。';
 }
 
 // Path: login.encLoginStep.encFaq.2

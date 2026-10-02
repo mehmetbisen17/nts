@@ -4,16 +4,21 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:nts/components/canvas/_calligraphy_stroke.dart';
+import 'package:nts/components/home/home_layout_button.dart';
+import 'package:nts/components/home/sort_button.dart';
+import 'package:nts/components/navbar/responsive_navbar.dart';
+import 'package:nts/data/ai/auth/oauth_tokens.dart';
+import 'package:nts/data/codecs/base64_codec.dart';
+import 'package:nts/data/quota.dart';
+import 'package:nts/data/sentry/sentry_consent.dart';
+import 'package:nts/data/services/pen_presets.dart';
+import 'package:nts/data/tools/eraser.dart';
+import 'package:nts/data/tools/highlighter.dart';
+import 'package:nts/data/tools/pen.dart';
+import 'package:nts/data/tools/select.dart';
+import 'package:nts/data/tools/tool_catalog.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:saber/components/home/home_layout_button.dart';
-import 'package:saber/components/home/sort_button.dart';
-import 'package:saber/components/navbar/responsive_navbar.dart';
-import 'package:saber/data/codecs/base64_codec.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/quota.dart';
-import 'package:saber/data/sentry/sentry_consent.dart';
-import 'package:saber/data/tools/highlighter.dart';
-import 'package:saber/data/tools/pen.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 import 'package:sbn/tool_id.dart';
 import 'package:stow/stow.dart';
@@ -51,6 +56,14 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
+  /// Base64 security-scoped bookmark of the notes folder the user picked
+  /// (e.g. in iCloud Drive), or empty if none. See `ICloudStorage`.
+  final icloudBookmark = PlainStow(
+    'icloudBookmark',
+    '',
+    volatile: !_isOnMainIsolate,
+  );
+
   final allowInsecureConnections = SecureStow.bool(
     'allowInsecureConnections',
     false,
@@ -69,15 +82,63 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
-  /// Whether the user is logged in and has provided both passwords.
-  /// Please ensure that the relevant Prefs are loaded before using this.
-  bool get loggedIn =>
-      username.value.isNotEmpty &&
-      ncPassword.value.isNotEmpty &&
-      encPassword.value.isNotEmpty;
+  /// Nextcloud sync is disabled: notes are synced by iCloud Drive instead
+  /// (see `ICloudStorage`), so the (dead) Nextcloud syncer never runs,
+  /// even with credentials saved from an old login.
+  bool get loggedIn => false;
 
   final key = SecureStow('key', '', volatile: !_isOnMainIsolate);
   final iv = SecureStow('iv', '', volatile: !_isOnMainIsolate);
+
+  /// Sign-in tokens of the AI accounts as JSON (see `TokenStore`),
+  /// or empty if signed out. Claude has none: Claude Code keeps its own.
+  final aiChatgptTokens = KeychainStow(
+    'ai.chatgpt.tokens',
+    volatile: !_isOnMainIsolate,
+  );
+  final aiGoogleTokens = KeychainStow(
+    'ai.google.tokens',
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// The OAuth client ID and project ID of the user's own Google Cloud
+  /// project, entered in Settings. Public identifiers, not secrets.
+  final aiGoogleClientId = PlainStow(
+    'ai.google.clientId',
+    '',
+    volatile: !_isOnMainIsolate,
+  );
+  final aiGoogleProjectId = PlainStow(
+    'ai.google.projectId',
+    '',
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// Which account and model each AI action uses, by `AiAction.name`:
+  /// `auto` or `<provider>:<model>`. See `AiRouter`.
+  final aiRoutes = {
+    for (final action in const [
+      'explainExample',
+      'paragraph',
+      'graph',
+      'illustration',
+      'video',
+      'source',
+    ])
+      action: PlainStow(
+        'ai.route.$action',
+        'auto',
+        volatile: !_isOnMainIsolate,
+      ),
+  };
+
+  /// Whether the notes of the sandboxed Mac app were copied out of its
+  /// container, see `SandboxMigration`.
+  final macSandboxNotesCopied = PlainStow(
+    'macSandboxNotesCopied',
+    false,
+    volatile: !_isOnMainIsolate,
+  );
 
   final pfp = PlainStow<Uint8List?>(
     'pfp',
@@ -91,19 +152,24 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
+  /// Higan: dark ("Night") is the default, light is "Paper".
   final appTheme = PlainStow(
     'appTheme',
-    ThemeMode.system,
+    ThemeMode.dark,
     codec: const EnumCodec(ThemeMode.values),
     volatile: !_isOnMainIsolate,
   );
 
   /// The type of platform to theme. Default value is [defaultTargetPlatform].
+  ///
+  /// Not saved: Higan has no picker for it, and the layout and window
+  /// chrome follow it, so a value saved by an older version must not stick.
+  /// Tests set it to render other platforms.
   final platform = PlainStow(
     'platform',
     defaultTargetPlatform,
     codec: const EnumCodec(TargetPlatform.values),
-    volatile: !_isOnMainIsolate,
+    volatile: true,
   );
   final layoutSize = PlainStow(
     'layoutSize',
@@ -136,14 +202,60 @@ class Stows {
     true,
     volatile: !_isOnMainIsolate,
   );
+
+  /// The toolbar's buttons in order, as [ToolbarItem.id]s.
+  /// Unknown ids (e.g. from a newer version) are ignored, see [ToolCatalog].
+  final editorToolbarItems = PlainStow(
+    'editorToolbarItems',
+    ToolCatalog.basics,
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// Whether [ToolCatalog.seed] has run.
+  final editorToolbarSeeded = PlainStow(
+    'editorToolbarSeeded',
+    false,
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// Where the user moved the editor's floating bars, as
+  /// `'<bar>.<compact|wide>': [x, y]` fractions of the free space.
+  /// No entry means the bar is in its default place. See `FloatingBar`.
+  final editorBarPositions = PlainStow.json(
+    'editorBarPositions',
+    const <String, List<double>>{},
+    fromJson: (json) => {
+      for (final MapEntry(:key, :value) in (json as Map).entries)
+        key as String: [for (final x in value as List) (x as num).toDouble()],
+    },
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// Ids of the editor's floating bars that are minimized.
+  final editorMinimizedBars = PlainStow(
+    'editorMinimizedBars',
+    <String>[],
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// The pen favorites in the toolbar, see [PenPreset].
+  final penPresets = PlainStow.json(
+    'penPresets',
+    const <PenPreset>[],
+    fromJson: PenPreset.listFromJson,
+    volatile: !_isOnMainIsolate,
+  );
+
   final editorFingerDrawing = PlainStow(
     'editorFingerDrawing',
     true,
     volatile: !_isOnMainIsolate,
   );
+
+  /// "Pages: Black" in settings. Pages are paper-colored by default.
   final editorAutoInvert = PlainStow(
     'editorAutoInvert',
-    true,
+    false,
     volatile: !_isOnMainIsolate,
   );
   final preferGreyscale = PlainStow(
@@ -193,6 +305,19 @@ class Stows {
   final disableEraserAfterUse = PlainStow(
     'disableEraserAfterUse',
     false,
+    volatile: !_isOnMainIsolate,
+  );
+  final eraserMode = PlainStow(
+    'eraserMode',
+    EraserMode.stroke,
+    codec: const EnumCodec(EraserMode.values),
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// The eraser's radius in page units.
+  final eraserSize = PlainStow<double>(
+    'eraserSize',
+    10,
     volatile: !_isOnMainIsolate,
   );
   final hideFingerDrawingToggle = PlainStow(
@@ -298,6 +423,53 @@ class Stows {
         Colors.black.toARGB32(),
         volatile: !_isOnMainIsolate,
       );
+
+  // Canvas tools (see lib/data/tools)
+  final lastTapeOptions = PlainStow.json(
+        'lastTapeProperties',
+        Pen.tapeOptions,
+        fromJson: _strokeOptionsFromJson,
+        volatile: !_isOnMainIsolate,
+      ),
+      lastBrushPenOptions = PlainStow.json(
+        'lastBrushPenProperties',
+        Pen.brushPenOptions,
+        fromJson: _strokeOptionsFromJson,
+        volatile: !_isOnMainIsolate,
+      ),
+      lastCalligraphyPenOptions = PlainStow.json(
+        'lastCalligraphyPenProperties',
+        Pen.calligraphyPenOptions,
+        fromJson: _strokeOptionsFromJson,
+        volatile: !_isOnMainIsolate,
+      );
+
+  /// The calligraphy pen's nib angle, in degrees.
+  final calligraphyNibAngle = PlainStow<double>(
+    'calligraphyNibAngle',
+    CalligraphyStroke.defaultNibAngle,
+    volatile: !_isOnMainIsolate,
+  );
+  final lassoMode = PlainStow(
+    'lassoMode',
+    LassoMode.freehand,
+    codec: const EnumCodec(LassoMode.values),
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// Scribbling over ink with a pen erases it.
+  final scribbleToErase = PlainStow(
+    'scribbleToErase',
+    false,
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// Holding a pen still at the end of a stroke snaps it into a shape.
+  final holdToSnapShape = PlainStow(
+    'holdToSnapShape',
+    true,
+    volatile: !_isOnMainIsolate,
+  );
   final lastBackgroundPattern = PlainStow(
     'lastBackgroundPattern',
     CanvasBackgroundPattern.none,
@@ -344,6 +516,23 @@ class Stows {
     codec: SortMetric.codec,
     volatile: !_isOnMainIsolate,
   );
+
+  /// Folder path -> [FolderViewMode.name]. Use [FolderViewMode.of] and
+  /// [FolderViewMode.set] instead of reading this directly.
+  final folderViewModes = PlainStow.json(
+    'folderViewModes',
+    const <String, String>{},
+    fromJson: (json) => (json as Map).cast<String, String>(),
+    volatile: !_isOnMainIsolate,
+  );
+
+  /// How big note cards and folder tiles are in galleries, as a multiple
+  /// of their default width (see `galleryColumns`).
+  final galleryScale = PlainStow<double>(
+    'galleryScale',
+    1,
+    volatile: !_isOnMainIsolate,
+  );
   final recentFiles = PlainStow(
     'recentFiles',
     <String>[],
@@ -385,7 +574,7 @@ class Stows {
 
   final shouldCheckForUpdates = PlainStow(
     'shouldCheckForUpdates',
-    FlavorConfig.shouldCheckForUpdatesByDefault && !Platform.isLinux,
+    false, // nts has no update feed; upstream Saber's releases don't apply
     volatile: !_isOnMainIsolate,
   );
   final shouldAlwaysAlertForUpdates = PlainStow(
@@ -440,5 +629,36 @@ class TransformedStow<T_in, T_out> extends Stow<dynamic, T_out, dynamic> {
   void dispose() {
     parent.removeListener(notifyListeners);
     super.dispose();
+  }
+}
+
+/// Whether a folder (or the Recent page) shows notes as a gallery or a list.
+/// Each folder remembers its own choice in [Stows.folderViewModes].
+enum FolderViewMode {
+  gallery,
+  list;
+
+  /// Key for the Recent page, which isn't a folder.
+  static const recentKey = '@recent';
+
+  /// The saved mode for [path], or [gallery] if none was saved.
+  /// To rebuild on changes, listen to [Stows.folderViewModes].
+  factory of(String path) =>
+      values.asNameMap()[stows.folderViewModes.value[_key(path)]] ?? gallery;
+
+  static void set(String path, FolderViewMode mode) {
+    final modes = {...stows.folderViewModes.value};
+    if (mode == gallery) {
+      modes.remove(_key(path));
+    } else {
+      modes[_key(path)] = mode.name;
+    }
+    stows.folderViewModes.value = modes;
+  }
+
+  /// Treats '' and '/' (and trailing slashes) as the same folder.
+  static String _key(String path) {
+    final trimmed = path.replaceFirst(RegExp(r'/+$'), '');
+    return trimmed.isEmpty ? '/' : trimmed;
   }
 }

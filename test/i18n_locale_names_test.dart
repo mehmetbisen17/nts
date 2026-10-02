@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:saber/data/locales.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/data/locales.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 void main() {
   test('Test that all supported languages have a localised name', () {

@@ -2,9 +2,10 @@ import 'dart:math';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/data/extensions/matrix4_extensions.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:saber/components/canvas/_stroke.dart';
 import 'package:sbn/has_size.dart';
 
 class CircleStroke extends Stroke {
@@ -56,18 +57,20 @@ class CircleStroke extends Stroke {
       toolId: .parsePenType(json['ty'], fallback: .shapePen),
       center: Offset(json['cx'] ?? 0, json['cy'] ?? 0),
       radius: json['r'] ?? 0,
-    );
+    )..fillColor = Stroke.colorFromJson(json['fc']);
   }
   @override
   Map<String, dynamic> toJson() {
     return {
       'shape': 'circle',
       'i': pageIndex,
+      'ty': toolId.id,
       'cx': center.dx,
       'cy': center.dy,
       'r': radius,
       'pe': pressureEnabled,
       'c': color.toARGB32(),
+      if (fillColor != null) 'fc': fillColor!.toARGB32(),
     }..addAll(options.toJson());
   }
 
@@ -85,6 +88,33 @@ class CircleStroke extends Stroke {
         .map((radians) => Offset(cos(radians), sin(radians)))
         .map((unitDir) => unitDir * radius + center)
         .toList();
+  }
+
+  @override
+  Rect get bounds => Rect.fromCircle(center: center, radius: radius);
+
+  @override
+  bool get isClosed => true;
+
+  @override
+  Path get fillPath => Path()..addOval(bounds);
+
+  /// The circle as a closed polyline, so it can be partially erased.
+  @override
+  List<PointVector> get erasablePoints {
+    // About one point per 2 units of circumference
+    final n = (pi * radius).ceil().clamp(24, 360);
+    final first = PointVector(center.dx + radius, center.dy, 0.5);
+    return [
+      first,
+      for (int i = 1; i < n; ++i)
+        PointVector(
+          center.dx + radius * cos(2 * pi * i / n),
+          center.dy + radius * sin(2 * pi * i / n),
+          0.5,
+        ),
+      first,
+    ];
   }
 
   /// Returns a [Path] that forms a circle with [center] and [radius].
@@ -141,6 +171,16 @@ class CircleStroke extends Stroke {
   bool isStraightLine([int minLength = 0]) => false;
 
   @override
+  CircleStroke transformed(Matrix4 transform) {
+    final scale = transform.uniformScale;
+    return copy()
+      ..center = MatrixUtils.transformPoint(transform, center)
+      ..radius = radius * scale
+      ..options.size *= scale
+      ..markPolygonNeedsUpdating();
+  }
+
+  @override
   CircleStroke copy() => CircleStroke(
     color: color,
     pressureEnabled: pressureEnabled,
@@ -150,5 +190,5 @@ class CircleStroke extends Stroke {
     toolId: toolId,
     center: center,
     radius: radius,
-  );
+  )..fillColor = fillColor;
 }

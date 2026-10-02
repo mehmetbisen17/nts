@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saber/components/theming/dynamic_material_app.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/theming/dynamic_material_app.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 void main() {
   group('Theme', () {
@@ -58,28 +59,19 @@ void _testTheme({
     for (final theme in [app.theme, ?app.darkTheme]) {
       expect(theme.platform, platform);
 
-      if (hasAccent) {
-        final actualAccent = HSVColor.fromColor(theme.colorScheme.primary);
-        expect(
-          actualAccent.hue,
-          inInclusiveRange(90, 150),
-          reason: 'Accent should be green',
-        );
-      }
+      // Higan ignores accent colors: the one red is always primary.
+      expect(theme.colorScheme.primary, HiganColors.night.higan);
+      expect(theme.extension<HiganColors>(), isNotNull);
 
       final expectedFontFamily = hyperlegible
           ? 'AtkinsonHyperlegibleNext'
-          : switch (platform) {
-              .iOS => RegExp('CupertinoSystem(Display|Text)'),
-              .linux => 'Adwaita Sans',
-              .macOS => '.AppleSystemUIFont',
-              .windows => 'Segoe UI',
-              _ => 'Roboto',
-            };
+          : 'Geist';
       for (final font in _extractFonts(theme.textTheme)) {
-        expect(font, matches(expectedFontFamily));
+        expect(font, expectedFontFamily);
       }
     }
+    expect(app.theme.brightness, Brightness.light);
+    expect(app.darkTheme?.brightness, Brightness.dark);
   });
 }
 

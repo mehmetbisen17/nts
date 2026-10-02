@@ -1,15 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/canvas/canvas_background_preview.dart';
-import 'package:saber/components/canvas/canvas_image_dialog.dart';
-import 'package:saber/components/canvas/inner_canvas.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/extensions/list_extensions.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/extensions/box_fit_localized.dart';
-import 'package:saber/i18n/extensions/canvas_background_pattern_localized.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/canvas/canvas_background_preview.dart';
+import 'package:nts/components/canvas/canvas_image_dialog.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/extensions/list_extensions.dart';
+import 'package:nts/i18n/extensions/box_fit_localized.dart';
+import 'package:nts/i18n/extensions/canvas_background_pattern_localized.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 
 class EditorBottomSheet extends StatefulWidget {
@@ -29,8 +30,6 @@ class EditorBottomSheet extends StatefulWidget {
     required this.pickPhotos,
     required this.importPdf,
     required this.canRasterPdf,
-    required this.getIsWatchingServer,
-    required this.setIsWatchingServer,
   });
 
   final bool invert;
@@ -47,8 +46,6 @@ class EditorBottomSheet extends StatefulWidget {
   final Future<int> Function() pickPhotos;
   final Future<bool> Function() importPdf;
   final bool canRasterPdf;
-  final bool Function() getIsWatchingServer;
-  final void Function(bool) setIsWatchingServer;
 
   @override
   State<EditorBottomSheet> createState() => _EditorBottomSheetState();
@@ -91,7 +88,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                       : null,
                   child: Wrap(
                     children: [
-                      const Icon(Icons.cleaning_services),
+                      const Icon(
+                        Symbols.cleaning_services,
+                        size: 18,
+                        weight: 300,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         t.editor.menu.clearPage(
@@ -113,7 +114,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                       : null,
                   child: Wrap(
                     children: [
-                      const Icon(Icons.cleaning_services),
+                      const Icon(
+                        Symbols.cleaning_services,
+                        size: 18,
+                        weight: 300,
+                      ),
                       const SizedBox(width: 8),
                       Text(t.editor.menu.clearAllPages),
                     ],
@@ -123,10 +128,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
             ),
             const SizedBox(height: 16),
             if (backgroundImage != null) ...[
-              Text(
-                t.editor.menu.backgroundImageFit,
-                style: TextTheme.of(context).titleMedium,
-              ),
+              _SectionLabel(t.editor.menu.backgroundImageFit),
               SizedBox(
                 height: previewSize.height,
                 child: ListView.separated(
@@ -146,9 +148,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                           CanvasBackgroundPreview(
                             selected: backgroundImage.backgroundFit == boxFit,
                             invert: widget.invert,
-                            backgroundColor:
-                                widget.coreInfo.backgroundColor ??
-                                InnerCanvas.defaultBackgroundColor,
+                            backgroundColor: widget.coreInfo.backgroundColor,
                             backgroundPattern:
                                 widget.coreInfo.backgroundPattern,
                             backgroundImage: backgroundImage,
@@ -186,10 +186,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ),
               const SizedBox(height: 16),
             ],
-            Text(
-              t.editor.menu.backgroundPattern,
-              style: TextTheme.of(context).titleMedium,
-            ),
+            _SectionLabel(t.editor.menu.backgroundPattern),
             SizedBox(
               height: previewSize.height,
               child: ListView.separated(
@@ -211,9 +208,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                               widget.coreInfo.backgroundPattern ==
                               backgroundPattern,
                           invert: widget.invert,
-                          backgroundColor:
-                              widget.coreInfo.backgroundColor ??
-                              InnerCanvas.defaultBackgroundColor,
+                          backgroundColor: widget.coreInfo.backgroundColor,
                           backgroundPattern: backgroundPattern,
                           backgroundImage: null, // focus on background pattern
                           pageSize: pageSize,
@@ -237,17 +232,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              t.editor.menu.lineHeight,
-              style: TextTheme.of(context).titleMedium,
-            ),
-            Text(
-              t.editor.menu.lineHeightDescription,
-              style: TextTheme.of(context).bodyMedium,
-            ),
+            _SectionLabel(t.editor.menu.lineHeight),
+            _Description(t.editor.menu.lineHeightDescription),
             Row(
               children: [
-                Text(widget.coreInfo.lineHeight.toString()),
+                _Value(widget.coreInfo.lineHeight),
                 Expanded(
                   child: Slider(
                     value: widget.coreInfo.lineHeight.toDouble(),
@@ -261,17 +250,11 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
                 ),
               ],
             ),
-            Text(
-              t.editor.menu.lineThickness,
-              style: TextTheme.of(context).titleMedium,
-            ),
-            Text(
-              t.editor.menu.lineThicknessDescription,
-              style: TextTheme.of(context).bodyMedium,
-            ),
+            _SectionLabel(t.editor.menu.lineThickness),
+            _Description(t.editor.menu.lineThicknessDescription),
             Row(
               children: [
-                Text(widget.coreInfo.lineThickness.toString()),
+                _Value(widget.coreInfo.lineThickness),
                 Expanded(
                   child: Slider(
                     value: widget.coreInfo.lineThickness.toDouble(),
@@ -286,10 +269,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              t.editor.menu.import,
-              style: TextTheme.of(context).titleMedium,
-            ),
+            _SectionLabel(t.editor.menu.import),
             Wrap(
               spacing: 8,
               children: [
@@ -317,24 +297,6 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
               ],
             ),
             const SizedBox(height: 16),
-            if (stows.loggedIn) ...[
-              StatefulBuilder(
-                builder: (context, setState) {
-                  final isWatchingServer = widget.getIsWatchingServer();
-                  return CheckboxListTile.adaptive(
-                    value: isWatchingServer,
-                    title: Text(t.editor.menu.watchServer),
-                    subtitle: isWatchingServer
-                        ? Text(t.editor.menu.watchServerReadOnly)
-                        : null,
-                    onChanged: (value) => setState(() {
-                      widget.setIsWatchingServer(value!);
-                    }),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
           ],
         ),
       ),
@@ -349,21 +311,67 @@ class _PermanentTooltip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
+    final c = context.higan;
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: const .all(.circular(8)),
-        color: colorScheme.surface.withValues(alpha: 0.8),
+        borderRadius: const .all(.circular(HiganRadius.pill)),
+        color: c.surface2.withValues(alpha: 0.9),
+        border: Border.all(color: c.hairline),
       ),
       child: Padding(
-        padding: const .symmetric(horizontal: 8),
-        child: Text(
+        padding: const .symmetric(horizontal: 8, vertical: 3),
+        child: HiganLabel(
           text,
+          size: 9.5,
+          color: c.text,
+          maxLines: 2,
           textAlign: .center,
-          textWidthBasis: TextWidthBasis.longestLine,
-          style: TextStyle(color: colorScheme.onSurface),
         ),
       ),
     );
   }
+}
+
+/// A mono section label, e.g. BACKGROUND PATTERN.
+class _SectionLabel extends StatelessWidget {
+  const new(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const .only(top: 8, bottom: 10),
+    child: HiganLabel(text, maxLines: null),
+  );
+}
+
+class _Description extends StatelessWidget {
+  const new(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: HiganText.body(
+      context,
+      size: 13,
+      color: context.higan.textSecondary,
+    ),
+  );
+}
+
+class _Value extends StatelessWidget {
+  const new(this.value);
+
+  final int value;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 28,
+    child: Text(
+      '$value',
+      style: HiganText.label(context, color: context.higan.text),
+    ),
+  );
 }

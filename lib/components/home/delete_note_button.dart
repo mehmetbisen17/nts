@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
 
 class DeleteNoteButton extends StatelessWidget {
   const new({
@@ -20,19 +22,25 @@ class DeleteNoteButton extends StatelessWidget {
     return IconButton(
       padding: EdgeInsets.zero,
       tooltip: t.home.deleteNote,
-      onPressed: () async {
-        await showDialog(
-          context: context,
-          builder: (context) => _DeleteNoteDialog(
-            filesToDelete: filesToDelete,
-            unselectNotes: unselectNotes,
-          ),
-        );
-      },
-      icon: const Icon(Icons.delete_forever),
+      onPressed: () =>
+          showDeleteNoteDialog(context, filesToDelete, unselectNotes),
+      icon: const Icon(Symbols.delete, weight: 300),
     );
   }
 }
+
+/// Asks to confirm, then deletes [filesToDelete].
+Future<void> showDeleteNoteDialog(
+  BuildContext context,
+  List<String> filesToDelete,
+  VoidCallback unselectNotes,
+) => showDialog(
+  context: context,
+  builder: (context) => _DeleteNoteDialog(
+    filesToDelete: filesToDelete,
+    unselectNotes: unselectNotes,
+  ),
+);
 
 class _DeleteNoteDialog extends StatefulWidget {
   const new({required this.filesToDelete, required this.unselectNotes});
@@ -77,6 +85,7 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog> {
       actions: [
         CupertinoDialogAction(
           onPressed: () => Navigator.of(context).pop(),
+          textStyle: TextStyle(color: context.higan.text),
           child: Text(t.common.cancel),
         ),
         CupertinoDialogAction(
@@ -102,6 +111,7 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog> {
                 }
               : null,
           isDestructiveAction: true,
+          textStyle: TextStyle(color: context.higan.higanText),
           child: Text(t.home.deleteNoteDialog.delete),
         ),
       ],

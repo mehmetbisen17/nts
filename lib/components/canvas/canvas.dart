@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/tools/_tool.dart';
+import 'package:nts/data/tools/pen.dart';
+import 'package:nts/data/tools/select.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:onyxsdk_pen/onyxsdk_pen.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/components/canvas/inner_canvas.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/tools/_tool.dart';
-import 'package:saber/data/tools/pen.dart';
-import 'package:saber/data/tools/select.dart';
 import 'package:sbn/tool_id.dart';
 
 class Canvas extends StatelessWidget {
@@ -26,6 +27,7 @@ class Canvas extends StatelessWidget {
     required this.currentTool,
     required this.currentScale,
     this.placeholder = false,
+    this.showPageIndicator = true,
   });
 
   final String path;
@@ -43,6 +45,9 @@ class Canvas extends StatelessWidget {
   final Tool currentTool;
   final double currentScale;
   final bool placeholder;
+
+  /// The "1 / 2" at the bottom of the page.
+  final bool showPageIndicator;
 
   OnyxStrokeStyle _getOnyxTool(Tool currentTool) {
     if (placeholder) return OnyxStrokeStyle.pen;
@@ -89,22 +94,45 @@ class Canvas extends StatelessWidget {
     }
   }
 
+  /// The page floats over the editor's backdrop: a deep shadow in Night,
+  /// a hairline and a faint shadow in Paper. Black pages get a hairline
+  /// too, so they don't vanish into the Night backdrop.
+  static List<BoxShadow> _pageShadow(BuildContext context) {
+    final c = Theme.of(context).extension<HiganColors>();
+    if (c == null) {
+      return [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.1),
+          blurRadius: 10,
+          spreadRadius: 2,
+        ),
+      ];
+    }
+    final invert = InnerCanvas.invertOf(context);
+    return [
+      if (invert || !c.isNight)
+        BoxShadow(color: c.hairlineStrong, spreadRadius: 1),
+      if (c.isNight)
+        const BoxShadow(
+          color: Color(0x8C000000), // 0.55
+          offset: Offset(0, 40),
+          blurRadius: 80,
+        )
+      else
+        const BoxShadow(
+          color: Color(0x14141210), // 0.08
+          offset: Offset(0, 18),
+          blurRadius: 40,
+        ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: FittedBox(
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(
-                  alpha: 0.1,
-                ), // dark regardless of theme
-                blurRadius: 10,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
+          decoration: BoxDecoration(boxShadow: _pageShadow(context)),
           child: !placeholder
               ? SizedBox(
                   width: page.size.width,
@@ -128,6 +156,7 @@ class Canvas extends StatelessWidget {
                       setAsBackground: setAsBackground,
                       currentToolIsSelect: currentTool.toolId == ToolId.select,
                       currentScale: currentScale,
+                      showPageIndicator: showPageIndicator,
                     ),
                   ),
                 )

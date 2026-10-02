@@ -1,49 +1,32 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/settings/settings_dropdown.dart';
-import 'package:saber/components/theming/adaptive_toggle_buttons.dart';
-import 'package:saber/components/theming/uni_icon.dart';
-import 'package:saber/pages/home/settings.dart';
+import 'package:nts/components/settings/settings_row.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/pages/home/settings.dart';
 import 'package:stow/stow.dart';
 
-class SettingsSelection<T extends num> extends StatefulWidget {
+/// A settings row with a pill segmented control, e.g. NIGHT | PAPER | SYSTEM.
+class SettingsSelection<T> extends StatefulWidget {
   const new({
     super.key,
     required this.title,
     this.subtitle,
-    this.icon,
-    this.iconBuilder,
     required this.pref,
     required this.options,
     this.afterChange,
-    this.optionsWidth = 72,
-    this.optionsHeight = 40,
-  }) : assert(
-         icon == null || iconBuilder == null,
-         'Cannot set both icon and iconBuilder',
-       );
+  });
 
   final String title;
   final String? subtitle;
-  final Object? icon;
-  final Object? Function(T)? iconBuilder;
 
   final Stow<dynamic, T, dynamic> pref;
-  final List<ToggleButtonsOption<T>> options;
+  final List<HiganSegment<T>> options;
   final ValueChanged<T>? afterChange;
 
-  final double optionsWidth, optionsHeight;
-
   @override
-  State<SettingsSelection> createState() => _SettingsSelectionState<T>();
+  State<SettingsSelection<T>> createState() => _SettingsSelectionState<T>();
 }
 
-class _SettingsSelectionState<T extends num>
-    extends State<SettingsSelection<T>> {
-  late final dropdownFocusNode = FocusNode(
-    debugLabel: 'dropdownFocusNode(${widget.pref.key})',
-  );
-
+class _SettingsSelectionState<T> extends State<SettingsSelection<T>> {
   @override
   void initState() {
     widget.pref.addListener(onChanged);
@@ -57,41 +40,15 @@ class _SettingsSelectionState<T extends num>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.options.any(
-      (ToggleButtonsOption option) => widget.pref.value == option.value,
-    )) {
-      if (kDebugMode)
-        throw Exception(
-          'SettingsSelection (${widget.pref.key}): Value ${widget.pref.value} is not in the list of values, set it to ${widget.options.first.value}?',
-        );
-      widget.pref.value = widget.options.first.value;
-    }
-
-    final expSelectionWidth = widget.options.length * widget.optionsWidth;
-    final useDropdownInstead =
-        MediaQuery.sizeOf(context).width * 0.48 < expSelectionWidth;
-    if (useDropdownInstead) {
-      // Use dropdown if there isn't enough horizontal space
-      return SettingsDropdown<T>(
-        pref: widget.pref,
-        options: widget.options,
-        title: widget.title,
-        subtitle: widget.subtitle,
-        icon: widget.icon,
-        iconBuilder: widget.iconBuilder,
-        afterChange: widget.afterChange,
-      );
-    }
-
-    var icon = widget.icon;
-    icon ??= widget.iconBuilder?.call(widget.pref.value);
-    icon ??= Icons.settings;
-
-    return ListTile(
+    return SettingsRow(
+      title: widget.title,
+      subtitle: widget.subtitle,
+      wide: true,
+      modified: widget.pref.value != widget.pref.defaultValue,
       onTap: () {
         // cycle through options
-        final int i = widget.options.indexWhere(
-          (ToggleButtonsOption option) => option.value == widget.pref.value,
+        final i = widget.options.indexWhere(
+          (option) => option.value == widget.pref.value,
         );
         widget.pref.value =
             widget.options[(i + 1) % widget.options.length].value;
@@ -103,35 +60,10 @@ class _SettingsSelectionState<T extends num>
           prefTitle: widget.title,
         );
       },
-      contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-      leading: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 100),
-        child: UniIcon(icon, key: ValueKey(icon)),
-      ),
-      title: Text(
-        widget.title,
-        style: TextStyle(
-          fontSize: 18,
-          fontStyle: widget.pref.value != widget.pref.defaultValue
-              ? FontStyle.italic
-              : null,
-        ),
-      ),
-      subtitle: Text(
-        widget.subtitle ?? '',
-        style: const TextStyle(fontSize: 13),
-      ),
-      trailing: AdaptiveToggleButtons(
+      trailing: HiganSegmented<T>(
+        segments: widget.options,
         value: widget.pref.value,
-        options: widget.options,
-        onChange: (T? value) {
-          // setState is automatically called when the pref changes
-          if (value != null) {
-            widget.pref.value = value;
-          }
-        },
-        optionsWidth: widget.optionsWidth,
-        optionsHeight: widget.optionsHeight,
+        onChanged: (value) => widget.pref.value = value,
       ),
     );
   }

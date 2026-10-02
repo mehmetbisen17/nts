@@ -14,7 +14,13 @@ enum ToolId(final String id) {
   eraser('Eraser'),
   select('Select'),
   textEditing('TextEditingTool'),
-  laserPointer('LaserPointer');
+  laserPointer('LaserPointer'),
+  // [stows.lastTool] stores the index, so only ever append.
+  tape('tape'),
+  brushPen('brushPen'),
+  calligraphyPen('calligraphyPen'),
+  fill('fill'),
+  insertSpace('insertSpace');
 
   static const codec = EnumCodec(values);
 

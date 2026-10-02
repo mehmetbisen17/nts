@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+
+Name=nts
+Comment=Handwritten notes with AI help
+Categories=Office;WordProcessor;
+
+Icon=com.mehmetbisen.nts
+Exec=nts
+MimeType=application/sbn;application/sbn2;application/sba
+Terminal=false
+StartupWMClass=nts

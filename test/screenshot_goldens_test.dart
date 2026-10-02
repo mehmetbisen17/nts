@@ -4,23 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
-import 'package:saber/components/canvas/pencil_shader.dart';
-import 'package:saber/components/home/syncing_button.dart';
-import 'package:saber/components/settings/nextcloud_profile.dart';
-import 'package:saber/components/theming/saber_theme.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/locales.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/sentry/sentry_init.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
-import 'package:saber/pages/home/home.dart';
-import 'package:saber/pages/user/login.dart';
+import 'package:nts/components/canvas/pencil_shader.dart';
+import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/locales.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/sentry/sentry_init.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
+import 'package:nts/pages/home/home.dart';
 import 'package:yaru/yaru.dart';
 
 import 'utils/test_mock_channel_handlers.dart';
-import 'utils/test_user.dart';
 
 Future<void> setupDemoFiles() async {
   const demoFiles = <String>[
@@ -60,13 +56,11 @@ void main() {
 
     setupMockPathProvider();
     setupMockPrinting();
+    setupMockWindowManager();
     disableSentryForTesting();
 
     FlavorConfig.setup();
-    SyncingButton.debugForceButtonActive = true;
 
-    stows.lastStorageQuota.value = TestUser.getQuota();
-    stows.username.value = 'myusername';
     stows.sentryConsent.value = .granted;
 
     setUpAll(() async {
@@ -103,13 +97,6 @@ void main() {
       yaruTheme: yaruTheme,
       goldenFileName: '2_editor',
       child: Editor(path: '/Metric Spaces Week 1'),
-    );
-    _screenshot(
-      materialTheme: materialTheme,
-      cupertinoTheme: cupertinoTheme,
-      yaruTheme: yaruTheme,
-      goldenFileName: '3_login',
-      child: const NcLoginPage(forceAppBarLeading: true),
     );
     _screenshot(
       materialTheme: materialTheme,
@@ -165,11 +152,6 @@ void _screenshot({
         final device = goldenDevice.device;
         stows.platform.value = device.platform;
         await tester.runAsync(() => LocaleSettings.setLocaleRaw(localeCode));
-
-        if (goldenFileName == '4_settings') {
-          NextcloudProfile.forceLoginStep = .done;
-          addTearDown(() => NextcloudProfile.forceLoginStep = null);
-        }
 
         var theme = switch (device.platform) {
           .linux => yaruTheme,

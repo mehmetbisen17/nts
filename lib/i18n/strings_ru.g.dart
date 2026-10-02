@@ -16,7 +16,7 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsRu({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.ru,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -25,7 +25,8 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
 
 	/// Metadata for the translations of <ru>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final TranslationsRu _root = this; // ignore: unused_field
 
@@ -64,14 +65,11 @@ class _Translations$home$ru extends Translations$home$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$home$tabs$ru tabs = _Translations$home$tabs$ru._(_root);
 	@override late final _Translations$home$titles$ru titles = _Translations$home$titles$ru._(_root);
 	@override late final _Translations$home$tooltips$ru tooltips = _Translations$home$tooltips$ru._(_root);
 	@override late final _Translations$home$create$ru create = _Translations$home$create$ru._(_root);
-	@override String get welcome => 'Приветствуем в Saber';
+	@override String get welcome => 'Приветствуем в nts';
 	@override String get invalidFormat => 'Выбранный вами файл не поддерживается. Выберите файл .sbn, .sbn2, .sba или .pdf.';
-	@override String get noFiles => 'Файлов ещё нет';
-	@override String get noPreviewAvailable => 'Предварительный просмотр недоступен';
 	@override String get createNewNote => 'Нажмите кнопку «+» чтобы создать новую заметку';
 	@override String get backFolder => 'Вернуться к предыдущей папке';
 	@override late final _Translations$home$newFolder$ru newFolder = _Translations$home$newFolder$ru._(_root);
@@ -82,7 +80,6 @@ class _Translations$home$ru extends Translations$home$en {
 	@override late final _Translations$home$renameFolder$ru renameFolder = _Translations$home$renameFolder$ru._(_root);
 	@override late final _Translations$home$deleteFolder$ru deleteFolder = _Translations$home$deleteFolder$ru._(_root);
 	@override late final _Translations$home$sort$ru sort = _Translations$home$sort$ru._(_root);
-	@override late final _Translations$home$layout$ru layout = _Translations$home$layout$ru._(_root);
 }
 
 // Path: sentry
@@ -117,7 +114,7 @@ class _Translations$settings$ru extends Translations$settings$en {
 	];
 	@override late final _Translations$settings$reset$ru reset = _Translations$settings$reset$ru._(_root);
 	@override String get resyncEverything => 'Повторная синхронизация всего';
-	@override String get openDataDir => 'Открыть папку Saber';
+	@override String get openDataDir => 'Открыть папку nts';
 	@override late final _Translations$settings$customDataDir$ru customDataDir = _Translations$settings$customDataDir$ru._(_root);
 	@override String get autosaveDisabled => 'Никогда';
 	@override String get shapeRecognitionDisabled => 'Никогда';
@@ -190,7 +187,7 @@ class _Translations$appInfo$ru extends Translations$appInfo$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String licenseNotice({required Object buildYear}) => 'Saber  Copyright © 2022-${buildYear}  Adil Hanney\nЭта программа поставляется без каких-либо гарантий. Это бесплатное программное обеспечение, и вы можете распространять его при определенных условиях.';
+	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nЭта программа поставляется без каких-либо гарантий. Это бесплатное программное обеспечение, и вы можете распространять его при определенных условиях.';
 	@override String get debug => 'ОТЛАДКА';
 	@override String get sponsorButton => 'Проспонсируйте меня или купите дополнительное пространство';
 	@override String get licenseButton => 'Просмотрите дополнительную информацию о лицензии';
@@ -231,19 +228,6 @@ class _Translations$editor$ru extends Translations$editor$en {
 	@override String get pages => 'Листы';
 	@override String get untitled => 'Без названия';
 	@override String get needsToSaveBeforeExiting => 'Сохраните Ваши изменения… Вы можете безопасно выйти из редактора, когда это будет сделано';
-}
-
-// Path: home.tabs
-class _Translations$home$tabs$ru extends Translations$home$tabs$en {
-	_Translations$home$tabs$ru._(TranslationsRu root) : this._root = root, super.internal(root);
-
-	final TranslationsRu _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => 'Домашняя';
-	@override String get browse => 'Обзор';
-	@override String get whiteboard => 'Чистый лист';
-	@override String get settings => 'Настройки';
 }
 
 // Path: home.titles
@@ -387,18 +371,6 @@ class _Translations$home$sort$ru extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => 'Отредактировано (По убыванию возраста)';
 }
 
-// Path: home.layout
-class _Translations$home$layout$ru extends Translations$home$layout$en {
-	_Translations$home$layout$ru._(TranslationsRu root) : this._root = root, super.internal(root);
-
-	final TranslationsRu _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => 'Макет';
-	@override String get masonryGrid => 'Сетка в стиле кладки';
-	@override String get simpleGrid => 'Простая сетка';
-}
-
 // Path: sentry.consent
 class _Translations$sentry$consent$ru extends Translations$sentry$consent$en {
 	_Translations$sentry$consent$ru._(TranslationsRu root) : this._root = root, super.internal(root);
@@ -406,7 +378,7 @@ class _Translations$sentry$consent$ru extends Translations$sentry$consent$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Поможете улучшить Saber?';
+	@override String get title => 'Поможете улучшить nts?';
 	@override late final _Translations$sentry$consent$description$ru description = _Translations$sentry$consent$description$ru._(_root);
 	@override late final _Translations$sentry$consent$answers$ru answers = _Translations$sentry$consent$answers$ru._(_root);
 }
@@ -438,7 +410,7 @@ class _Translations$settings$prefLabels$ru extends Translations$settings$prefLab
 	@override String get layoutSize => 'Размер макета';
 	@override String get customAccentColor => 'Свой цвет акцента';
 	@override String get hyperlegibleFont => 'Гипер разборчивый шрифт';
-	@override String get shouldCheckForUpdates => 'Автоматически проверять обновления Saber';
+	@override String get shouldCheckForUpdates => 'Автоматически проверять обновления nts';
 	@override String get shouldAlwaysAlertForUpdates => 'Быстрые обновления';
 	@override String get allowInsecureConnections => 'Разрешить небезопасные соединения';
 	@override String get editorToolbarAlignment => 'Панель инструментов редактора';
@@ -457,7 +429,7 @@ class _Translations$settings$prefLabels$ru extends Translations$settings$prefLab
 	@override String get autosave => 'Автосохранение';
 	@override String get shapeRecognitionDelay => 'Задержка распознавания формы';
 	@override String get autoStraightenLines => 'Автоматическое выпрямление линий';
-	@override String get customDataDir => 'Свой каталог Saber';
+	@override String get customDataDir => 'Свой каталог nts';
 	@override String get sentry => 'Сообщить об ошибке';
 }
 
@@ -469,7 +441,7 @@ class _Translations$settings$prefDescriptions$ru extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Шрифт Atkinson Hyperlegible повышает разборчивость для читателей с плохим зрением';
-	@override String get allowInsecureConnections => '(Не рекомендуется) Разрешить Saber подключаться к серверам с самоподписанными/ненадёжными сертификатами.';
+	@override String get allowInsecureConnections => '(Не рекомендуется) Разрешить nts подключаться к серверам с самоподписанными/ненадёжными сертификатами.';
 	@override String get preferGreyscale => 'Для e-ink экранов';
 	@override String get autoClearWhiteboardOnExit => 'Это будет синхронизировано с другими вашими устройствами';
 	@override String get disableEraserAfterUse => 'Автоматически переключается на перо после использования ластика';
@@ -580,10 +552,10 @@ class _Translations$login$ncLoginStep$ru extends Translations$login$ncLoginStep$
 
 	// Translations
 	@override String get whereToStoreData => 'Выберите, где вы хотите хранить свои данные:';
-	@override String get saberNcServer => 'Saber Nextcloud сервер';
+	@override String get saberNcServer => 'nts Nextcloud сервер';
 	@override String get otherNcServer => 'Другой Nextcloud сервер';
 	@override String get serverUrl => 'URL-адрес сервера';
-	@override String get loginWithSaber => 'Войти с помощью Saber';
+	@override String get loginWithSaber => 'Войти с помощью nts';
 	@override String get loginWithNextcloud => 'Войти с помощью Nextcloud';
 	@override late final _Translations$login$ncLoginStep$loginFlow$ru loginFlow = _Translations$login$ncLoginStep$loginFlow$ru._(_root);
 }
@@ -596,7 +568,7 @@ class _Translations$login$encLoginStep$ru extends Translations$login$encLoginSte
 
 	// Translations
 	@override String get enterEncPassword => 'Чтобы защитить ваши данные, введите пароль шифрования:';
-	@override String get newToSaber => 'Новичок в Saber? Просто введите новый пароль для шифрования.';
+	@override String get newToSaber => 'Новичок в nts? Просто введите новый пароль для шифрования.';
 	@override String get encPassword => 'Пароль шифрования';
 	@override String get encFaqTitle => 'Часто задаваемые вопросы';
 	@override String get wrongEncPassword => 'Не удалось расшифровать указанным паролем. Пожалуйста, попробуйте ввести его еще раз.';
@@ -638,7 +610,7 @@ class _Translations$profile$faq$1$ru extends Translations$profile$faq$1$en {
 
 	// Translations
 	@override String get q => 'Как изменить свой пароль Nextcloud?';
-	@override String get a => 'Перейдите на веб-сайт своего сервера и войдите в систему. Затем перейдите в «Параметры пользователя» > «Безопасность» > «Пароль». Вам нужно будет выйти и снова войти в Saber после смены пароля.';
+	@override String get a => 'Перейдите на веб-сайт своего сервера и войдите в систему. Затем перейдите в «Параметры пользователя» > «Безопасность» > «Пароль». Вам нужно будет выйти и снова войти в nts после смены пароля.';
 }
 
 // Path: profile.faq.2
@@ -649,7 +621,7 @@ class _Translations$profile$faq$2$ru extends Translations$profile$faq$2$en {
 
 	// Translations
 	@override String get q => 'Как изменить свой пароль шифрования?';
-	@override String get a => '1. Выйдите из Saber. Перед выходом убедитесь, что синхронизация завершена, чтобы не потерять данные (см. синхронизацию на главном экране).\n2. Перейдите на веб-сайт своего сервера и удалите папку «Saber». Это приведет к удалению всех ваших заметок с сервера.\n3. Снова войдите в Saber. Вы можете создать новый пароль шифрования при входе в систему.\n4. Не забудьте выйти и снова войти в Saber на других своих устройствах.';
+	@override String get a => '1. Выйдите из nts. Перед выходом убедитесь, что синхронизация завершена, чтобы не потерять данные (см. синхронизацию на главном экране).\n2. Перейдите на веб-сайт своего сервера и удалите папку «Saber». Это приведет к удалению всех ваших заметок с сервера.\n3. Снова войдите в nts. Вы можете создать новый пароль шифрования при входе в систему.\n4. Не забудьте выйти и снова войти в nts на других своих устройствах.';
 }
 
 // Path: profile.faq.3
@@ -660,7 +632,7 @@ class _Translations$profile$faq$3$ru extends Translations$profile$faq$3$en {
 
 	// Translations
 	@override String get q => 'Как я могу удалить свою учётную запись?';
-	@override String get a => 'Нажмите кнопку "${_root.profile.quickLinks.deleteAccount}" выше и войдите в систему, если необходимо.\nЕсли вы используете официальный сервер Saber, ваша учётная запись будет удалена по истечении 1-недельного льготного периода. Вы можете связаться со мной по адресу adilhanney@disroot.org в течение этого периода, чтобы отменить удаление.\nЕсли вы используете сторонний сервер, то у вас может не быть возможности удалить свою учётную запись. Вам нужно будет ознакомиться с политикой конфиденциальности сервера, для получения дополнительной информации.';
+	@override String get a => 'Нажмите кнопку "${_root.profile.quickLinks.deleteAccount}" выше и войдите в систему, если необходимо.\nЕсли вы используете официальный сервер nts, ваша учётная запись будет удалена по истечении 1-недельного льготного периода. Вы можете связаться со мной по адресу adilhanney@disroot.org в течение этого периода, чтобы отменить удаление.\nЕсли вы используете сторонний сервер, то у вас может не быть возможности удалить свою учётную запись. Вам нужно будет ознакомиться с политикой конфиденциальности сервера, для получения дополнительной информации.';
 }
 
 // Path: editor.toolbar
@@ -813,7 +785,7 @@ class _Translations$editor$versionTooNew$ru extends Translations$editor$versionT
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Эта заметка была отредактирована в более новой версии Saber.';
+	@override String get title => 'Эта заметка была отредактирована в более новой версии nts.';
 	@override String get subtitle => 'Редактирование этой заметки может привести к потере некоторой информации. Вы хотите проигнорировать это и начать редактирование?';
 	@override String get allowEditing => 'Разрешить редактирование';
 }
@@ -905,7 +877,7 @@ class _Translations$login$ncLoginStep$loginFlow$ru extends Translations$login$nc
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get pleaseAuthorize => 'Пожалуйста, авторизуйте Saber для доступа к вашей учётной записи Nextcloud';
+	@override String get pleaseAuthorize => 'Пожалуйста, авторизуйте nts для доступа к вашей учётной записи Nextcloud';
 	@override String get followPrompts => 'Пожалуйста, следуйте инструкциям в интерфейсе Nextcloud';
 	@override String get browserDidntOpen => 'Страница входа в систему не открылась? Нажмите сюда';
 }
@@ -929,7 +901,7 @@ class _Translations$login$encLoginStep$encFaq$1$ru extends Translations$login$en
 
 	// Translations
 	@override String get q => 'Я еще не установил пароль для шифрования. Где я могу его получить?';
-	@override String get a => 'Придумайте новый пароль для шифрования и введите его выше.\nSaber автоматически сгенерирует ваши ключи шифрования на основе этого пароля.';
+	@override String get a => 'Придумайте новый пароль для шифрования и введите его выше.\nnts автоматически сгенерирует ваши ключи шифрования на основе этого пароля.';
 }
 
 // Path: login.encLoginStep.encFaq.2

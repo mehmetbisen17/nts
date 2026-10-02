@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:saber/components/canvas/save_indicator.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:nts/components/canvas/save_indicator.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
 
 import 'utils/test_editor.dart';
 import 'utils/test_mock_channel_handlers.dart';
@@ -51,7 +51,7 @@ void main() {
       );
 
       // undo the drawing
-      await tester.tap(find.byIcon(Icons.undo));
+      await tester.tap(find.byTooltip(t.editor.toolbar.undo));
       await tester.pumpAndSettle();
       expect(
         getSavingState(),
@@ -94,7 +94,7 @@ void main() {
         reason: 'Saving state should be "saved" after saving the file',
       );
 
-      await tester.tap(find.byIcon(Icons.undo));
+      await tester.tap(find.byTooltip(t.editor.toolbar.undo));
       await tester.pumpAndSettle();
       expect(
         getSavingState(),

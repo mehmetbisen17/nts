@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Generator for metainfo & .desktop files:
+    https://www.freedesktop.org/software/appstream/metainfocreator/#/
+-->
+<component type="desktop-application">
+    <id>com.mehmetbisen.nts</id>
+
+    <name>nts</name>
+    <summary>Handwritten notes with AI help</summary>
+    <url type="homepage">REPLACE_WITH_REPO_URL</url>
+    <url type="bugtracker">REPLACE_WITH_REPO_URL/issues</url>
+    <url type="vcs-browser">REPLACE_WITH_REPO_URL</url>
+
+    <developer id="com.mehmetbisen">
+        <name>Mehmet Bisen</name>
+    </developer>
+
+    <branding>
+        <color type="primary" scheme_preference="light">#f8f7f3</color>
+        <color type="primary" scheme_preference="dark">#2b2a27</color>
+    </branding>
+
+    <metadata_license>MIT</metadata_license>
+    <project_license>GPL-3.0-only</project_license>
+
+    <supports>
+        <control>pointing</control>
+        <control>keyboard</control>
+        <control>touch</control>
+    </supports>
+
+    <recommends>
+        <control>tablet</control>
+        <internet>always</internet>
+    </recommends>
+
+    <requires>
+        <display_length compare="ge">360</display_length>
+    </requires>
+
+    <provides>
+        <mediatype>application/sbn</mediatype>
+        <mediatype>application/json</mediatype>
+        <mediatype>text/*</mediatype>
+
+        <mediatype>application/sbn2</mediatype>
+        <mediatype>application/octet-stream</mediatype>
+
+        <mediatype>application/sba</mediatype>
+        <mediatype>application/zip</mediatype>
+    </provides>
+
+    <description>
+        <p>
+            nts is a notes app built for handwriting with a stylus.
+        </p>
+        <p>
+            Notes are stored on your device or in your own iCloud Drive folder.
+            Circle part of a page and pick an AI action to get help from the
+            provider you signed in to (Google, ChatGPT or Claude).
+        </p>
+    </description>
+
+    <launchable type="desktop-id">com.mehmetbisen.nts.desktop</launchable>
+
+    <content_rating type="oars-1.1" />
+
+    <categories>
+        <category>Education</category>
+        <category>Graphics</category>
+        <category>Office</category>
+    </categories>
+
+    <keywords>
+        <keyword>handwritten</keyword>
+        <keyword>notes</keyword>
+    </keywords>
+
+    <releases>
+        <release version="1.36.1" date="2026-10-02">
+            <description>
+                <ul>
+                    <li>First nts release.</li>
+                </ul>
+            </description>
+        </release>
+    </releases>
+</component>

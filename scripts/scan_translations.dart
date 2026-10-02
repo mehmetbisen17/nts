@@ -19,23 +19,11 @@ Output only the tick emoji ✅ if there are no issues.
   final lms = await LmsTranslator.create();
 
   try {
-    final files = [
-      ...Directory('lib/i18n')
-          .listSync()
-          .whereType<File>()
-          .where((file) => file.path.endsWith('.i18n.yaml'))
-          .sortedBy((file) => file.path),
-      ...Directory('metadata')
-          .listSync()
-          .whereType<Directory>()
-          .expand(
-            (dir) => [
-              File('${dir.path}/full_description.txt'),
-              File('${dir.path}/short_description.txt'),
-            ],
-          )
-          .where((file) => file.existsSync()),
-    ];
+    final files = Directory('lib/i18n')
+        .listSync()
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.i18n.yaml'))
+        .sortedBy((file) => file.path);
     for (final file in files) {
       print('Reading ${file.path}');
       final lines = await file.readAsLines();

@@ -1,6 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_circular_progress_indicator.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/theming/adaptive_circular_progress_indicator.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class ExportBar extends StatefulWidget {
   const new({
@@ -58,41 +61,42 @@ class _ExportBarState extends State<ExportBar> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.higan;
+    final style = TextButton.styleFrom(
+      foregroundColor: c.text,
+      textStyle: HiganText.label(context, size: 11),
+      minimumSize: const Size(52, 36),
+      padding: const .symmetric(horizontal: 12),
+    );
+    Widget button(Future Function(BuildContext)? export, String text) =>
+        Builder(
+          builder: (context) => TextButton(
+            style: style,
+            onPressed: _onPressed(export, context),
+            child: _buttonChild(export, text),
+          ),
+        );
+
     final children = <Widget>[
-      Text(t.editor.toolbar.exportAs),
-      const SizedBox.square(dimension: 8),
-      Builder(
-        builder: (context) {
-          return TextButton(
-            onPressed: _onPressed(widget.exportAsSba, context),
-            child: _buttonChild(widget.exportAsSba, 'SBA'),
-          );
-        },
+      Padding(
+        padding: const .symmetric(horizontal: 10, vertical: 6),
+        child: HiganLabel(t.editor.toolbar.exportAs),
       ),
-      Builder(
-        builder: (context) {
-          return TextButton(
-            onPressed: _onPressed(widget.exportAsPdf, context),
-            child: _buttonChild(widget.exportAsPdf, 'PDF'),
-          );
-        },
-      ),
-      Builder(
-        builder: (context) {
-          return TextButton(
-            onPressed: _onPressed(widget.exportAsPng, context),
-            child: _buttonChild(widget.exportAsPng, 'PNG'),
-          );
-        },
-      ),
+      button(widget.exportAsSba, 'SBA'),
+      button(widget.exportAsPdf, 'PDF'),
+      button(widget.exportAsPng, 'PNG'),
     ];
 
-    return Center(
-      child: Padding(
-        padding: const .all(8),
-        child: SingleChildScrollView(
-          scrollDirection: widget.axis,
-          child: Flex(direction: widget.axis, children: children),
+    return ScrollConfiguration(
+      // A mouse drag scrolls it too
+      behavior: ScrollConfiguration.of(context)
+          .copyWith(dragDevices: PointerDeviceKind.values.toSet()),
+      child: SingleChildScrollView(
+        scrollDirection: widget.axis,
+        child: Flex(
+          direction: widget.axis,
+          mainAxisSize: .min,
+          children: children,
         ),
       ),
     );

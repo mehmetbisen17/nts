@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
 
+/// An 18px swatch; when selected, a thin bone ring sits 2px outside it.
+/// Taps anywhere in the 30px circle around it (44px on touch screens).
 class ColorOption extends StatelessWidget {
   const new({
     super.key,
@@ -18,36 +22,44 @@ class ColorOption extends StatelessWidget {
   final String? tooltip;
   final Widget child;
 
-  static const double diameter = 25;
+  static const double diameter = 24;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
+    final c = context.higan;
+    final onLongPress = enabled ? this.onLongPress : null;
     return Tooltip(
       message: tooltip ?? '',
-      child: Padding(
-        padding: const .symmetric(horizontal: 4),
-        child: InkWell(
-          borderRadius: const .all(.circular(diameter / 2)),
+      child: ControlClick(
+        onClick: onLongPress == null ? null : (_) => onLongPress(),
+        child: HiganTapTarget(
           onTap: enabled ? onTap : null,
-          onLongPress: enabled ? onLongPress : null,
-          onSecondaryTap: enabled ? onLongPress : null,
-          child: Container(
-            width: diameter,
-            height: diameter,
-            decoration: BoxDecoration(
-              shape: .circle,
-              border: Border.all(
-                color: isSelected ? colorScheme.onSurface : Colors.transparent,
-                width: 2,
-              ),
-            ),
-            child: Padding(
-              padding: const .all(3),
-              child: AnimatedOpacity(
-                opacity: enabled ? 1 : 0.5,
-                duration: const Duration(milliseconds: 200),
-                child: child,
+          child: HiganFocusRing(
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: enabled ? onTap : null,
+              onLongPress: onLongPress,
+              onSecondaryTap: onLongPress,
+              child: Padding(
+                padding: const .all(3),
+                child: AnimatedContainer(
+                  duration: HiganMotion.fast,
+                  width: diameter,
+                  height: diameter,
+                  padding: const .all(2),
+                  decoration: BoxDecoration(
+                    shape: .circle,
+                    border: Border.all(
+                      color: isSelected ? c.text : Colors.transparent,
+                    ),
+                  ),
+                  child: AnimatedOpacity(
+                    opacity: enabled ? 1 : 0.4,
+                    duration: HiganMotion.fast,
+                    child: child,
+                  ),
+                ),
               ),
             ),
           ),
@@ -57,24 +69,48 @@ class ColorOption extends StatelessWidget {
   }
 }
 
-class ColorOptionSeparatorIcon extends StatelessWidget {
-  const new({super.key, required this.icon});
+/// The current [color] as an 18px dot in a bone ring, like a selected
+/// [ColorOption], so it shows even when it's the glass's own color
+/// (black in Night, white in Paper).
+class CurrentColorDot extends StatelessWidget {
+  const new(this.color, {super.key});
 
-  final IconData icon;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
+    final c = context.higan;
+    return Container(
+      width: ColorOption.diameter,
+      height: ColorOption.diameter,
+      padding: const .all(2),
+      decoration: BoxDecoration(
+        shape: .circle,
+        border: Border.all(color: c.text),
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: color,
+          shape: .circle,
+          border: Border.all(color: c.hairlineStrong),
+        ),
+      ),
+    );
+  }
+}
+
+/// A hairline between groups of colors.
+class ColorOptionSeparator extends StatelessWidget {
+  const new({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const .symmetric(horizontal: 8, vertical: 4),
-      child: Icon(
-        icon,
-        size: 16,
-        color: Color.lerp(
-          colorScheme.onSurface,
-          colorScheme.primary,
-          0.2,
-        )!.withValues(alpha: 0.7),
+      padding: const .symmetric(horizontal: 8),
+      child: SizedBox(
+        width: 1,
+        height: 18,
+        child: ColoredBox(color: context.higan.hairlineStrong),
       ),
     );
   }

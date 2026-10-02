@@ -1,35 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saber/components/theming/adaptive_circular_progress_indicator.dart';
-import 'package:saber/data/is_this_a_test.dart';
-import 'package:saber/data/routes.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/data/is_this_a_test.dart';
+import 'package:nts/data/routes.dart';
+import 'package:nts/i18n/strings.g.dart';
 
-/// Replaces the back button as the
-/// [AppBar.leading] widget in the [AppBar]
-/// to indicate the state of saving in the editor.
+/// The editor's back button, which also shows the state of saving:
+/// back when saved, save (tap to save now) when there are unsaved changes,
+/// and a spinner while saving.
 class SaveIndicator extends StatelessWidget {
   const new({super.key, required this.savingState, required this.triggerSave});
 
   final ValueNotifier<SavingState> savingState;
   final VoidCallback triggerSave;
 
+  static const double size = 36;
+
   @override
   Widget build(BuildContext context) {
+    final c = context.higan;
     return ValueListenableBuilder(
       valueListenable: savingState,
-      builder: (context, isSaving, _) {
-        return AnimatedSwitcher(
-          duration: isThisATest
-              ? Duration.zero
-              : const Duration(milliseconds: 300),
-          child: IconButton(
-            key: ValueKey(savingState.value),
-            onPressed: () => _onPressed(context),
-            icon: switch (savingState.value) {
-              .waitingToSave => const Icon(Icons.save),
-              .saving => const AdaptiveCircularProgressIndicator(),
-              .saved => const Icon(Icons.arrow_back),
-            },
+      builder: (context, state, _) {
+        final Widget icon = switch (state) {
+          .waitingToSave => Icon(
+            Symbols.save,
+            size: 17,
+            weight: 300,
+            color: c.text,
+          ),
+          .saving => SizedBox.square(
+            dimension: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 1.5,
+              color: c.textSecondary,
+            ),
+          ),
+          .saved => Icon(
+            Symbols.arrow_back_ios_new,
+            size: 16,
+            weight: 300,
+            color: c.text,
+          ),
+        };
+        return Tooltip(
+          message: switch (state) {
+            .waitingToSave => MaterialLocalizations.of(context).saveButtonLabel,
+            .saving => t.higan.saving,
+            .saved => t.higan.back,
+          },
+          child: HiganTapTarget(
+            onTap: () => _onPressed(context),
+            child: HiganFocusRing(
+              shape: const CircleBorder(),
+              child: Material(
+                type: .transparency,
+                shape: const CircleBorder(),
+                clipBehavior: .antiAlias,
+                child: InkWell(
+                  onTap: () => _onPressed(context),
+                  child: SizedBox.square(
+                    dimension: size,
+                    child: Center(
+                      child: AnimatedSwitcher(
+                        duration: isThisATest
+                            ? Duration.zero
+                            : HiganMotion.fast,
+                        child: KeyedSubtree(key: ValueKey(state), child: icon),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         );
       },

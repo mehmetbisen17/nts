@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saber/components/theming/dynamic_material_app.dart';
-import 'package:saber/components/theming/saber_theme.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/routes.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/home/browse.dart';
-import 'package:saber/pages/home/home.dart';
+import 'package:nts/components/theming/dynamic_material_app.dart';
+import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/routes.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/home/browse.dart';
+import 'package:nts/pages/home/home.dart';
 
 import 'utils/test_mock_channel_handlers.dart';
 
@@ -43,6 +43,9 @@ void main() {
       expect(find.byIcon(Icons.arrow_back), findsNothing);
     });
     testWidgets('Navigate back twice to root', (tester) async {
+      // Tall enough for the folder tiles to sit below the header on screen.
+      tester.view.physicalSize = Size(tester.view.physicalSize.width, 3000);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(const _BrowseApp(path: '/helloworld'));
       await tester.pump();
       await tester.tap(find.text('subfolder1'));

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/i18n/strings.g.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/editor.dart';
 
 import 'utils/test_mock_channel_handlers.dart';
 
@@ -37,13 +38,13 @@ void main() {
 
     IconButton getUndoBtn() => tester.widget<IconButton>(
       find.ancestor(
-        of: find.byIcon(Icons.undo),
+        of: find.byIcon(Symbols.undo),
         matching: find.byType(IconButton),
       ),
     );
     IconButton getRedoBtn() => tester.widget<IconButton>(
       find.ancestor(
-        of: find.byIcon(Icons.redo),
+        of: find.byIcon(Symbols.redo),
         matching: find.byType(IconButton),
       ),
     );
@@ -64,7 +65,7 @@ void main() {
     );
 
     // undo
-    await tester.tap(find.byIcon(Icons.undo));
+    await tester.tap(find.byIcon(Symbols.undo));
     await tester.pump();
     expect(editorState.coreInfo.pages.first.strokes, hasLength(0));
     expect(
@@ -74,7 +75,7 @@ void main() {
     );
 
     // redo
-    await tester.tap(find.byIcon(Icons.redo));
+    await tester.tap(find.byIcon(Symbols.redo));
     await tester.pump();
     expect(editorState.coreInfo.pages.first.strokes, hasLength(1));
     expect(
@@ -84,7 +85,7 @@ void main() {
     );
 
     // undo, then draw again
-    await tester.tap(find.byIcon(Icons.undo));
+    await tester.tap(find.byIcon(Symbols.undo));
     await tester.pump();
     expect(editorState.coreInfo.pages.first.strokes, hasLength(0));
     await drawOnEditor(tester);

@@ -1,9 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/settings/app_info.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/sentry/sentry_init.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/settings/app_info.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/sentry/sentry_init.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class const SentryConsentDialog({super.key}) extends StatelessWidget {
@@ -31,12 +32,12 @@ class const SentryConsentDialog({super.key}) extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.higan;
     return AlertDialog(
       title: Text(t.sentry.consent.title),
       scrollable: true,
-      content: RichText(
-        text: TextSpan(
-          style: TextTheme.of(context).bodyMedium,
+      content: Text.rich(
+        TextSpan(
           children: [
             TextSpan(text: t.sentry.consent.description.question),
             const TextSpan(text: '\n\n'),
@@ -51,7 +52,11 @@ class const SentryConsentDialog({super.key}) extends StatelessWidget {
             t.sentry.consent.description.learnMoreInPrivacyPolicy(
               link: (text) => TextSpan(
                 text: text,
-                style: TextStyle(color: ColorScheme.of(context).primary),
+                style: TextStyle(
+                  color: c.text,
+                  decoration: .underline,
+                  decorationColor: c.textTertiary,
+                ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     launchUrl(AppInfo.privacyPolicyUrl);
@@ -62,28 +67,28 @@ class const SentryConsentDialog({super.key}) extends StatelessWidget {
         ),
       ),
       actions: [
-        ElevatedButton(
-          onPressed: () {
-            stows.sentryConsent.value = .granted;
-            Navigator.of(context).pop();
-          },
-          child: Text(t.sentry.consent.answers.yes),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            stows.sentryConsent.value = .denied;
-            Navigator.of(context).pop();
-          },
-          child: Text(t.sentry.consent.answers.no),
-        ),
         if (stows.sentryConsent.value == .unknown)
-          ElevatedButton(
+          TextButton(
             onPressed: () {
               stows.sentryConsent.value = .unknown;
               Navigator.of(context).pop();
             },
             child: Text(t.sentry.consent.answers.later),
           ),
+        OutlinedButton(
+          onPressed: () {
+            stows.sentryConsent.value = .denied;
+            Navigator.of(context).pop();
+          },
+          child: Text(t.sentry.consent.answers.no),
+        ),
+        FilledButton(
+          onPressed: () {
+            stows.sentryConsent.value = .granted;
+            Navigator.of(context).pop();
+          },
+          child: Text(t.sentry.consent.answers.yes),
+        ),
       ],
     );
   }

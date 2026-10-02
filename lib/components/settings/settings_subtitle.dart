@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
 
+/// Mono section label with a hairline below, e.g. "APPEARANCE".
 class SettingsSubtitle extends StatelessWidget {
   const new({super.key, required this.subtitle});
 
@@ -7,13 +10,12 @@ class SettingsSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
-    return Padding(
-      padding: const .only(top: 32, left: 16, right: 16, bottom: 0),
-      child: Text(
-        subtitle,
-        style: TextStyle(color: colorScheme.primary, fontWeight: .w500),
+    return Container(
+      padding: const .only(top: HiganSpace.xxl, bottom: HiganSpace.m),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: context.higan.hairline)),
       ),
+      child: HiganLabel(subtitle),
     );
   }
 }

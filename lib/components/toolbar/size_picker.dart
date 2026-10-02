@@ -1,13 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/data/tools/pen.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/tools/pen.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class SizePicker extends StatefulWidget {
-  const new({super.key, required this.axis, required this.pen});
+  const new({
+    super.key,
+    required this.axis,
+    required this.pen,
+    this.length = largeLength,
+  });
 
   final Axis axis;
   final Pen pen;
+
+  /// The slider's length along [axis].
+  final double length;
 
   @override
   State<SizePicker> createState() => _SizePickerState();
@@ -28,31 +37,28 @@ String _prettyNum(double num) {
 class _SizePickerState extends State<SizePicker> {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
+    final c = context.higan;
+    final size = _prettyNum(widget.pen.options.size);
     return Flex(
       direction: widget.axis,
       mainAxisSize: .min,
       children: [
-        Column(
-          children: [
-            Text(
-              t.editor.penOptions.size,
-              style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.8),
-                fontSize: 10,
-                height: 1,
-              ),
-            ),
-            Text(_prettyNum(widget.pen.options.size)),
-          ],
-        ),
-        const SizedBox(width: 8),
-        Padding(
-          padding: const .symmetric(vertical: 8),
+        Semantics(
+          label: t.editor.penOptions.size,
+          value: size,
           child: _SizeSlider(
             pen: widget.pen,
             axis: widget.axis,
+            length: widget.length,
             setState: setState,
+          ),
+        ),
+        const SizedBox.square(dimension: 10),
+        SizedBox(
+          width: 26,
+          child: Text(
+            size,
+            style: HiganText.label(context, size: 10, color: c.text),
           ),
         ),
       ],
@@ -61,10 +67,16 @@ class _SizePickerState extends State<SizePicker> {
 }
 
 class _SizeSlider extends StatelessWidget {
-  const new({required this.pen, required this.axis, required this.setState});
+  const new({
+    required this.pen,
+    required this.axis,
+    required this.length,
+    required this.setState,
+  });
 
   final Pen pen;
   final Axis axis;
+  final double length;
   final void Function(void Function()) setState;
 
   /// [percent] is a value between 0 and 1
@@ -83,35 +95,36 @@ class _SizeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
+    final c = context.higan;
     return GestureDetector(
       onHorizontalDragStart: axis == Axis.horizontal
-          ? (details) =>
-                onDrag(details.localPosition.dx / SizePicker.largeLength)
+          ? (details) => onDrag(details.localPosition.dx / length)
           : null,
       onHorizontalDragUpdate: axis == Axis.horizontal
-          ? (details) =>
-                onDrag(details.localPosition.dx / SizePicker.largeLength)
+          ? (details) => onDrag(details.localPosition.dx / length)
           : null,
       onVerticalDragStart: axis == Axis.vertical
-          ? (details) =>
-                onDrag(details.localPosition.dy / SizePicker.largeLength)
+          ? (details) => onDrag(details.localPosition.dy / length)
           : null,
       onVerticalDragUpdate: axis == Axis.vertical
-          ? (details) =>
-                onDrag(details.localPosition.dy / SizePicker.largeLength)
+          ? (details) => onDrag(details.localPosition.dy / length)
           : null,
+      onTapUp: (details) => onDrag(
+        (axis == Axis.horizontal
+                ? details.localPosition.dx
+                : details.localPosition.dy) /
+            length,
+      ),
       child: RotatedBox(
         quarterTurns: axis == Axis.horizontal ? 0 : 1,
         child: CustomPaint(
-          size: const Size(SizePicker.largeLength, SizePicker.smallLength),
+          size: Size(length, SizePicker.smallLength),
           painter: _SizeSliderPainter(
-            axis: axis,
             minSize: pen.sizeMin,
             maxSize: pen.sizeMax,
             currentSize: pen.options.size,
-            trackColor: colorScheme.onSurface.withValues(alpha: 0.2),
-            thumbColor: colorScheme.primary,
+            trackColor: c.hairlineStrong,
+            thumbColor: c.text,
           ),
         ),
       ),
@@ -119,9 +132,9 @@ class _SizeSlider extends StatelessWidget {
   }
 }
 
+/// A 2px track with a 12px thumb, like the app's other sliders.
 class _SizeSliderPainter extends CustomPainter {
   new({
-    required this.axis,
     required this.minSize,
     required this.maxSize,
     required this.currentSize,
@@ -129,61 +142,45 @@ class _SizeSliderPainter extends CustomPainter {
     required this.thumbColor,
   });
 
-  final Axis axis;
   final double minSize;
   final double maxSize;
   final double currentSize;
   final Color trackColor;
   final Color thumbColor;
 
+  static const thumbRadius = 6.0;
+
   @override
   void paint(Canvas canvas, Size size) {
-    /// The smallest height the track can be
-    final leftHeight = size.height * minSize / maxSize;
-    final topLeft = Offset(0, (size.height - leftHeight) / 2);
-    final bottomLeft = Offset(0, topLeft.dy + leftHeight);
-    final topRight = Offset(size.width, 0);
-    final bottomRight = Offset(size.width, size.height);
-
-    // track
-    canvas.drawPath(
-      Path()
-        ..moveTo(topLeft.dx, topLeft.dy)
-        ..lineTo(bottomLeft.dx, bottomLeft.dy)
-        ..lineTo(bottomRight.dx, bottomRight.dy)
-        ..lineTo(topRight.dx, topRight.dy)
-        ..close(),
-      Paint()
-        ..color = trackColor
-        ..style = .fill,
+    final y = size.height / 2;
+    final ratio = clampDouble(
+      (currentSize - minSize) / (maxSize - minSize),
+      0,
+      1,
     );
+    final thumbX = thumbRadius + (size.width - 2 * thumbRadius) * ratio;
+    final track = Paint()
+      ..strokeWidth = 2
+      ..strokeCap = .round;
 
-    // thumb
-    final ratio = (currentSize - minSize) / (maxSize - minSize);
-    final thumbHeight = size.height * ratio;
-    final thumbRight = size.width * ratio;
-    final thumbTop = (size.height - thumbHeight) / 2;
-    canvas.drawPath(
-      Path()
-        ..moveTo(topLeft.dx, topLeft.dy)
-        ..lineTo(bottomLeft.dx, bottomLeft.dy)
-        ..lineTo(thumbRight, thumbTop + thumbHeight)
-        ..lineTo(thumbRight, thumbTop)
-        ..close(),
-      Paint()
-        ..color = thumbColor
-        ..style = .fill,
+    canvas.drawLine(
+      Offset(0, y),
+      Offset(size.width, y),
+      track..color = trackColor,
+    );
+    canvas.drawLine(Offset(0, y), Offset(thumbX, y), track..color = thumbColor);
+    canvas.drawCircle(
+      Offset(thumbX, y),
+      thumbRadius,
+      Paint()..color = thumbColor,
     );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is! _SizeSliderPainter ||
-        oldDelegate.axis != axis ||
-        oldDelegate.minSize != minSize ||
-        oldDelegate.maxSize != maxSize ||
-        oldDelegate.currentSize != currentSize ||
-        oldDelegate.trackColor != trackColor ||
-        oldDelegate.thumbColor != thumbColor;
-  }
+  bool shouldRepaint(_SizeSliderPainter oldDelegate) =>
+      oldDelegate.minSize != minSize ||
+      oldDelegate.maxSize != maxSize ||
+      oldDelegate.currentSize != currentSize ||
+      oldDelegate.trackColor != trackColor ||
+      oldDelegate.thumbColor != thumbColor;
 }

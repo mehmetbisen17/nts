@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:saber/components/toolbar/size_picker.dart';
-import 'package:saber/data/extensions/axis_extensions.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/tools/_tool.dart';
-import 'package:saber/data/tools/highlighter.dart';
-import 'package:saber/data/tools/pen.dart';
-import 'package:saber/data/tools/pencil.dart';
-import 'package:saber/data/tools/shape_pen.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/toolbar/toolbar_button.dart';
+import 'package:nts/data/extensions/axis_extensions.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/tools/_tool.dart';
+import 'package:nts/data/tools/calligraphy_pen.dart';
+import 'package:nts/data/tools/pen.dart';
+import 'package:nts/data/tools/shape_pen.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class PenModal extends StatefulWidget {
   const new({super.key, required this.getTool, required this.setTool});
@@ -25,94 +24,76 @@ class _PenModalState extends State<PenModal> {
   @override
   Widget build(BuildContext context) {
     final axis = stows.editorToolbarAlignment.value.axis.opposite;
-    final Tool currentTool = widget.getTool();
-    final Pen currentPen;
-    if (currentTool is Pen) {
-      currentPen = currentTool;
-    } else {
-      return const SizedBox();
-    }
+    if (widget.getTool() is! Pen) return const SizedBox();
 
+    const padding = EdgeInsets.all(2);
     return Flex(
       direction: axis,
-      mainAxisAlignment: .center,
+      mainAxisSize: .min,
       children: [
-        SizePicker(axis: axis, pen: currentPen),
-        if (currentPen is! Highlighter && currentPen is! Pencil) ...[
-          const SizedBox.square(dimension: 8),
-          IconButton(
-            onPressed: () => setState(() {
-              widget.setTool(Pen.fountainPen());
-            }),
-            style: TextButton.styleFrom(
-              foregroundColor: Pen.currentPen.icon == Pen.fountainPenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-              backgroundColor: Pen.currentPen.icon == Pen.fountainPenIcon
-                  ? Theme.of(context).colorScheme.secondary
-                        .withValues(alpha: 0.1)
-                  : Colors.transparent,
-              shape: const CircleBorder(),
-            ),
-            tooltip: t.editor.pens.fountainPen,
-            icon: SvgPicture.asset(
-              'assets/images/scribble_fountain.svg',
-              width: 32,
-              height: 32 / 508 * 374,
-              theme: SvgTheme(
-                currentColor: Pen.currentPen.icon == Pen.fountainPenIcon
-                    ? ColorScheme.of(context).secondary
-                    : ColorScheme.of(context).onSurface,
-              ),
-            ),
-          ),
-          const SizedBox.square(dimension: 8),
-          IconButton(
-            onPressed: () => setState(() {
-              widget.setTool(Pen.ballpointPen());
-            }),
-            style: TextButton.styleFrom(
-              foregroundColor: Pen.currentPen.icon == Pen.ballpointPenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-              backgroundColor: Pen.currentPen.icon == Pen.ballpointPenIcon
-                  ? Theme.of(context).colorScheme.secondary
-                        .withValues(alpha: 0.1)
-                  : Colors.transparent,
-              shape: const CircleBorder(),
-            ),
-            tooltip: t.editor.pens.ballpointPen,
-            icon: SvgPicture.asset(
-              'assets/images/scribble_ballpoint.svg',
-              width: 32,
-              height: 32 / 508 * 374,
-              theme: SvgTheme(
-                currentColor: Pen.currentPen.icon == Pen.ballpointPenIcon
-                    ? ColorScheme.of(context).secondary
-                    : ColorScheme.of(context).onSurface,
-              ),
-            ),
-          ),
-          const SizedBox.square(dimension: 8),
-          IconButton(
-            onPressed: () => setState(() {
-              widget.setTool(ShapePen());
-            }),
-            style: TextButton.styleFrom(
-              foregroundColor: Pen.currentPen.icon == ShapePen.shapePenIcon
-                  ? ColorScheme.of(context).secondary
-                  : ColorScheme.of(context).onSurface,
-              backgroundColor: Pen.currentPen.icon == ShapePen.shapePenIcon
-                  ? Theme.of(context).colorScheme.secondary
-                        .withValues(alpha: 0.1)
-                  : Colors.transparent,
-              shape: const CircleBorder(),
-            ),
-            tooltip: t.editor.pens.shapePen,
-            icon: const FaIcon(ShapePen.shapePenIcon),
-          ),
-        ],
+        ToolbarIconButton(
+          tooltip: t.editor.pens.fountainPen,
+          selected: Pen.currentPen.icon == Pen.fountainPenIcon,
+          onPressed: () => setState(() {
+            widget.setTool(Pen.fountainPen());
+          }),
+          padding: padding,
+          child: const _Scribble('assets/images/scribble_fountain.svg'),
+        ),
+        ToolbarIconButton(
+          tooltip: t.editor.pens.ballpointPen,
+          selected: Pen.currentPen.icon == Pen.ballpointPenIcon,
+          onPressed: () => setState(() {
+            widget.setTool(Pen.ballpointPen());
+          }),
+          padding: padding,
+          child: const _Scribble('assets/images/scribble_ballpoint.svg'),
+        ),
+        ToolbarIconButton(
+          tooltip: t.editor.pens.shapePen,
+          selected: Pen.currentPen.icon == ShapePen.shapePenIcon,
+          onPressed: () => setState(() {
+            widget.setTool(ShapePen());
+          }),
+          padding: padding,
+          child: const Icon(Symbols.shapes),
+        ),
+        ToolbarIconButton(
+          tooltip: t.editor.canvasTools.brushPen,
+          selected: Pen.currentPen.icon == Pen.brushPenIcon,
+          onPressed: () => setState(() {
+            widget.setTool(Pen.brushPen());
+          }),
+          padding: padding,
+          child: const Icon(Symbols.brush),
+        ),
+        ToolbarIconButton(
+          tooltip: t.editor.canvasTools.calligraphyPen,
+          selected: Pen.currentPen.icon == CalligraphyPen.calligraphyPenIcon,
+          onPressed: () => setState(() {
+            widget.setTool(CalligraphyPen());
+          }),
+          padding: padding,
+          child: const Icon(Symbols.history_edu),
+        ),
       ],
+    );
+  }
+}
+
+/// A sample stroke of a pen, in the button's icon color.
+class _Scribble extends StatelessWidget {
+  const new(this.asset);
+
+  final String asset;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: 26,
+      height: 26 / 508 * 374,
+      theme: SvgTheme(currentColor: IconTheme.of(context).color!),
     );
   }
 }

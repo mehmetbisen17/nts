@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:saber/components/home/sentry_consent_dialog.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/sentry/sentry_init.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/home/sentry_consent_dialog.dart';
+import 'package:nts/components/settings/settings_row.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/sentry/sentry_init.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class const SettingsSentryConsent({super.key}) extends StatelessWidget {
   String _getSubtitle() {
@@ -27,20 +28,11 @@ class const SettingsSentryConsent({super.key}) extends StatelessWidget {
       valueListenable: stows.sentryConsent,
       builder: (context, consent, child) {
         final subtitle = _getSubtitle();
-        return ListTile(
-          contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-          leading: const Icon(Icons.bug_report),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontStyle:
-                  stows.sentryConsent.value != stows.sentryConsent.defaultValue
-                  ? FontStyle.italic
-                  : null,
-            ),
-          ),
-          subtitle: Text(subtitle, style: const TextStyle(fontSize: 13)),
+        return SettingsRow(
+          title: title,
+          subtitle: subtitle,
+          modified: consent != stows.sentryConsent.defaultValue,
+          showChevron: true,
           onTap: () => SentryConsentDialog.show(context),
           onLongPress: () => SentryConsentDialog.show(context),
         );

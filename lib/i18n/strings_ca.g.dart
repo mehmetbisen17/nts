@@ -16,7 +16,7 @@ class TranslationsCa extends Translations with BaseTranslations<AppLocale, Trans
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsCa({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.ca,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
@@ -25,7 +25,8 @@ class TranslationsCa extends Translations with BaseTranslations<AppLocale, Trans
 		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver);
 
 	/// Metadata for the translations of <ca>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	late final TranslationsCa _root = this; // ignore: unused_field
 
@@ -64,14 +65,11 @@ class _Translations$home$ca extends Translations$home$en {
 	final TranslationsCa _root; // ignore: unused_field
 
 	// Translations
-	@override late final _Translations$home$tabs$ca tabs = _Translations$home$tabs$ca._(_root);
 	@override late final _Translations$home$titles$ca titles = _Translations$home$titles$ca._(_root);
 	@override late final _Translations$home$tooltips$ca tooltips = _Translations$home$tooltips$ca._(_root);
 	@override late final _Translations$home$create$ca create = _Translations$home$create$ca._(_root);
-	@override String get welcome => 'Benvingut/d@ a Saber';
+	@override String get welcome => 'Benvingut/d@ a nts';
 	@override String get invalidFormat => 'L\'arxiu seleccionat no és compatible.\nSiusplau, proveu-ho des d\'un dels següents formats: sbn, sbn2, sba o PDF';
-	@override String get noFiles => 'Cap arxiu trobat';
-	@override String get noPreviewAvailable => 'Previsualització no disponible';
 	@override String get createNewNote => 'Prem + per a crear una nota nova';
 	@override String get backFolder => 'Torna a la carpeta anterior';
 	@override late final _Translations$home$newFolder$ca newFolder = _Translations$home$newFolder$ca._(_root);
@@ -82,7 +80,6 @@ class _Translations$home$ca extends Translations$home$en {
 	@override late final _Translations$home$renameFolder$ca renameFolder = _Translations$home$renameFolder$ca._(_root);
 	@override late final _Translations$home$deleteFolder$ca deleteFolder = _Translations$home$deleteFolder$ca._(_root);
 	@override late final _Translations$home$sort$ca sort = _Translations$home$sort$ca._(_root);
-	@override late final _Translations$home$layout$ca layout = _Translations$home$layout$ca._(_root);
 }
 
 // Path: sentry
@@ -118,7 +115,7 @@ class _Translations$settings$ca extends Translations$settings$en {
 	];
 	@override String get systemLanguage => 'Automàtic';
 	@override String get resyncEverything => 'Resincronitza tot';
-	@override String get openDataDir => 'Obre la carpeta Saber';
+	@override String get openDataDir => 'Obre la carpeta nts';
 	@override String get autosaveDisabled => 'Né jamais';
 	@override String get shapeRecognitionDisabled => 'Né jamais';
 }
@@ -187,7 +184,7 @@ class _Translations$appInfo$ca extends Translations$appInfo$en {
 	final TranslationsCa _root; // ignore: unused_field
 
 	// Translations
-	@override String licenseNotice({required Object buildYear}) => 'Saber  Copyright © 2022-${buildYear}  Adil Hanney\nAquest programa no compta amb cap garantia. És programari lliure, i estàs en el teu dret de distribuir-ho sota certes condicions.';
+	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nAquest programa no compta amb cap garantia. És programari lliure, i estàs en el teu dret de distribuir-ho sota certes condicions.';
 	@override String get debug => 'DEBUG';
 	@override String get sponsorButton => 'Prem aquí per a mostrar-me el teu suport o ampliar l\'emmagatzematge';
 	@override String get licenseButton => 'Prem aquí per a més informació sobre la llicència';
@@ -228,19 +225,6 @@ class _Translations$editor$ca extends Translations$editor$en {
 	@override String get pages => 'Folis';
 	@override String get untitled => 'Sense títol';
 	@override String get needsToSaveBeforeExiting => 'Desant canvis… pots tancar l\'editor quan finalitzi el procés';
-}
-
-// Path: home.tabs
-class _Translations$home$tabs$ca extends Translations$home$tabs$en {
-	_Translations$home$tabs$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get home => 'Inici';
-	@override String get browse => 'Cerca';
-	@override String get whiteboard => 'Document en Blanc';
-	@override String get settings => 'Configuració';
 }
 
 // Path: home.titles
@@ -384,18 +368,6 @@ class _Translations$home$sort$ca extends Translations$home$sort$en {
 	@override String get lastModifiedOldToNew => 'Editat (Del més antic al més recent)';
 }
 
-// Path: home.layout
-class _Translations$home$layout$ca extends Translations$home$layout$en {
-	_Translations$home$layout$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get layout => 'Disposició';
-	@override String get masonryGrid => 'Grilla de maçoneria';
-	@override String get simpleGrid => 'Grilla simple';
-}
-
 // Path: sentry.consent
 class _Translations$sentry$consent$ca extends Translations$sentry$consent$en {
 	_Translations$sentry$consent$ca._(TranslationsCa root) : this._root = root, super.internal(root);
@@ -403,7 +375,7 @@ class _Translations$sentry$consent$ca extends Translations$sentry$consent$en {
 	final TranslationsCa _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Vols ajudar a millorar Saber?';
+	@override String get title => 'Vols ajudar a millorar nts?';
 	@override late final _Translations$sentry$consent$description$ca description = _Translations$sentry$consent$description$ca._(_root);
 	@override late final _Translations$sentry$consent$answers$ca answers = _Translations$sentry$consent$answers$ca._(_root);
 }
@@ -431,7 +403,7 @@ class _Translations$settings$prefLabels$ca extends Translations$settings$prefLab
 	// Translations
 	@override String get locale => 'Llengua';
 	@override String get layoutSize => 'Format';
-	@override String get shouldCheckForUpdates => 'Comprova si hi ha actualitzacions disponibles per Saber';
+	@override String get shouldCheckForUpdates => 'Comprova si hi ha actualitzacions disponibles per nts';
 	@override String get shouldAlwaysAlertForUpdates => 'Actualitzacions més ràpides';
 	@override String get allowInsecureConnections => 'Permet connexions no segures';
 	@override String get appTheme => 'tema de l\'aplicació';
@@ -454,7 +426,7 @@ class _Translations$settings$prefLabels$ca extends Translations$settings$prefLab
 	@override String get autosave => 'Auto-guardat';
 	@override String get shapeRecognitionDelay => 'Retard de reconnaissance de forme';
 	@override String get autoStraightenLines => 'Rectificar líneas automáticamente';
-	@override String get customDataDir => 'Pàrador custom Saber';
+	@override String get customDataDir => 'Pàrador custom nts';
 	@override String get sentry => 'Informar errores';
 }
 
@@ -468,7 +440,7 @@ class _Translations$settings$prefDescriptions$ca extends Translations$settings$p
 	@override late final _Translations$settings$prefDescriptions$hideFingerDrawing$ca hideFingerDrawing = _Translations$settings$prefDescriptions$hideFingerDrawing$ca._(_root);
 	@override late final _Translations$settings$prefDescriptions$sentry$ca sentry = _Translations$settings$prefDescriptions$sentry$ca._(_root);
 	@override String get hyperlegibleFont => 'Increxeix la legibilitat per als usuaris amb baixa visió';
-	@override String get allowInsecureConnections => '(No recomanhat) Permitir a Saber conectar a serveis amb certs autogenerades/no fiables';
+	@override String get allowInsecureConnections => '(No recomanhat) Permitir a nts conectar a serveis amb certs autogenerades/no fiables';
 	@override String get preferGreyscale => 'Per a dispositius e-ink';
 	@override String get autoClearWhiteboardOnExit => 'Borra la llista blanca després de sortir de l\'aplicació';
 	@override String get disableEraserAfterUse => 'Automàticament torna al bolífer després de utilitzar l\'efaçador';
@@ -578,10 +550,10 @@ class _Translations$login$ncLoginStep$ca extends Translations$login$ncLoginStep$
 	// Translations
 	@override late final _Translations$login$ncLoginStep$loginFlow$ca loginFlow = _Translations$login$ncLoginStep$loginFlow$ca._(_root);
 	@override String get whereToStoreData => 'Escollreu on où voleu guardar els teus dades:';
-	@override String get saberNcServer => 'Serveur Nextcloud de Saber';
+	@override String get saberNcServer => 'Serveur Nextcloud de nts';
 	@override String get otherNcServer => 'Un servidor Nextcloud';
 	@override String get serverUrl => 'URL del servidor';
-	@override String get loginWithSaber => 'Inglesar amb Saber';
+	@override String get loginWithSaber => 'Inglesar amb nts';
 	@override String get loginWithNextcloud => 'Inglesar amb Nextcloud';
 }
 
@@ -598,7 +570,7 @@ class _Translations$login$encLoginStep$ca extends Translations$login$encLoginSte
 		_Translations$login$encLoginStep$encFaq$2$ca._(_root),
 	];
 	@override String get enterEncPassword => 'Per protegere i tuoi dati, inserisci la tua password di crittografia:';
-	@override String get newToSaber => 'Nou en Saber? Simplement ingresa una nova contrasenya de cifratura.';
+	@override String get newToSaber => 'Nou en nts? Simplement ingresa una nova contrasenya de cifratura.';
 	@override String get encPassword => 'contraseña de cifrado';
 	@override String get encFaqTitle => 'Preguntes freqüents';
 	@override String get wrongEncPassword => 'Descodificació fallada amb la contrasenya proporcionada. Si us plau, intenteu introduir-la de nou.';
@@ -776,7 +748,7 @@ class _Translations$editor$versionTooNew$ca extends Translations$editor$versionT
 	final TranslationsCa _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Aquesta nota va ser editada des d\'una versió més recent de Saber';
+	@override String get title => 'Aquesta nota va ser editada des d\'una versió més recent de nts';
 	@override String get allowEditing => 'Habilitar edició';
 	@override String get subtitle => 'L\'édition de cette note peut entraîner la perte d\'informations. Voulez-vous ignorer cela et éditer quand même ?';
 }
@@ -868,7 +840,7 @@ class _Translations$login$ncLoginStep$loginFlow$ca extends Translations$login$nc
 	final TranslationsCa _root; // ignore: unused_field
 
 	// Translations
-	@override String get pleaseAuthorize => 'Permeta a Saber accedir a la teva compte de Nextcloud';
+	@override String get pleaseAuthorize => 'Permeta a nts accedir a la teva compte de Nextcloud';
 	@override String get followPrompts => 'Si us plauseguda les instruccions a l\'interfície de Nextcloud';
 	@override String get browserDidntOpen => 'La pàgina de connexió no s\'ha obert? Clic aquí';
 }
@@ -892,7 +864,7 @@ class _Translations$login$encLoginStep$encFaq$1$ca extends Translations$login$en
 
 	// Translations
 	@override String get q => 'No he menet altrepass de cifratge fins ara. On l\'obtenc?';
-	@override String get a => 'Escoll un nou contrasen de cifratge i introduïu-lo a la sota.\nSaber generarà les teves clau de cifratge automàticament a partir d\'aquest contrasen.';
+	@override String get a => 'Escoll un nou contrasen de cifratge i introduïu-lo a la sota.\nnts generarà les teves clau de cifratge automàticament a partir d\'aquest contrasen.';
 }
 
 // Path: login.encLoginStep.encFaq.2

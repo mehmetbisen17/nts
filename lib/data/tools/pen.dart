@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/tools/_tool.dart';
+import 'package:nts/data/tools/highlighter.dart';
+import 'package:nts/data/tools/pencil.dart';
+import 'package:nts/data/tools/shape_pen.dart';
+import 'package:nts/data/tools/tape.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/tools/_tool.dart';
-import 'package:saber/data/tools/highlighter.dart';
-import 'package:saber/data/tools/pencil.dart';
-import 'package:saber/i18n/strings.g.dart';
 import 'package:sbn/tool_id.dart';
 
 class Pen extends Tool {
@@ -47,6 +51,18 @@ class Pen extends Tool {
       color = Color(stows.lastBallpointPenColor.value),
       toolId = .ballpointPen;
 
+  /// Tapers strongly with pressure (or speed), for lettering.
+  new brushPen()
+    : name = t.editor.canvasTools.brushPen,
+      sizeMin = 1,
+      sizeMax = 40,
+      sizeStep = 1,
+      icon = brushPenIcon,
+      options = stows.lastBrushPenOptions.value,
+      pressureEnabled = true,
+      color = Colors.black,
+      toolId = .brushPen;
+
   final String name;
   final double sizeMin, sizeMax, sizeStep;
   late final int sizeStepsBetweenMinAndMax = ((sizeMax - sizeMin) / sizeStep)
@@ -58,6 +74,7 @@ class Pen extends Tool {
 
   static const fountainPenIcon = FontAwesomeIcons.penFancy;
   static const ballpointPenIcon = FontAwesomeIcons.pen;
+  static const brushPenIcon = FontAwesomeIcons.paintbrush;
 
   static Stroke? currentStroke;
   Color color;
@@ -72,6 +89,7 @@ class Pen extends Tool {
       'Use Highlighter.currentHighlighter instead',
     );
     assert(currentPen is! Pencil, 'Use Pencil.currentPencil instead');
+    assert(currentPen is! Tape, 'Use Tape.currentTape instead');
     _currentPen = currentPen;
   }
 
@@ -81,30 +99,77 @@ class Pen extends Tool {
     int pageIndex,
     double? pressure,
   ) {
-    currentStroke = Stroke(
-      color: color,
-      pressureEnabled: pressureEnabled,
-      options: options.copyWith(isComplete: false),
-      pageIndex: pageIndex,
-      page: page,
-      toolId: toolId,
-    );
+    currentStroke = newStroke(page, pageIndex);
     onDragUpdate(position, pressure);
   }
 
+  /// The stroke that [onDragStart] starts.
+  @protected
+  Stroke newStroke(EditorPage page, int pageIndex) => Stroke(
+    color: color,
+    pressureEnabled: pressureEnabled,
+    options: options.copyWith(isComplete: false),
+    pageIndex: pageIndex,
+    page: page,
+    toolId: toolId,
+  );
+
   void onDragUpdate(Offset position, double? pressure) {
     currentStroke?.addPoint(position, pressure);
+    if (_canHoldToSnap) _restartHoldTimer(position);
   }
 
   Stroke? onDragEnd() {
+    _holdTimer?.cancel();
+    _holdTimer = _holdAnchor = null;
     final stroke = currentStroke;
     currentStroke = null;
     if (stroke == null) return null;
 
-    return stroke
+    stroke
       ..options.isComplete = true
       ..markPolygonNeedsUpdating();
+    if (!_canHoldToSnap) return stroke;
+    final shape = ShapePen.detectedShape;
+    ShapePen.detectedShape = null;
+    return shape == null ? stroke : ShapePen.applyDetectedShape(stroke, shape);
   }
+
+  /// How long the pen must stay still for [Stows.holdToSnapShape].
+  static const holdToSnapDelay = Duration(milliseconds: 600);
+
+  /// Moving less than this (in page units) still counts as holding still.
+  static const _holdSlop = 3.0;
+
+  static Timer? _holdTimer;
+  static Offset? _holdAnchor;
+
+  bool get _canHoldToSnap =>
+      stows.holdToSnapShape.value &&
+      (toolId == .fountainPen || toolId == .ballpointPen || toolId == .pencil);
+
+  /// Snaps [currentStroke] into a shape if the pen stays near [position]
+  /// for [holdToSnapDelay]. Moving on drops the shape again.
+  void _restartHoldTimer(Offset position) {
+    final anchor = _holdAnchor;
+    if (anchor != null && (position - anchor).distance < _holdSlop) return;
+    _holdAnchor = position;
+    ShapePen.detectedShape = null;
+    _holdTimer?.cancel();
+    _holdTimer = Timer(holdToSnapDelay, () {
+      final stroke = currentStroke;
+      if (stroke == null) return;
+      final shape = stroke.detectShape();
+      // (The score can be NaN, e.g. for a loop that ends where it started)
+      if (shape?.name == null || !(shape!.score >= holdToSnapMinScore)) return;
+      ShapePen.detectedShape = shape;
+      if (stroke.page case final EditorPage page) page.redrawStrokes();
+    });
+  }
+
+  /// How closely a held stroke must match a shape to snap,
+  /// so pausing mid-word doesn't turn handwriting into shapes.
+  static const holdToSnapMinScore = 0.8;
 
   /// The default stroke options.
   ///
@@ -124,4 +189,18 @@ class Pen extends Tool {
     start: StrokeEndOptions.start(taperEnabled: true, customTaper: 1),
     end: StrokeEndOptions.end(taperEnabled: true, customTaper: 1),
   );
+  static StrokeOptions get tapeOptions => defaultOptions.copyWith(
+    size: 40,
+    thinning: 0,
+    start: StrokeEndOptions.start(cap: false),
+    end: StrokeEndOptions.end(cap: false),
+  );
+  static StrokeOptions get brushPenOptions => defaultOptions.copyWith(
+    size: 10,
+    thinning: 0.9,
+    start: StrokeEndOptions.start(taperEnabled: true, customTaper: 25),
+    end: StrokeEndOptions.end(taperEnabled: true, customTaper: 25),
+  );
+  static StrokeOptions get calligraphyPenOptions =>
+      defaultOptions.copyWith(size: 12, thinning: 0);
 }

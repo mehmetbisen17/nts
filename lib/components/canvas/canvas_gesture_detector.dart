@@ -3,17 +3,18 @@ import 'dart:collection';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keybinder/keybinder.dart';
-import 'package:saber/components/canvas/hud/canvas_hud.dart';
-import 'package:saber/components/canvas/interactive_canvas.dart';
-import 'package:saber/data/editor/page.dart';
-import 'package:saber/data/extensions/change_notifier_extensions.dart';
-import 'package:saber/data/extensions/matrix4_extensions.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:nts/components/canvas/hud/canvas_hud.dart';
+import 'package:nts/components/canvas/interactive_canvas.dart';
+import 'package:nts/data/editor/page.dart';
+import 'package:nts/data/extensions/change_notifier_extensions.dart';
+import 'package:nts/data/extensions/matrix4_extensions.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/pages/editor/editor.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class CanvasGestureDetector extends StatefulWidget {
@@ -25,6 +26,9 @@ class CanvasGestureDetector extends StatefulWidget {
     required this.onDrawStart,
     required this.onDrawUpdate,
     required this.onDrawEnd,
+    this.onTapUp,
+    this.onPointerDown,
+    this.onSecondaryTap,
     required this.updatePointerData,
     required this.onHovering,
     required this.onHoveringEnd,
@@ -35,7 +39,8 @@ class CanvasGestureDetector extends StatefulWidget {
     required this.initialPageIndex,
     required this.pageBuilder,
     required this.placeholderPageBuilder,
-    required this.isTextEditing,
+    required this.arrowKeysPan,
+    required this.shortcutsApply,
     TransformationController? transformationController,
   }) : _transformationController =
            transformationController ?? TransformationController();
@@ -48,9 +53,23 @@ class CanvasGestureDetector extends StatefulWidget {
   final ValueChanged<ScaleUpdateDetails> onDrawUpdate;
   final ValueChanged<ScaleEndDetails> onDrawEnd;
 
-  /// Called when the pressure of the stylus changes.
+  /// Taps that aren't draw gestures, e.g. in read-only notes.
+  /// Only set this when needed: it makes drawing wait for the tap to fail.
+  final GestureTapUpCallback? onTapUp;
+
+  /// Where a pointer went down, which can be before [onDrawStart]
+  /// (e.g. if the gesture had to move before it was accepted).
+  final ValueChanged<Offset>? onPointerDown;
+
+  /// A right-click with the mouse (or a Control-click on a Mac),
+  /// at this global position.
+  final ValueChanged<Offset>? onSecondaryTap;
+
+  /// Called when the pointer or the pressure of the stylus changes.
   /// The [pressure] value is normalized into a range of 0 to 1.
-  final void Function(PointerDeviceKind kind, double? pressure)
+  /// [buttons] are the pointer's (see [PointerEvent.buttons]), or 0 once
+  /// it's up.
+  final void Function(PointerDeviceKind kind, double? pressure, int buttons)
   updatePointerData;
   final VoidCallback onHovering;
   final VoidCallback onHoveringEnd;
@@ -65,7 +84,11 @@ class CanvasGestureDetector extends StatefulWidget {
   final Widget Function(BuildContext context, int pageIndex)
   placeholderPageBuilder;
 
-  final bool Function() isTextEditing;
+  /// Whether the arrow keys pan the canvas, e.g. not while typing.
+  final bool Function() arrowKeysPan;
+
+  /// Whether the zoom shortcuts apply, e.g. not while typing.
+  final bool Function() shortcutsApply;
 
   late final TransformationController _transformationController;
 
@@ -160,20 +183,19 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   /// Otherwise, panning can be done in any (i.e. diagonal) direction.
   late bool axisAlignedPanLock = stows.lastAxisAlignedPanLock.value;
 
-  void zoomIn() => widget._transformationController.value =
-      setZoom(
-        scaleDelta: 0.1,
-        transformation: widget._transformationController.value,
-        containerBounds: containerBounds,
-      ) ??
-      widget._transformationController.value;
-  void zoomOut() => widget._transformationController.value =
-      setZoom(
-        scaleDelta: -0.1,
-        transformation: widget._transformationController.value,
-        containerBounds: containerBounds,
-      ) ??
-      widget._transformationController.value;
+  void zoomIn() => _zoomBy(0.1);
+  void zoomOut() => _zoomBy(-0.1);
+  void _zoomBy(double scaleDelta) {
+    if (zoomLockedValue != null) return;
+    widget._transformationController.value =
+        setZoom(
+          scaleDelta: scaleDelta,
+          transformation: widget._transformationController.value,
+          containerBounds: containerBounds,
+        ) ??
+        widget._transformationController.value;
+  }
+
   @visibleForTesting
   static Matrix4? setZoom({
     required double scaleDelta,
@@ -204,8 +226,8 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     _arrowKeyPanTimers.remove(direction)?.cancel();
     if (!pressed) return;
 
-    // arrow keys are used to navigate around text
-    if (widget.isTextEditing()) return;
+    // e.g. arrow keys are used to navigate around text
+    if (!widget.arrowKeysPan()) return;
 
     _arrowKeyPanNow(direction);
 
@@ -243,24 +265,33 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   }
 
   var _setupKeybindings = false;
-  late Keybinding _ctrlPlus, _ctrlEquals, _ctrlMinus;
+  late Keybinding _ctrlPlus, _ctrlEquals, _ctrlMinus, _ctrl0;
   late Keybinding _leftKey, _rightKey, _upKey, _downKey;
   void _assignKeybindings() {
     _ctrlPlus = Keybinding([
-      KeyCode.ctrl,
+      Editor.ctrlOrCmd,
       KeyCode.from(LogicalKeyboardKey.add),
     ], inclusive: true);
     _ctrlEquals = Keybinding([
-      KeyCode.ctrl,
+      Editor.ctrlOrCmd,
       KeyCode.from(LogicalKeyboardKey.equal),
     ], inclusive: true);
     _ctrlMinus = Keybinding([
-      KeyCode.ctrl,
+      Editor.ctrlOrCmd,
       KeyCode.from(LogicalKeyboardKey.minus),
     ], inclusive: true);
-    Keybinder.bind(_ctrlPlus, zoomIn);
-    Keybinder.bind(_ctrlEquals, zoomIn);
-    Keybinder.bind(_ctrlMinus, zoomOut);
+    _ctrl0 = Keybinding([
+      Editor.ctrlOrCmd,
+      KeyCode.from(LogicalKeyboardKey.digit0),
+    ], inclusive: true);
+    // Not while typing: e.g. ⌘0 is normal text in the note's text
+    VoidCallback unlessTyping(VoidCallback callback) => () {
+      if (widget.shortcutsApply()) callback();
+    };
+    Keybinder.bind(_ctrlPlus, unlessTyping(zoomIn));
+    Keybinder.bind(_ctrlEquals, unlessTyping(zoomIn));
+    Keybinder.bind(_ctrlMinus, unlessTyping(zoomOut));
+    Keybinder.bind(_ctrl0, unlessTyping(resetZoom));
 
     _leftKey = Keybinding([
       KeyCode.from(LogicalKeyboardKey.arrowLeft),
@@ -301,6 +332,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     Keybinder.remove(_ctrlPlus);
     Keybinder.remove(_ctrlEquals);
     Keybinder.remove(_ctrlMinus);
+    Keybinder.remove(_ctrl0);
 
     Keybinder.remove(_leftKey);
     Keybinder.remove(_rightKey);
@@ -403,8 +435,9 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     }
   }
 
-  /// Resets the zoom level to 1.0x
+  /// Resets the zoom level to 1.0x, unless zoom is locked
   void resetZoom() {
+    if (zoomLockedValue != null) return;
     final transformation = widget._transformationController.value;
     final scale = transformation.approxScale;
     if (scale == 1) return;
@@ -418,7 +451,31 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
         transformation;
   }
 
+  /// Where a right-click went down, until it moves too far to be a click
+  /// (then it pans).
+  Offset? _secondaryClick;
+
+  /// [event]'s buttons, where a Control-click is a right-click on a Mac.
+  static int _buttonsOf(PointerEvent event) =>
+      event.kind == .mouse &&
+          event.buttons == kPrimaryMouseButton &&
+          defaultTargetPlatform == TargetPlatform.macOS &&
+          HardwareKeyboard.instance.isControlPressed
+      ? kSecondaryMouseButton
+      : event.buttons;
+
   void _listenerPointerEvent(PointerEvent event) {
+    final buttons = _buttonsOf(event);
+    if (event is PointerDownEvent) {
+      widget.onPointerDown?.call(event.position);
+      _secondaryClick = event.kind == .mouse && buttons == kSecondaryMouseButton
+          ? event.position
+          : null;
+    } else if (_secondaryClick case final down?
+        when (event.position - down).distance >
+            computePanSlop(event.kind, null)) {
+      _secondaryClick = null;
+    }
     final isStylus =
         event.kind == PointerDeviceKind.stylus ||
         event.kind == PointerDeviceKind.invertedStylus;
@@ -428,7 +485,13 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
 
     final double? pressure;
     if (isStylus) {
-      if (event.pressureMin != event.pressureMax) {
+      if (defaultTargetPlatform == TargetPlatform.iOS &&
+          event.pressureMax > 1) {
+        // iOS reports the Pencil's force, where 1 is an average press and
+        // the maximum about 4: an average press is the middle pressure,
+        // which is what fingers and mice draw with
+        pressure = (event.pressure * _iosPressurePerForce).clamp(0.0, 1.0);
+      } else if (event.pressureMin != event.pressureMax) {
         pressure = _inverseLerp(
           event.pressure,
           min: event.pressureMin,
@@ -441,7 +504,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     } else {
       pressure = null;
     }
-    widget.updatePointerData(event.kind, pressure);
+    widget.updatePointerData(event.kind, pressure, buttons);
 
     if (isStylus &&
         stows.autoDisableFingerDrawingWhenStylusDetected.value &&
@@ -477,7 +540,11 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   }
 
   void _listenerPointerUpEvent(PointerEvent event) {
-    widget.updatePointerData(event.kind, null);
+    widget.updatePointerData(event.kind, null, 0);
+    if (_secondaryClick != null) {
+      _secondaryClick = null;
+      widget.onSecondaryTap?.call(event.position);
+    }
     if (stylusButtonWasPressed) {
       stylusButtonWasPressed = false;
       widget.onStylusButtonChanged(false);
@@ -496,6 +563,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
           onPointerUp: _listenerPointerUpEvent,
           onPointerHover: _listenerPointerHoverEvent,
           child: GestureDetector(
+            onTapUp: widget.onTapUp,
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints containerBounds) {
                 this.containerBounds = containerBounds;
@@ -703,3 +771,8 @@ double _inverseLerp(num value, {required num min, required num max}) {
   );
   return (value - min) / (max - min);
 }
+
+/// Pressure per unit of Apple Pencil force (1 is an average press).
+/// ponytail: a guess from Apple's definition of force; tune it on an iPad
+/// if Pencil strokes come out too thin or too thick.
+const _iosPressurePerForce = 0.5;

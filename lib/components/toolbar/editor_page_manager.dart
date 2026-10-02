@@ -1,11 +1,12 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
-import 'package:saber/components/canvas/canvas_gesture_detector.dart';
-import 'package:saber/components/canvas/canvas_preview.dart';
-import 'package:saber/components/theming/adaptive_icon.dart';
-import 'package:saber/components/theming/saber_theme.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:nts/components/canvas/canvas_gesture_detector.dart';
+import 'package:nts/components/canvas/canvas_preview.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/i18n/strings.g.dart';
 
 class EditorPageManager extends StatefulWidget {
   const new({
@@ -67,7 +68,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                   Row(
                     mainAxisAlignment: .spaceAround,
                     children: [
-                      Text(
+                      HiganLabel(
                         '${pageIndex + 1} / ${widget.coreInfo.pages.length}',
                       ),
                       ConstrainedBox(
@@ -76,10 +77,15 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                           maxHeight: 250,
                         ),
                         child: FittedBox(
-                          child: CanvasPreview(
-                            pageIndex: pageIndex,
-                            height: null,
-                            coreInfo: widget.coreInfo,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              boxShadow: context.higan.paperShadow,
+                            ),
+                            child: CanvasPreview(
+                              pageIndex: pageIndex,
+                              height: null,
+                              coreInfo: widget.coreInfo,
+                            ),
                           ),
                         ),
                       ),
@@ -89,7 +95,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                           index: pageIndex,
                           child: const Padding(
                             padding: .all(8),
-                            child: Icon(Icons.drag_handle),
+                            child: Icon(Symbols.drag_handle, weight: 300),
                           ),
                         ),
                       ),
@@ -100,9 +106,9 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                     children: [
                       IconButton(
                         tooltip: t.editor.menu.insertPage,
-                        icon: const AdaptiveIcon(
-                          icon: Icons.insert_page_break,
-                          cupertinoIcon: CupertinoIcons.add,
+                        icon: const Icon(
+                          Symbols.insert_page_break,
+                          weight: 300,
                         ),
                         onPressed: () => setState(() {
                           widget.insertPageAfter(pageIndex);
@@ -111,10 +117,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                       ),
                       IconButton(
                         tooltip: t.editor.menu.duplicatePage,
-                        icon: const AdaptiveIcon(
-                          icon: Icons.content_copy,
-                          cupertinoIcon: CupertinoIcons.doc_on_clipboard,
-                        ),
+                        icon: const Icon(Symbols.content_copy, weight: 300),
                         onPressed: () => setState(() {
                           widget.duplicatePage(pageIndex);
                           scrollToPage(pageIndex + 1);
@@ -125,7 +128,10 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                           page: pageIndex + 1,
                           totalPages: widget.coreInfo.pages.length,
                         ),
-                        icon: const Icon(Icons.cleaning_services),
+                        icon: const Icon(
+                          Symbols.cleaning_services,
+                          weight: 300,
+                        ),
                         onPressed: isEmptyLastPage
                             ? null
                             : () => setState(() {
@@ -135,10 +141,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                       ),
                       IconButton(
                         tooltip: t.editor.menu.deletePage,
-                        icon: const AdaptiveIcon(
-                          icon: Icons.delete,
-                          cupertinoIcon: CupertinoIcons.delete,
-                        ),
+                        icon: const Icon(Symbols.delete, weight: 300),
                         onPressed: isEmptyLastPage
                             ? null
                             : () => setState(() {

@@ -1,10 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:saber/data/file_manager/file_manager.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/pages/editor/editor.dart';
+import 'package:nts/components/canvas/interactive_canvas.dart';
+import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/pages/editor/editor.dart';
 
 import 'utils/test_mock_channel_handlers.dart';
 
@@ -53,6 +54,44 @@ void main() {
         expect(page.strokes, hasLength(0));
       });
     }
+
+    testWidgets('A palm on the screen while writing is ignored', (
+      tester,
+    ) async {
+      final editorState = await tester._pumpEditor();
+      await tester.pump();
+      final page = editorState.coreInfo.pages.first;
+      Matrix4 transform() => tester
+          .widget<InteractiveCanvasViewer>(find.byType(InteractiveCanvasViewer))
+          .transformationController!
+          .value
+          .clone();
+      final before = transform();
+
+      final center = tester.getCenter(find.byType(Editor));
+      final pencil = await tester.createGesture(kind: .stylus);
+      await pencil.down(center);
+      for (var i = 1; i <= 5; ++i) {
+        await pencil.moveBy(const Offset(4, 2), timeStamp: .new(seconds: i));
+      }
+      // The hand lands mid-word, and moves (which would zoom)
+      final palm = await tester.createGesture(kind: .touch);
+      await palm.down(center + const Offset(80, 160));
+      for (var i = 6; i <= 10; ++i) {
+        await palm.moveBy(const Offset(30, 30), timeStamp: .new(seconds: i));
+        await pencil.moveBy(const Offset(4, 2), timeStamp: .new(seconds: i));
+      }
+      await palm.up(timeStamp: const .new(seconds: 11));
+      await pencil.moveBy(
+        const Offset(4, 2),
+        timeStamp: const .new(seconds: 11),
+      );
+      await pencil.up(timeStamp: const .new(seconds: 12));
+      await tester.pump();
+
+      expect(page.strokes, hasLength(1), reason: 'one stroke, not cut');
+      expect(transform(), before, reason: 'no zoom or pan');
+    });
   });
 }
 

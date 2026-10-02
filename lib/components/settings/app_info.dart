@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:saber/data/flavor_config.dart';
-import 'package:saber/data/is_this_a_test.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/version.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/data/flavor_config.dart';
+import 'package:nts/data/is_this_a_test.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/version.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class const AppInfo({super.key}) extends StatelessWidget {
@@ -32,13 +32,18 @@ class const AppInfo({super.key}) extends StatelessWidget {
     if (isThisATest) '(135010)' else '($buildNumber)',
   ].join(' ');
 
+  /// A mono readout, e.g. "NTS · V1.35.1 (135010)". Tap for the about dialog.
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () => _showAboutDialog(context),
-      child: ValueListenableBuilder(
-        valueListenable: stows.locale,
-        builder: (context, _, _) => Text(info),
+    return InkWell(
+      onTap: () => _showAboutDialog(context),
+      borderRadius: const .all(.circular(4)),
+      child: Padding(
+        padding: const .symmetric(vertical: 4),
+        child: ValueListenableBuilder(
+          valueListenable: stows.locale,
+          builder: (context, _, _) => HiganLabel('nts · $info'),
+        ),
       ),
     );
   }
@@ -46,11 +51,7 @@ class const AppInfo({super.key}) extends StatelessWidget {
   void _showAboutDialog(BuildContext context) => showAboutDialog(
     context: context,
     applicationVersion: info,
-    applicationIcon: SvgPicture.asset(
-      'assets/icon/icon.svg',
-      width: 50,
-      height: 50,
-    ),
+    applicationIcon: Image.asset('assets/icon/icon.png', width: 50, height: 50),
     applicationLegalese: t.appInfo.licenseNotice(buildYear: buildYear),
     children: [
       const SizedBox(height: 10),

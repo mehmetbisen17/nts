@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_switch_list_tile.dart';
-import 'package:saber/components/theming/uni_icon.dart';
-import 'package:saber/pages/home/settings.dart';
+import 'package:nts/components/settings/settings_row.dart';
+import 'package:nts/pages/home/settings.dart';
 import 'package:stow/stow.dart';
 
 class SettingsSwitch extends StatefulWidget {
@@ -9,19 +8,12 @@ class SettingsSwitch extends StatefulWidget {
     super.key,
     required this.title,
     this.subtitle,
-    this.icon,
-    this.iconBuilder,
     required this.pref,
     this.afterChange,
-  }) : assert(
-         icon == null || iconBuilder == null,
-         'Cannot set both icon and iconBuilder',
-       );
+  });
 
   final String title;
   final String? subtitle;
-  final Object? icon;
-  final Object? Function(bool)? iconBuilder;
 
   final Stow<dynamic, bool, dynamic> pref;
   final ValueChanged<bool>? afterChange;
@@ -44,41 +36,23 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    var icon = widget.icon;
-    icon ??= widget.iconBuilder?.call(widget.pref.value);
-    icon ??= Icons.settings;
-
-    return GestureDetector(
-      onLongPress: () {
-        SettingsPage.showResetDialog(
-          context: context,
-          pref: widget.pref,
-          prefTitle: widget.title,
-        );
-      },
-      child: AdaptiveSwitchListTile(
-        contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-        secondary: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          child: UniIcon(icon, key: ValueKey(icon)),
-        ),
-        title: Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle: widget.pref.value != widget.pref.defaultValue
-                ? FontStyle.italic
-                : null,
-          ),
-        ),
-        subtitle: Text(
-          widget.subtitle ?? '',
-          style: const TextStyle(fontSize: 13),
-        ),
-        value: widget.pref.value,
-        onChanged: (bool value) {
-          widget.pref.value = value;
+    return MergeSemantics(
+      child: SettingsRow(
+        title: widget.title,
+        subtitle: widget.subtitle,
+        modified: widget.pref.value != widget.pref.defaultValue,
+        onTap: () => widget.pref.value = !widget.pref.value,
+        onLongPress: () {
+          SettingsPage.showResetDialog(
+            context: context,
+            pref: widget.pref,
+            prefTitle: widget.title,
+          );
         },
+        trailing: Switch(
+          value: widget.pref.value,
+          onChanged: (bool value) => widget.pref.value = value,
+        ),
       ),
     );
   }

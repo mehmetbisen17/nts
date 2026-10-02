@@ -1,30 +1,24 @@
 import 'dart:io';
 
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saber/components/theming/saber_theme.dart';
-import 'package:saber/components/theming/yaru_builder.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/i18n/extensions/redirecting_localization_delegate.dart';
-import 'package:saber/i18n/strings.g.dart';
+import 'package:nts/components/navbar/responsive_navbar.dart';
+import 'package:nts/components/theming/higan/higan_theme.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/i18n/extensions/redirecting_localization_delegate.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:window_manager/window_manager.dart';
 
 class DynamicMaterialApp extends StatefulHookWidget {
-  const new({
-    super.key,
-    required this.title,
-    required this.router,
-    this.defaultSwatch = Colors.yellow,
-  });
+  const new({super.key, required this.title, required this.router});
 
   final String title;
-  final Color defaultSwatch;
   final GoRouter router;
 
   @override
@@ -32,6 +26,7 @@ class DynamicMaterialApp extends StatefulHookWidget {
 
   static final ValueNotifier<bool> _isFullscreen = ValueNotifier(false);
   static bool get isFullscreen => _isFullscreen.value;
+  static ValueListenable<bool> get fullscreen => _isFullscreen;
 
   static void setFullscreen(bool value, {required bool updateSystem}) {
     _isFullscreen.value = value;
@@ -86,72 +81,25 @@ class DynamicMaterialAppState extends State<DynamicMaterialApp>
   Widget build(BuildContext context) {
     final themeMode = useValueListenable(stows.appTheme);
     final platform = useValueListenable(stows.platform);
-    var chosenAccentColor = useValueListenable(stows.accentColor);
-    if ((chosenAccentColor?.a ?? 0) < double.minPositive)
-      chosenAccentColor = null; // discard transparent accent color
-    useListenable(stows.hyperlegibleFont);
+    final hyperlegibleFont = useValueListenable(stows.hyperlegibleFont);
 
-    // Use Yaru theme, with or without [chosenAccentColor]
-    if (platform == .linux) {
-      return YaruBuilder(
-        primary: chosenAccentColor, // if null, falls back to system color
-        platform: platform,
-        builder: (context, theme) {
-          return ExplicitlyThemedApp(
-            title: widget.title,
-            router: widget.router,
-            themeMode: themeMode,
-            theme: theme,
-            darkTheme: theme,
-            highContrastTheme: theme,
-            highContrastDarkTheme: theme,
-          );
-        },
-      );
-    }
-
-    // Use [chosenAccentColor] with material/cupertino theme
-    if (chosenAccentColor != null) {
-      return ExplicitlyThemedApp(
-        title: widget.title,
-        router: widget.router,
-        themeMode: themeMode,
-        theme: SaberTheme.createThemeFromSeed(
-          chosenAccentColor,
-          .light,
-          platform,
-        ),
-        darkTheme: SaberTheme.createThemeFromSeed(
-          chosenAccentColor,
-          .dark,
-          platform,
-        ),
-      );
-    }
-
-    // Try and use device's accent color, or fall back to defaultSwatch
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightColorScheme, ColorScheme? darkColorScheme) {
-        return ExplicitlyThemedApp(
-          title: widget.title,
-          router: widget.router,
-          themeMode: themeMode,
-          theme: (platform == .android && lightColorScheme != null)
-              ? SaberTheme.createTheme(lightColorScheme, platform)
-              : SaberTheme.createThemeFromSeed(
-                  lightColorScheme?.primary ?? widget.defaultSwatch,
-                  .light,
-                  platform,
-                ),
-          darkTheme: (platform == .android && darkColorScheme != null)
-              ? SaberTheme.createTheme(darkColorScheme, platform)
-              : SaberTheme.createThemeFromSeed(
-                  darkColorScheme?.primary ?? widget.defaultSwatch,
-                  .dark,
-                  platform,
-                ),
-        );
-      },
+    // Higan is the theme on every platform: no Yaru, dynamic or accent colors.
+    final night = useMemoized(() => HiganTheme.night(platform), [
+      platform,
+      hyperlegibleFont,
+    ]);
+    final paper = useMemoized(() => HiganTheme.paper(platform), [
+      platform,
+      hyperlegibleFont,
+    ]);
+    return ExplicitlyThemedApp(
+      title: widget.title,
+      router: widget.router,
+      themeMode: themeMode,
+      theme: paper,
+      darkTheme: night,
+      highContrastTheme: paper,
+      highContrastDarkTheme: night,
     );
   }
 
@@ -224,6 +172,7 @@ class ExplicitlyThemedApp extends StatelessWidget {
       darkTheme: darkTheme,
       highContrastTheme: highContrastTheme,
       highContrastDarkTheme: highContrastDarkTheme,
+      builder: (context, child) => MacTitlebar(child: child!),
       debugShowCheckedModeBanner: false,
     );
   }

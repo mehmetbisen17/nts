@@ -3,11 +3,6 @@ common:
   continueBtn: Nadaljuj
   cancel: Prekliči
 home:
-  tabs:
-    home: Domov
-    browse: Brskaj
-    whiteboard: Tabla
-    settings: Nastavitve
   titles:
     home: Nedavni zapiski
     browse: Brskaj
@@ -20,10 +15,8 @@ home:
   create:
     newNote: Nov zapisek
     importNote: Uvozi zapisek
-  welcome: Dobrodošli v Saber
+  welcome: Dobrodošli v nts
   invalidFormat: Izbrana datoteka ni podprta. Prosim, izberi datoteko sbn, sbn2, sba ali pdf.
-  noFiles: Ni najdenih datotek
-  noPreviewAvailable: Predogled ni na voljo
   createNewNote: Dotakni se gumba + za ustvarjanje novega zapiska
   backFolder: Pojdi nazaj v prejšnjo mapo
   newFolder:
@@ -75,13 +68,9 @@ home:
     nameZToA(OUTDATED): Ime (od A do Z)
     lastModifiedNewToOld(OUTDATED): Uredite (Najnovejše prvé)
     lastModifiedOldToNew(OUTDATED): Uredite (Najstarejši prvý)
-  layout:
-    layout(OUTDATED): Razpoložba
-    masonryGrid(OUTDATED): Mrežni sistem z mozaikom
-    simpleGrid(OUTDATED): Preprosta mreža
 sentry:
   consent:
-    title: Ali želiš pomagati izboljšati Saber?
+    title: Ali želiš pomagati izboljšati nts?
     description:
       question: Ali želiš samodejno poročati o nepričakovanih napakah? To mi pomaga hitreje prepoznati in odpraviti težave.
       scope: Poročila lahko vsebujejo informacije o napaki in tvoji napravi. Potrudil sem se, da bi filtriral osebne podatke, vendar lahko nekateri ostanejo.
@@ -106,7 +95,7 @@ settings:
     layoutSize: Vrsta postavitve
     customAccentColor: Barva poudarka po meri
     hyperlegibleFont: Pisava Atkinson Hyperlegible
-    shouldCheckForUpdates: Preveri posodobitve za Saber
+    shouldCheckForUpdates: Preveri posodobitve za nts
     shouldAlwaysAlertForUpdates: Hitrejše posodobitve
     allowInsecureConnections: Dovoli nezavarovane povezave
     editorToolbarAlignment: Položaj orodne vrstice
@@ -125,11 +114,11 @@ settings:
     autosave: Samodejno shranjevanje
     shapeRecognitionDelay: Zakasnitev prepoznave oblik
     autoStraightenLines: Samodejno poravnaj črte
-    customDataDir: Mapa Saber po meri
+    customDataDir: Mapa nts po meri
     sentry: Poročanje o napakah
   prefDescriptions:
     hyperlegibleFont: Poveča čitljivost za uporabnike s slabšim vidom
-    allowInsecureConnections: (Ni priporočljivo) Dovoli Saberju povezovanje s strežniki s samopodpisanimi/nezaupanja vrednimi potrdili
+    allowInsecureConnections: (Ni priporočljivo) Dovoli nts-u povezovanje s strežniki s samopodpisanimi/nezaupanja vrednimi potrdili
     preferGreyscale: Za zaslone e-ink
     autoClearWhiteboardOnExit: Počisti tablo, ko zapustiš aplikacijo
     disableEraserAfterUse: Po uporabi radirke samodejno preklopi nazaj na pero
@@ -170,7 +159,7 @@ settings:
     title: Ponastavi to nastavitev?
     button: Ponastavi
   resyncEverything: Ponovno sinhroniziraj vse
-  openDataDir: Odpri mapo Saber
+  openDataDir: Odpri mapo nts
   customDataDir:
     cancel: Prekliči
     select: Izberi
@@ -199,18 +188,18 @@ login:
     loggedIn: Prijavljen z Nextcloudom
   ncLoginStep:
     whereToStoreData: "Izberi, kje želiš shraniti svoje podatke:"
-    saberNcServer: Saberjev Nextcloud strežnik
+    saberNcServer: Nextcloud strežnik nts
     otherNcServer: Drug Nextcloud strežnik
     serverUrl: URL strežnika
-    loginWithSaber: Prijava v Saber
+    loginWithSaber: Prijava v nts
     loginWithNextcloud: Prijava v Nextcloud
     loginFlow:
-      pleaseAuthorize: Prosim, pooblasti Saber za dostop do tvojega Nextcloud računa
+      pleaseAuthorize: Prosim, pooblasti nts za dostop do tvojega Nextcloud računa
       followPrompts: Prosim, sledi navodilom v vmesniku Nextcloud
       browserDidntOpen: Prijavna stran se ni odprla? Klikni tukaj
   encLoginStep:
     enterEncPassword: "Za zaščito tvojih podatkov vnesi geslo za šifriranje:"
-    newToSaber: Si nov v Saberju? Samo vnesi novo geslo za šifriranje.
+    newToSaber: Si nov v nts-u? Samo vnesi novo geslo za šifriranje.
     encPassword: Geslo za šifriranje
     encFaqTitle: Pogosta vprašanja
     wrongEncPassword: Dešifriranje s podanim geslom ni uspelo. Prosim, poskusi znova vnesti geslo.
@@ -224,7 +213,7 @@ login:
     - q: Še nisem nastavil gesla za šifriranje. Kje ga dobim?
       a: |-
         Izberi novo geslo za šifriranje in ga vnesi zgoraj.
-        Saber bo iz tega gesla samodejno ustvaril tvoje šifrirne ključe.
+        nts bo iz tega gesla samodejno ustvaril tvoje šifrirne ključe.
     - q: Ali lahko uporabim isto geslo kot za moj Nextcloud račun?
       a: Da, vendar imej v mislih, da bi bilo skrbniku strežnika ali komu drugemu lažje dostopati do tvojih zapiskov, če pridobijo dostop do tvojega Nextcloud računa.
 profile:
@@ -240,23 +229,23 @@ profile:
   - q: Ali bom izgubil zapiske, če se odjavim?
     a: Ne. Tvoji zapiski bodo ostali tako na tvoji napravi kot na strežniku. S strežnikom se ne bodo sinhronizirali, dokler se znova ne prijaviš. Prepričaj se, da je sinhronizacija končana, preden se odjaviš, da ne izgubiš podatkov (glej napredek sinhronizacije na domačem zaslonu).
   - q: Kako spremenim geslo za Nextcloud?
-    a: Pojdi na spletno stran tvojega strežnika in se prijavi. Nato pojdi na Nastavitve > Varnost > Spremeni geslo. Po spremembi gesla se boš moral odjaviti in znova prijaviti v Saber.
+    a: Pojdi na spletno stran tvojega strežnika in se prijavi. Nato pojdi na Nastavitve > Varnost > Spremeni geslo. Po spremembi gesla se boš moral odjaviti in znova prijaviti v nts.
   - q: Kako spremenim geslo za šifriranje?
     a: |-
       0. Prepričaj se, da je sinhronizacija končana (glej napredek sinhronizacije na domačem zaslonu).
-      1. Odjavi se iz Saberja.
+      1. Odjavi se iz nts-a.
       2. Pojdi na spletno stran tvojega strežnika in izbriši mapo 'Saber'. S tem boš izbrisal vse svoje zapiske s strežnika.
-      3. Znova se prijavi v Saber. Pri prijavi lahko izbereš novo geslo za šifriranje.
-      4. Ne pozabi se odjaviti in znova prijaviti v Saber tudi na drugih napravah.
+      3. Znova se prijavi v nts. Pri prijavi lahko izbereš novo geslo za šifriranje.
+      4. Ne pozabi se odjaviti in znova prijaviti v nts tudi na drugih napravah.
   - q: Kako lahko izbrišem svoj račun?
     a: |-
       Dotakni se gumba "@:profile.quickLinks.deleteAccount" zgoraj in se po potrebi prijavi.
-      Če uporabljaš uradni strežnik Saber, bo tvoj račun izbrisan po 1 tednu odloga. V tem času me lahko kontaktiraš na adilhanney@disroot.org, da prekličeš izbris.
+      Če uporabljaš uradni strežnik nts, bo tvoj račun izbrisan po 1 tednu odloga. V tem času me lahko kontaktiraš na adilhanney@disroot.org, da prekličeš izbris.
       Če uporabljaš strežnik drugega ponudnika, morda ni možnosti za izbris tvojega računa: za več informacij preberi politiko zasebnosti strežnika.
   quotaUsageUncapped(OUTDATED): Uporabljate $used
 appInfo:
   licenseNotice: |-
-    Saber  Avtorske pravice © 2022-$buildYear  Adil Hanney
+    nts (modified from Saber)  Avtorske pravice © 2022-$buildYear  Adil Hanney
     Ta program je brez kakršnegakoli jamstva. To je prosta programska oprema in vabljeni ste, da jo razširjate pod določenimi pogoji.
   debug: RAZROŠČEVANJE
   sponsorButton: Dotakni se tukaj, da me sponzoriraš ali kupiš več prostora za shranjevanje
@@ -360,7 +349,7 @@ editor:
     watchingServer: Trenutno spremljaš posodobitve na strežniku. Urejanje v tem načinu je onemogočeno.
     corrupted: Nalaganje zapiska ni uspelo. Morda je poškodovan ali pa se še vedno prenaša.
   versionTooNew:
-    title: Ta zapisek je bil urejen z novejšo različico Saberja
+    title: Ta zapisek je bil urejen z novejšo različico nts-a
     subtitle: Urejanje tega zapiska lahko povzroči izgubo nekaterih informacij. Ali želiš to prezreti in vseeno urejati?
     allowEditing: Dovoli urejanje
   quill:

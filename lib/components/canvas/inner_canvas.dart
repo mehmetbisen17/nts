@@ -1,16 +1,17 @@
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:nts/components/canvas/_canvas_background_painter.dart';
+import 'package:nts/components/canvas/_canvas_painter.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/canvas_image.dart';
+import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/tools/select.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
-import 'package:saber/components/canvas/_canvas_background_painter.dart';
-import 'package:saber/components/canvas/_canvas_painter.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/components/canvas/canvas_image.dart';
-import 'package:saber/components/canvas/image/editor_image.dart';
-import 'package:saber/data/editor/editor_core_info.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/tools/select.dart';
-import 'package:saber/i18n/strings.g.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 import 'package:sbn/quill_styles.dart';
 
@@ -52,6 +53,38 @@ class InnerCanvas extends StatefulWidget {
 
   static const defaultBackgroundColor = Color(0xFFFCFCFC);
 
+  /// The page color for notes that don't set one: Higan paper in the app,
+  /// [defaultBackgroundColor] in exports (which use their own theme).
+  static Color defaultBackgroundColorOf(BuildContext context) =>
+      Theme.of(context).extension<HiganColors>()?.pagePaper ??
+      defaultBackgroundColor;
+
+  /// Whether pages are drawn black with inverted ink (Settings › Pages),
+  /// in both Night and Paper. Exports keep paper: their light theme
+  /// has no [HiganColors].
+  static bool invertOf(BuildContext context) {
+    if (!stows.editorAutoInvert.value) return false;
+    final theme = Theme.of(context);
+    return theme.extension<HiganColors>() != null || theme.brightness == .dark;
+  }
+
+  /// Background line colors ([primary] lines, [secondary] margins):
+  /// quiet blue-grey rules and a red margin in the app,
+  /// the theme's colors in exports.
+  static ({Color primary, Color secondary}) backgroundLineColorsOf(
+    BuildContext context,
+  ) {
+    final theme = Theme.of(context);
+    final higan = theme.extension<HiganColors>();
+    if (higan == null) {
+      return (
+        primary: theme.colorScheme.primary,
+        secondary: theme.colorScheme.secondary,
+      );
+    }
+    return (primary: const Color(0xFF6C8CA8), secondary: higan.higan);
+  }
+
   @override
   State<InnerCanvas> createState() => _InnerCanvasState();
 }
@@ -61,10 +94,11 @@ class _InnerCanvasState extends State<InnerCanvas> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final brightness = theme.brightness;
-    final invert = stows.editorAutoInvert.value && brightness == .dark;
+    final invert = InnerCanvas.invertOf(context);
     final Color backgroundColor =
-        widget.coreInfo.backgroundColor ?? InnerCanvas.defaultBackgroundColor;
+        widget.coreInfo.backgroundColor ??
+        InnerCanvas.defaultBackgroundColorOf(context);
+    final lineColors = InnerCanvas.backgroundLineColorsOf(context);
 
     if (widget.coreInfo.pages.isEmpty) {
       return SizedBox(width: widget.width, height: widget.height);
@@ -122,8 +156,8 @@ class _InnerCanvasState extends State<InnerCanvas> {
           }(),
           lineHeight: widget.coreInfo.lineHeight,
           lineThickness: widget.coreInfo.lineThickness,
-          primaryColor: colorScheme.primary,
-          secondaryColor: colorScheme.secondary,
+          primaryColor: lineColors.primary,
+          secondaryColor: lineColors.secondary,
         ),
         foregroundPainter: CanvasPainter(
           repaint: widget.redrawPageListenable,
@@ -139,6 +173,7 @@ class _InnerCanvasState extends State<InnerCanvas> {
           totalPages: widget.coreInfo.pages.length,
           currentScale: widget.currentScale,
           defaultTextStyle: theme.textTheme.bodyMedium!,
+          linkColor: theme.extension<HiganColors>()?.higan,
         ),
         isComplex: true,
         willChange: true,
@@ -157,6 +192,20 @@ class _InnerCanvasState extends State<InnerCanvas> {
                     isBackground: true,
                     readOnly: true,
                   ),
+                // Fills go under the text, images and ink
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: RepaintBoundary(
+                      child: CustomPaint(
+                        painter: CanvasFillPainter(
+                          repaint: widget.redrawPageListenable,
+                          strokes: page.strokes,
+                          invert: invert,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Positioned(
                   top: 0,
                   left: 0,

@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logging/logging.dart';
+import 'package:nts/components/canvas/_circle_stroke.dart';
+import 'package:nts/components/canvas/_rectangle_stroke.dart';
+import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/data/prefs.dart';
+import 'package:nts/data/tools/pen.dart';
+import 'package:nts/i18n/strings.g.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
-import 'package:saber/components/canvas/_circle_stroke.dart';
-import 'package:saber/components/canvas/_rectangle_stroke.dart';
-import 'package:saber/components/canvas/_stroke.dart';
-import 'package:saber/data/prefs.dart';
-import 'package:saber/data/tools/pen.dart';
-import 'package:saber/i18n/strings.g.dart';
 
 class ShapePen extends Pen {
   new()
@@ -71,50 +71,60 @@ class ShapePen extends Pen {
     ShapePen.detectedShape = null;
 
     if (detectedShape == null) return rawStroke;
+    return applyDetectedShape(rawStroke, detectedShape);
+  }
 
-    switch (detectedShape.name) {
+  /// Replaces [raw] with the clean [shape] it was recognized as,
+  /// in the same color and pen.
+  static Stroke applyDetectedShape(Stroke raw, RecognizedUnistroke shape) {
+    switch (shape.name) {
       case null:
         log.info('Detected unknown shape');
-        return rawStroke;
+        return raw;
       case DefaultUnistrokeNames.line:
         log.info('Detected line');
-        return rawStroke..convertToLine();
+        return raw..convertToLine();
       case DefaultUnistrokeNames.rectangle:
-        final rect = detectedShape.convertToRect();
+        final rect = shape.convertToRect();
         log.info('Detected rectangle: $rect');
         return RectangleStroke(
-          color: color,
-          pressureEnabled: pressureEnabled,
-          options: rawStroke.options,
-          pageIndex: rawStroke.pageIndex,
-          page: rawStroke.page,
-          toolId: toolId,
+          color: raw.color,
+          pressureEnabled: raw.pressureEnabled,
+          options: raw.options,
+          pageIndex: raw.pageIndex,
+          page: raw.page,
+          toolId: raw.toolId,
           rect: rect,
         );
       case DefaultUnistrokeNames.circle:
-        final (center, radius) = detectedShape.convertToCircle();
+        final (center, radius) = shape.convertToCircle();
         log.info('Detected circle: c=$center, r=$radius');
         return CircleStroke(
-          color: color,
-          pressureEnabled: pressureEnabled,
-          options: rawStroke.options,
-          pageIndex: rawStroke.pageIndex,
-          page: rawStroke.page,
-          toolId: toolId,
+          color: raw.color,
+          pressureEnabled: raw.pressureEnabled,
+          options: raw.options,
+          pageIndex: raw.pageIndex,
+          page: raw.page,
+          toolId: raw.toolId,
           radius: radius,
           center: center,
         );
       case DefaultUnistrokeNames.triangle:
       case DefaultUnistrokeNames.star:
-        final polygon = detectedShape.convertToCanonicalPolygon();
-        log.info('Detected ${detectedShape.name}');
+        final polygon = shape.convertToCanonicalPolygon();
+        log.info('Detected ${shape.name}');
         return Stroke(
-          color: color,
-          pressureEnabled: pressureEnabled,
-          options: rawStroke.options,
-          pageIndex: rawStroke.pageIndex,
-          page: rawStroke.page,
-          toolId: toolId,
+          color: raw.color,
+          pressureEnabled: raw.pressureEnabled,
+          // Sharp corners and an even width, like the shape pen
+          options: raw.options.copyWith(
+            smoothing: 0,
+            streamline: 0,
+            simulatePressure: false,
+          ),
+          pageIndex: raw.pageIndex,
+          page: raw.page,
+          toolId: raw.toolId,
         )..addPoints(polygon);
     }
   }

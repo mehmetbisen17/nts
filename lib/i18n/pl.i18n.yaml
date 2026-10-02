@@ -3,11 +3,6 @@ common:
   continueBtn: Kontynuuj
   cancel: Anuluj
 home:
-  tabs:
-    home: Główna
-    browse: Przeglądaj
-    whiteboard: Tablica
-    settings: Ustawienia
   titles:
     home: Ostatnie notatki
     browse: Przeglądaj
@@ -20,10 +15,8 @@ home:
   create:
     newNote: Nowa notatka
     importNote: Importuj notatkę
-  welcome: Witaj w Saber
+  welcome: Witaj w nts
   invalidFormat: Plik który wskazano nie jest wspierany. Proszę wybrać plik w formacie sbn, sbn2, sba, lub pdf.
-  noFiles: Nie znaleziono plików
-  noPreviewAvailable: Podgląd niedostępny
   createNewNote: Użyj przycisku + aby utworzyć nową notatkę
   backFolder: Cofnij się do poprzedniego folderu
   newFolder:
@@ -75,13 +68,9 @@ home:
     nameZToA(OUTDATED): Nazwa (od A do Z)
     lastModifiedNewToOld(OUTDATED): Edytowane (Najnowsze na górze)
     lastModifiedOldToNew(OUTDATED): Edytowane (Najstarsze jako pierwsze)
-  layout:
-    layout(OUTDATED): Układ
-    masonryGrid(OUTDATED): Siatka murarska
-    simpleGrid(OUTDATED): Prosta siatka
 sentry:
   consent:
-    title: Chcesz wesprzeć Saber?
+    title: Chcesz wesprzeć nts?
     description:
       question: Czy chciałbyś automatycznie wysyłać raporty o niespodziewanych błędach? To pomaga identyfikować i rozwiązywać problemy szybciej.
       scope: Te raporty mogą zawierać informacje o błędach i twoim urządzeniu. Przykładamy wszelki wysiłek aby odfiltrować dane personalne, ale część z nich może pozostać.
@@ -106,7 +95,7 @@ settings:
     layoutSize: Rodzaj układu
     customAccentColor: Niestandardowy kolor akcentu
     hyperlegibleFont: Czcionka Atkinson Hyperlegible
-    shouldCheckForUpdates: Sprawdź dostępność aktualizacji Saber
+    shouldCheckForUpdates: Sprawdź dostępność aktualizacji nts
     shouldAlwaysAlertForUpdates: Szybsze aktualizacje
     allowInsecureConnections: Zezwól na niezabezpieczone połączenia
     editorToolbarAlignment: Pozycja przybornika
@@ -125,11 +114,11 @@ settings:
     autosave: Auto-zapis
     shapeRecognitionDelay: Opóźnienie rozpoznania symbolu
     autoStraightenLines: Automatycznie prostuj linie
-    customDataDir: Niestandardowa lokalizacja Saber
+    customDataDir: Niestandardowa lokalizacja nts
     sentry: Zgłaszanie błędów
   prefDescriptions:
     hyperlegibleFont: Zwiększenie czytelności dla użytkowników słabowidzących
-    allowInsecureConnections: (Nie zalecane) Zezwól Saber na połączenie z serwerami używając certyfikatów niezaufanych/z własnym podpisem
+    allowInsecureConnections: (Nie zalecane) Zezwól nts na połączenie z serwerami używając certyfikatów niezaufanych/z własnym podpisem
     preferGreyscale: Dla ekranów e-ink
     autoClearWhiteboardOnExit: Czyści tablice po wyjściu z aplikacji
     disableEraserAfterUse: Automatycznie przełącza na poprzednie narzędzie po skorzystaniu z gumki
@@ -170,7 +159,7 @@ settings:
     title: Zresetować to ustawienie?
     button: Resetuj
   resyncEverything: Synchronizuj wszystko
-  openDataDir: Otwórz folder Saber
+  openDataDir: Otwórz folder nts
   customDataDir:
     cancel: Anuluj
     select: Wybierz
@@ -199,18 +188,18 @@ login:
     loggedIn: Zalogowano przez Nextcloud
   ncLoginStep:
     whereToStoreData: "Wybierz gdzie przechowywać twoje dane:"
-    saberNcServer: Serwer Nextcloud Saber
+    saberNcServer: Serwer Nextcloud nts
     otherNcServer: Inny serwer Nextcloud
     serverUrl: Serwer URL
-    loginWithSaber: Zaloguj przez Saber
+    loginWithSaber: Zaloguj przez nts
     loginWithNextcloud: Zaloguj przez Nextcloud
     loginFlow:
-      pleaseAuthorize: Proszę autoryzuj Saber do używania twojego konta Nextcloud
+      pleaseAuthorize: Proszę autoryzuj nts do używania twojego konta Nextcloud
       followPrompts: Proszę postępuj zgodnie z poleceniami interfejsu Nextcloud
       browserDidntOpen: Strona logowania nie otworzyła się? Kliknij tutaj
   encLoginStep:
     enterEncPassword: "Aby chronić twoje dane, podaj proszę hasło szyfrowania:"
-    newToSaber: Nowy w Saber? Utwórz nowe hasło szyfrowania.
+    newToSaber: Nowy w nts? Utwórz nowe hasło szyfrowania.
     encPassword: Hasło szyfrowania
     encFaqTitle: Często zadawane pytania (FAQ)
     wrongEncPassword: Odszyfrowywanie przy użyciu podanego hasła nie powiodło się. Spróbuj wpisać je ponownie.
@@ -224,7 +213,7 @@ login:
     - q: Nie ustawiłem jeszcze hasła szyfrującego. Jak mogę je uzyskać?
       a: |-
         Utwórz nowe hasło i wpisz je poniżej. 
-        Saber wygeneruje klucze szyfrowania z tego hasła automatycznie.
+        nts wygeneruje klucze szyfrowania z tego hasła automatycznie.
     - q: Czy mogę użyć tego samego hasła co do konta Nextcloud?
       a: Tak, ale pamiętaj że łatwiej będzie uzyskać dostęp do twoich notatek osobie która ma/może uzyskać dostęp do twojego konta Nextcloud (np. administratorowi serwera).
 profile:
@@ -240,23 +229,23 @@ profile:
   - q: Czy utracę moje notatki jeżeli się wyloguje?
     a: Nie. Twoje notatki pozostaną zarówno na twoim urządzeniu jak i na serwerze. Nie będą synchronizowane dopóki nie zalogujesz się ponownie. Upewnij się, że synchronizacja została ukończona przed wylogowaniem aby nie utracić żadnych danych (zobacz status synchronizacji na stronie głównej).
   - q: Jak mogę zmienić hasło do Nextcloud?
-    a: Wejdź na stronę swojego serwera i się zaloguj. Następnie przejdź do Settings > Security > Change password (Ustawienia > Bezpieczeństwo>Zmiana hasła). Po zmianie hasła należy wylogować się z serwera w Saber, a następnie zalogować ponownie za pomocą nowego hasła.
+    a: Wejdź na stronę swojego serwera i się zaloguj. Następnie przejdź do Settings > Security > Change password (Ustawienia > Bezpieczeństwo>Zmiana hasła). Po zmianie hasła należy wylogować się z serwera w nts, a następnie zalogować ponownie za pomocą nowego hasła.
   - q: Jak mogę zmienić moje hasło szyfrowania?
     a: |-
       0. Upewnij się, że synchronizacja została zakończona (zobacz postęp synchronizacji na ekranie głównym).
-      1. Wyloguj się z Saber.
+      1. Wyloguj się z nts.
       2. Przejdź na stronę swojego serwera i usuń folder 'Saber'. Spowoduje to usunięcie wszystkich Twoich notatek z serwera.
-      3. Zaloguj się ponownie do Saber. Podczas logowania możesz wybrać nowe hasło szyfrowania.
-      4. Nie zapomnij wylogować się i zalogować ponownie do Saber również na swoich innych urządzeniach.
+      3. Zaloguj się ponownie do nts. Podczas logowania możesz wybrać nowe hasło szyfrowania.
+      4. Nie zapomnij wylogować się i zalogować ponownie do nts również na swoich innych urządzeniach.
   - q: Jak mogę usunąć moje konto?
     a: |-
       Kliknij "@:profile.quickLinks.deleteAccount" przycisk powyżej i zaloguj się jeżeli to wymagane.
-      Jeśli korzystasz z oficjalnego serwera Saber, Twoje konto zostanie usunięte po tygodniu. W tym czasie możesz skontaktować się ze mną pod adresem adilhanney@disroot.org, aby anulować usunięcie.
+      Jeśli korzystasz z oficjalnego serwera nts, Twoje konto zostanie usunięte po tygodniu. W tym czasie możesz skontaktować się ze mną pod adresem adilhanney@disroot.org, aby anulować usunięcie.
       Jeśli korzystasz z serwera zewnętrznego, opcja usunięcia konta może nie być dostępna: aby uzyskać więcej informacji, musisz zapoznać się z polityką prywatności serwera.
   quotaUsageUncapped(OUTDATED): Używasz $used
 appInfo:
   licenseNotice: |-
-    Saber  Copyright © 2022-$buildYear  Adil Hanney
+    nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Ten program jest dostarczany bez jakiejkolwiek gwarancji. Jest to wolne oprogramowanie i możesz je rozpowszechniać pod pewnymi warunkami.
   debug: DEBUGUJ
   sponsorButton: Kliknij tutaj aby mnie wesprzeć lub kupić więcej pamięci
@@ -360,7 +349,7 @@ editor:
     watchingServer: Obecnie oczekujesz na zmiany na serwerze. Edycja jest w tym trybie wyłączona.
     corrupted: Nie udało się załadować notatki. Może być uszkodzona lub wciąż jest pobierana.
   versionTooNew:
-    title: Ta notatka została edytowana w nowszej wersji aplikacji Saber
+    title: Ta notatka została edytowana w nowszej wersji aplikacji nts
     subtitle: Edycja tej notatki może spowodować utratę niektórych informacji. Czy chcesz to zignorować i mimo wszystko ją edytować?
     allowEditing: Zezwól na edycje
   quill:
