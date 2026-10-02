@@ -34,8 +34,7 @@ import 'utils/test_mock_channel_handlers.dart';
 final _mode = Platform.environment['NTS_EVAL'];
 final _dir =
     Platform.environment['NTS_EVAL_DIR'] ??
-    '/private/tmp/claude-501/-Users-mehmetbisen-Desktop-saber/'
-        'e21e6fbf-1b17-49c8-84d9-1e9fe570551b/scratchpad/eval';
+    '${Directory.systemTemp.path}/nts-eval';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

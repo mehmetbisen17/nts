@@ -39,10 +39,7 @@ class TranslationsDe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$de sentry = _Translations$sentry$de._(_root);
 	@override late final _Translations$settings$de settings = _Translations$settings$de._(_root);
 	@override late final _Translations$logs$de logs = _Translations$logs$de._(_root);
-	@override late final _Translations$login$de login = _Translations$login$de._(_root);
-	@override late final _Translations$profile$de profile = _Translations$profile$de._(_root);
 	@override late final _Translations$appInfo$de appInfo = _Translations$appInfo$de._(_root);
-	@override late final _Translations$update$de update = _Translations$update$de._(_root);
 	@override late final _Translations$editor$de editor = _Translations$editor$de._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$de extends Translations$settings$en {
 		'Links',
 	];
 	@override late final _Translations$settings$reset$de reset = _Translations$settings$reset$de._(_root);
-	@override String get resyncEverything => 'Alles neu Synchronisieren';
 	@override String get openDataDir => 'nts-Ordner öffnen';
 	@override late final _Translations$settings$customDataDir$de customDataDir = _Translations$settings$customDataDir$de._(_root);
 	@override String get autosaveDisabled => 'Nie';
@@ -134,52 +130,6 @@ class _Translations$logs$de extends Translations$logs$en {
 	@override String get useTheApp => 'Protokolle erscheinen hier während der Nutzung der App';
 }
 
-// Path: login
-class _Translations$login$de extends Translations$login$en {
-	_Translations$login$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Login';
-	@override late final _Translations$login$form$de form = _Translations$login$form$de._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Du hast noch kein Konto? '),
-		linkToSignup('Erstelle jetzt eins'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Nicht du? '),
-		undoLogin('Wähle ein anderes Konto'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$de status = _Translations$login$status$de._(_root);
-	@override late final _Translations$login$ncLoginStep$de ncLoginStep = _Translations$login$ncLoginStep$de._(_root);
-	@override late final _Translations$login$encLoginStep$de encLoginStep = _Translations$login$encLoginStep$de._(_root);
-}
-
-// Path: profile
-class _Translations$profile$de extends Translations$profile$en {
-	_Translations$profile$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Mein Profil';
-	@override String get logout => 'Abmelden';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Du verwendest ${used} von ${total} (${percent}%)';
-	@override String get connectedTo => 'Verbunden mit';
-	@override late final _Translations$profile$quickLinks$de quickLinks = _Translations$profile$quickLinks$de._(_root);
-	@override String get faqTitle => 'Häufig gestellte Fragen';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$de._(_root),
-		_Translations$profile$faq$1$de._(_root),
-		_Translations$profile$faq$2$de._(_root),
-		_Translations$profile$faq$3$de._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'Du verwendest ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$de extends Translations$appInfo$en {
 	_Translations$appInfo$de._(TranslationsDe root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$de extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nDieses Programm kommt ohne jegliche Gewährleistung. Dies ist freie Software und du bist herzlich eingeladen, diese unter bestimmten Bedingungen weiterzuverteilen.';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => 'Hier tippen, um mich zu unterstützen oder mehr Speicherplatz zu kaufen';
 	@override String get licenseButton => 'Hier tippen, um weitere Lizenzinformationen anzuzeigen';
 	@override String get privacyPolicyButton => 'Hier tippen, um die Datenschutzrichtlinie anzuzeigen';
-}
-
-// Path: update
-class _Translations$update$de extends Translations$update$en {
-	_Translations$update$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Aktualisierung verfügbar';
-	@override String get updateAvailableDescription => 'Eine neue Version der App ist verfügbar, mit folgenden Änderungen:';
-	@override String get update => 'Aktualisieren';
-	@override String get downloadNotAvailableYet => 'Der Download ist für deine Platform noch nicht verfügbar. Bitte schaue in Kürze noch einmal nach.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$de extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Notiz erstellen';
-	@override String get showUpdateDialog => 'Update-Info einblenden';
 	@override String get exportNote => 'Notiz exportieren';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$de extends Translations$settings$prefLab
 	@override String get layoutSize => 'Größe des Layouts';
 	@override String get customAccentColor => 'Benutzerdefinierte Akzentfarbe';
 	@override String get hyperlegibleFont => 'Verbesserte Lesbarkeit der Schrift';
-	@override String get shouldCheckForUpdates => 'Suche nach Updates für nts';
-	@override String get shouldAlwaysAlertForUpdates => 'Schneller aktualisieren';
-	@override String get allowInsecureConnections => 'Unsichere Verbindung erlauben';
 	@override String get editorToolbarAlignment => 'Position der Toolleiste';
 	@override String get editorToolbarShowInFullscreen => 'Toolleiste im Vollbildmodus einblenden';
 	@override String get editorAutoInvert => 'Notizfarbe im Dark Modus anpassen';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$de extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Verbessert die Lesbarkeit für Menschen mit geringer Sehkraft';
-	@override String get allowInsecureConnections => 'nts erlauben, unsichere Zertifikaten zu verwenden (Nicht empfohlen)';
 	@override String get preferGreyscale => 'Optimierung für E-Ink-Displays';
 	@override String get autoClearWhiteboardOnExit => 'Löscht das Whiteboard beim Beenden der App';
 	@override String get disableEraserAfterUse => 'Nach dem Nutzen des Radierers automatisch zum Stift zurückwechseln';
@@ -453,7 +384,6 @@ class _Translations$settings$prefDescriptions$de extends Translations$settings$p
 	@override String get autosave => 'Automatisches Backup in kurzen Abständen (wenn aktiviert)';
 	@override String get shapeRecognitionDelay => 'Aktualisierungshäufigkeit der Vorschau';
 	@override String get autoStraightenLines => 'Lange Linien auch ohne Formen-Stift automatisch begradigen';
-	@override String get shouldAlwaysAlertForUpdates => 'Über neue Updates informiert bleiben';
 	@override late final _Translations$settings$prefDescriptions$sentry$de sentry = _Translations$settings$prefDescriptions$sentry$de._(_root);
 }
 
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$de extends Translations$settings$cust
 	@override String get cancel => 'Abbrechen';
 	@override String get select => 'Auswählen';
 	@override String get mustBeEmpty => 'Ausgewählter Ordner muss leer sein';
-	@override String get mustBeDoneSyncing => 'Stelle sicher, dass die Synchronisierung abgeschlossen ist, bevor du den Ordner wechselst';
 	@override String get unsupported => 'Die Funktion ist zur Zeit nur für Entwickler gedacht. Die Verwendung führt wahrscheinlich zu Datenverlust.';
-}
-
-// Path: login.form
-class _Translations$login$form$de extends Translations$login$form$en {
-	_Translations$login$form$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Indem du dich anmeldest, stimmst du der '),
-		linkToPrivacyPolicy('Datenschutzrichtlinie'),
-		const TextSpan(text: ' zu.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$de extends Translations$login$status$en {
-	_Translations$login$status$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Nicht angemeldet';
-	@override String get tapToLogin => 'Hier tippen, um dich mit Nextcloud anzumelden';
-	@override String hi({required Object u}) => 'Hi, ${u}!';
-	@override String get almostDone => 'Fast bereit zum Synchronisieren. Tippe, um die Anmeldung abzuschließen';
-	@override String get loggedIn => 'Mit Nextcloud angemeldet';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$de extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Wähle, wo du deine Daten speichern willst:';
-	@override String get saberNcServer => 'Nextcloud-Server von nts';
-	@override String get otherNcServer => 'Anderer Nextcloud-Server';
-	@override String get serverUrl => 'Server URL';
-	@override String get loginWithSaber => 'Mit nts anmelden';
-	@override String get loginWithNextcloud => 'Mit Nextcloud anmelden';
-	@override late final _Translations$login$ncLoginStep$loginFlow$de loginFlow = _Translations$login$ncLoginStep$loginFlow$de._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$de extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Gib dein Verschlüsselungspasswort an, um deine Daten zu schützen:';
-	@override String get newToSaber => 'Neu bei nts? Gib einfach ein neues Verschlüsselungspasswort an.';
-	@override String get encPassword => 'Verschlüsselungspasswort';
-	@override String get encFaqTitle => 'Häufig gestellte Fragen';
-	@override String get wrongEncPassword => 'Entschlüsselung mit dem angegebenen Passwort fehlgeschlagen. Bitte versuche es erneut einzugeben.';
-	@override String get connectionFailed => 'Verbindung zum Server fehlgeschlagen. Bitte versuche es später erneut.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$de._(_root),
-		_Translations$login$encLoginStep$encFaq$1$de._(_root),
-		_Translations$login$encLoginStep$encFaq$2$de._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$de extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Server-Startseite';
-	@override String get deleteAccount => 'Account löschen';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$de extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Verliere ich meine Notizen, wenn ich mich abmelde?';
-	@override String get a => 'Nein. Deine Notizen bleiben auf deinem Gerät und auf dem Server. Sie werden erst wieder synchronisiert, wenn du dich erneut anmeldest. Um Datenverlust zu vermeiden, solltest du sicherstellen, dass alles korrekt synchronisiert wurde, bevor du dich abmeldest. Dazu kannst du auf dem Startbildschirm den Synchronisationsfortschritt überprüfen.';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$de extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Wie ändere ich mein Nextcloud-Passwort?';
-	@override String get a => 'Öffne die Server-Startseite und melde dich an. Unter Einstellungen > Sicherheit > Passwort, kannst du dein Passwort ändern. Nachdem du dein Passwort geändert hast, musst du dich in nts ab- und wieder anmelden.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$de extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Wie ändere ich mein Verschlüsselungspasswort?';
-	@override String get a => '0. Bitte stelle zuerst sicher, dass alle Daten korrekt synchronisiert wurden, damit du keine Daten verlierst (du kannst den Fortschritt auf dem Startbildschirm prüfen).\n1. Melde dich in nts ab.\n2. Öffne die Server-Startseite und lösche den „Saber“-Order. Dadurch werden alle Notizen vom Server gelöscht.\n3. Melde dich wieder in nts an. Du wirst nach einem neuen Verschlüsselungspasswort gefragt.\n4. Vergiss nicht dich auf anderen Geräten in nts ab- und wieder anzumelden.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$de extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Wie lösche ich meinen Account?';
-	@override String get a => 'Drücke oben den „${_root.profile.quickLinks.deleteAccount}“-Button und melde dich gegebenenfalls an.\nWenn du den offiziellen nts-Server nutzt, wird dein Account automatisch nach einer Woche gelöscht. Du kannst mich während dieser Woche unter adilhanney@disroot.org kontaktieren um die Löschung rückgängig zu machen.\nWenn du einen anderen Server nutzt, kann es sein, dass du deinen Account nicht löschen kannst: Für mehr Information kannst du in der Datenschutzbestimmung des Servers nachgucken.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$de extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Background image fit';
 	@override String get backgroundPattern => 'Hintergrundmuster';
 	@override String get import => 'Importieren';
-	@override String get watchServer => 'Halte nach Aktualisierungen auf dem Server Ausschau';
-	@override String get watchServerReadOnly => 'Bearbeiten ist deaktiviert, solange du den Server beobachtest';
 	@override late final _Translations$editor$menu$boxFits$de boxFits = _Translations$editor$menu$boxFits$de._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$de bgPatterns = _Translations$editor$menu$bgPatterns$de._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$de extends Translations$set
 	@override String get inactive => 'Nicht aktiviert';
 	@override String get activeUntilRestart => 'Aktiv bis zum Neustart der App';
 	@override String get inactiveUntilRestart => 'Inaktiv bis zum Neustart der App';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$de extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Bitte gib nts Zugriff auf dein Nextcloud Konto';
-	@override String get followPrompts => 'Bitte folge den Anweisungen in der Nextcloud-Oberfläche';
-	@override String get browserDidntOpen => 'Die Anmeldeseite hat sich nicht geöffnet? Klicke hier';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$de extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Was ist ein Verschlüsselungspasswort? Wozu zwei Passwörter?';
-	@override String get a => 'Mit dem Nextcloud-Passwort greifst du auf die Cloud zu. Das Verschlüsselungspasswort schützt deine Daten, bevor sie jemals die Cloud erreichen.\nSelbst wenn jemand Zugriff zu deinem Nextcloud-Konto erlangt, bleiben deine Notizen sicher und verschlüsselt mit einem separaten Passwort. Das bietet dir eine weitere Sicherheitsschicht zum Schutz deiner Daten.\nNiemand kann ohne dein Verschlüsselungspasswort auf deine Notizen auf dem Server zugreifen. Das bedeutet allerdings auch, dass du den Zugriff auf deine Daten verlierst, falls du dein Verschlüsselungspasswort vergisst.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$de extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ich habe noch kein Verschlüsselungspasswort festgelegt. Wo bekomme ich das her?';
-	@override String get a => 'Wähle ein neues Verschlüsselungspasswort und gib es oben ein.\nnts wird mit diesem Passwort automatisch deine Schlüssel generieren.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$de extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$de._(TranslationsDe root) : this._root = root, super.internal(root);
-
-	final TranslationsDe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kann ich das gleiche Passwort wie bei meinem Nextcloud-Konto verwenden?';
-	@override String get a => 'Ja, aber sei dir bewusst, dass es so für den Serveradministrator oder jemand anderen einfacher wäre, auf deine Notizen zuzugreifen, falls dieser Zugriff auf dein Nextcloud-Konto erlangt.';
 }
 
 // Path: editor.menu.boxFits

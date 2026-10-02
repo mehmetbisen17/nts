@@ -39,10 +39,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$fa sentry = _Translations$sentry$fa._(_root);
 	@override late final _Translations$settings$fa settings = _Translations$settings$fa._(_root);
 	@override late final _Translations$logs$fa logs = _Translations$logs$fa._(_root);
-	@override late final _Translations$login$fa login = _Translations$login$fa._(_root);
-	@override late final _Translations$profile$fa profile = _Translations$profile$fa._(_root);
 	@override late final _Translations$appInfo$fa appInfo = _Translations$appInfo$fa._(_root);
-	@override late final _Translations$update$fa update = _Translations$update$fa._(_root);
 	@override late final _Translations$editor$fa editor = _Translations$editor$fa._(_root);
 }
 
@@ -117,7 +114,6 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get autosaveDisabled => 'هرگز';
 	@override String get shapeRecognitionDisabled => 'هرگز';
 	@override String get openDataDir => 'پوشه nts را باز کنید';
-	@override String get resyncEverything => 'همه چیز را دوباره همگام سازی کنید';
 }
 
 // Path: logs
@@ -134,50 +130,6 @@ class _Translations$logs$fa extends Translations$logs$en {
 	@override String get noLogs => 'اینجا هیچ گزارشی وجود ندارد!';
 }
 
-// Path: login
-class _Translations$login$fa extends Translations$login$en {
-	_Translations$login$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'وارد شدن';
-	@override late final _Translations$login$form$fa form = _Translations$login$form$fa._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'حساب کاربری ندارید؟ '),
-		linkToSignup('Sign up now'),
-		const TextSpan(text: '!'),
-	]);
-	@override late final _Translations$login$status$fa status = _Translations$login$status$fa._(_root);
-	@override late final _Translations$login$ncLoginStep$fa ncLoginStep = _Translations$login$ncLoginStep$fa._(_root);
-	@override late final _Translations$login$encLoginStep$fa encLoginStep = _Translations$login$encLoginStep$fa._(_root);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		undoLogin('تو نه'),
-	]);
-}
-
-// Path: profile
-class _Translations$profile$fa extends Translations$profile$en {
-	_Translations$profile$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'پروفایل من';
-	@override String get logout => 'خروج';
-	@override late final _Translations$profile$quickLinks$fa quickLinks = _Translations$profile$quickLinks$fa._(_root);
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$fa._(_root),
-		_Translations$profile$faq$1$fa._(_root),
-		_Translations$profile$faq$2$fa._(_root),
-		_Translations$profile$faq$3$fa._(_root),
-	];
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'شما از ${used} از ${total} (${percent}%) استفاده می‌کنید';
-	@override String get connectedTo => 'مرتبط با';
-	@override String get faqTitle => 'سوالات متداول';
-	@override String quotaUsageUncapped({required Object used}) => 'شما از ${used} استفاده می‌کنید';
-}
-
 // Path: appInfo
 class _Translations$appInfo$fa extends Translations$appInfo$en {
 	_Translations$appInfo$fa._(TranslationsFa root) : this._root = root, super.internal(root);
@@ -187,22 +139,8 @@ class _Translations$appInfo$fa extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nاین برنامه کاملاً بدون گارانتی ارائه می شود. این نرم‌افزار رایگان است و شما می‌توانید تحت شرایط خاصی آن را مجدداً توزیع کنید';
 	@override String get debug => 'دیباگ';
-	@override String get sponsorButton => 'برای حمایت مالی از من یا خرید فضای ذخیره بیشتر، اینجا ضربه بزنید';
 	@override String get licenseButton => 'برای مشاهده اطلاعات بیشتر مجوز اینجا را ضربه بزنید';
 	@override String get privacyPolicyButton => 'برای مشاهده سیاست حفظ حریم خصوصی اینجا را ضربه بزنید';
-}
-
-// Path: update
-class _Translations$update$fa extends Translations$update$en {
-	_Translations$update$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'به‌روزرسانی‌ در دسترس است';
-	@override String get updateAvailableDescription => 'نسخه جدیدی از برنامه با این تغییرات در دسترس است:';
-	@override String get update => 'بروزرسانی';
-	@override String get downloadNotAvailableYet => 'دانلود هنوز برای پلتفرم شما در دسترس نیست. لطفا به زودی دوباره بررسی کنید.';
 }
 
 // Path: editor
@@ -249,7 +187,6 @@ class _Translations$home$tooltips$fa extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'یادداشت جدید';
-	@override String get showUpdateDialog => 'نمایش به روز رسانی';
 	@override String get exportNote => 'صدور یادداشت';
 }
 
@@ -408,9 +345,6 @@ class _Translations$settings$prefLabels$fa extends Translations$settings$prefLab
 	@override String get layoutSize => 'نوع چیدمان';
 	@override String get customAccentColor => 'رنگ سفارشی';
 	@override String get hyperlegibleFont => 'فونت بیش از حد خوانا';
-	@override String get shouldCheckForUpdates => 'به‌روزرسانی‌ برنامه را به‌طور خودکار بررسی کنید';
-	@override String get shouldAlwaysAlertForUpdates => 'به روز رسانی سریع تر';
-	@override String get allowInsecureConnections => 'به اتصالات ناامن اجازه دهید';
 	@override String get editorToolbarAlignment => 'تراز کردن نوار ابزار ویرایشگر';
 	@override String get editorToolbarShowInFullscreen => 'نوار ابزار ویرایشگر را در حالت تمام صفحه نمایش دهید';
 	@override String get editorAutoInvert => 'معکوس کردن رنگ یادداشت ها در حالت تاریک';
@@ -439,7 +373,6 @@ class _Translations$settings$prefDescriptions$fa extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'خوانایی را برای خوانندگان کم بینا افزایش می دهد';
-	@override String get allowInsecureConnections => '(توصیه نمی شود) به nts اجازه دهید به سرورهایی با گواهینامه های خودامضا/غیر قابل اعتماد متصل شود';
 	@override String get preferGreyscale => 'برای نمایشگر های e-ink';
 	@override String get autoClearWhiteboardOnExit => 'همچنان با دستگاه‌های دیگر شما همگام‌سازی می‌شود';
 	@override String get disableEraserAfterUse => 'پس از استفاده از پاک کن به صورت خودکار به خودکار برمی گردد';
@@ -448,7 +381,6 @@ class _Translations$settings$prefDescriptions$fa extends Translations$settings$p
 	@override String get editorPromptRename => 'همیشه می توانید بعداً نام یادداشت ها را تغییر دهید';
 	@override String get printPageIndicators => 'نمایش نشانگرهای صفحه در خروجی';
 	@override String get shapeRecognitionDelay => 'به روز رسانی پیشنمایش شکل چند وقت یکبار انجام شود';
-	@override String get shouldAlwaysAlertForUpdates => 'به محض اینکه به‌روزرسانی‌ها در دسترس هستند، به من بگویید';
 	@override late final _Translations$settings$prefDescriptions$sentry$fa sentry = _Translations$settings$prefDescriptions$sentry$fa._(_root);
 	@override String get autoDisableFingerDrawingWhenStylusDetected => 'هنگامی که یک قلم شناسایی شد، نقاشی با انگشت را خاموش کنید';
 	@override String get autosave => 'پس از یک تأخیر کوتاه ، یا هرگز';
@@ -511,126 +443,6 @@ class _Translations$settings$customDataDir$fa extends Translations$settings$cust
 	@override String get cancel => 'لغو کنید';
 	@override String get select => 'انتخاب کنید';
 	@override String get mustBeEmpty => 'دایرکتوری انتخاب شده باید خالی باشد';
-	@override String get mustBeDoneSyncing => 'قبل از تغییر دایرکتوری مطمئن شوید که همگام سازی کامل شده است';
-}
-
-// Path: login.form
-class _Translations$login$form$fa extends Translations$login$form$en {
-	_Translations$login$form$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'با ورود به سیستم، با قوانین موافقت خواهد شد '),
-		linkToPrivacyPolicy('Privacy Policy'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$fa extends Translations$login$status$en {
-	_Translations$login$status$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'خروج';
-	@override String get tapToLogin => 'برای ورود با Nextcloud ضربه بزنید';
-	@override String get loggedIn => 'وارد شدن با Nextcloud';
-	@override String hi({required Object u}) => 'سلام، ${u}!';
-	@override String get almostDone => 'تقریباً برای همگام‌سازی آماده است، برای پایان ورود به سیستم ضربه بزنید';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$fa extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$login$ncLoginStep$loginFlow$fa loginFlow = _Translations$login$ncLoginStep$loginFlow$fa._(_root);
-	@override String get whereToStoreData => 'محل ذخیره داده های خود را انتخاب کنید:';
-	@override String get saberNcServer => 'سرور Nextcloud nts';
-	@override String get otherNcServer => 'سرور Nextcloud دیگر';
-	@override String get serverUrl => 'آدرس سرور';
-	@override String get loginWithSaber => 'با nts وارد شوید';
-	@override String get loginWithNextcloud => 'با Nextcloud وارد شوید';
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$fa extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'برای محافظت از داده های خود، لطفا رمز رمزگذاری خود را وارد کنید:';
-	@override String get newToSaber => 'تازه وارد nts';
-	@override String get encPassword => 'رمز رمزگذاری';
-	@override String get encFaqTitle => 'سوالات متداول';
-	@override String get wrongEncPassword => 'رمزگشایی با رمز عبور ارائه شده انجام نشد. لطفاً دوباره آن را وارد کنید.';
-	@override String get connectionFailed => 'هنگام اتصال به سرور مشکلی پیش آمد. لطفاً بعداً دوباره امتحان کنید.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$fa._(_root),
-		_Translations$login$encLoginStep$encFaq$1$fa._(_root),
-		_Translations$login$encLoginStep$encFaq$2$fa._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$fa extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'صفحه اصلی سرور';
-	@override String get deleteAccount => 'حذف حساب';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$fa extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ایا اگر خارج شوم یادداشت هایم را از دست خواهم داد؟';
-	@override String get a => 'خیر. یادداشت‌های شما هم روی دستگاه و هم روی سرور باقی می‌مانند. تا زمانی که دوباره وارد سیستم نشوید با سرور همگام‌سازی نمی‌شوند. قبل از خروج از سیستم مطمئن شوید که همگام‌سازی کامل شده است تا هیچ داده‌ای را از دست ندهید (پیشرفت همگام‌سازی را در صفحه اصلی ببینید).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$fa extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'چگونه رمز عبور Nextcloud خود را تغییر دهم؟';
-	@override String get a => 'به وب سایت سرور خود بروید و وارد شوید. سپس به تنظیمات > امنیت > تغییر رمز عبور بروید. پس از تغییر رمز عبور، باید از سیستم خارج شوید و دوباره وارد nts شوید.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$fa extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'چگونه رمز رمزگذاری خود را تغییر دهم؟';
-	@override String get a => '1. از nts خارج شوید. قبل از خروج از سیستم مطمئن شوید که همگام‌سازی کامل شده است تا هیچ داده‌ای را از دست ندهید (پیشرفت همگام‌سازی را در صفحه اصلی ببینید).\n2. به وب سایت سرور خود بروید و پوشه \'Saber\' خود را حذف کنید. با این کار تمام یادداشت های شما از سرور حذف می شود.\n3. دوباره وارد nts شوید. هنگام ورود به سیستم می‌توانید رمز رمزگذاری جدیدی انتخاب کنید.\n4. فراموش نکنید که از سیستم خارج شوید و در دستگاه های دیگر خود نیز دوباره وارد nts شوید.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$fa extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'چگونه می توانم حساب کاربری خود را حذف کنم؟';
-	@override String get a => 'روی دکمه "${_root.profile.quickLinks.deleteAccount}" در بالا ضربه بزنید و در صورت نیاز وارد شوید.\nاگر از سرور رسمی nts استفاده می‌کنید، حساب شما پس از یک هفته مهلت حذف می‌شود. می‌توانید در این مدت با من در adilhanney@disroot.org تماس بگیرید تا حذف را لغو کنید.\nاگر از یک سرور شخص ثالث استفاده می‌کنید، ممکن است گزینه‌ای برای حذف حساب شما وجود نداشته باشد: باید با حفظ حریم خصوصی سرور مشورت کنید. سیاست برای اطلاعات بیشتر';
 }
 
 // Path: editor.toolbar
@@ -759,8 +571,6 @@ class _Translations$editor$menu$fa extends Translations$editor$menu$en {
 	@override late final _Translations$editor$menu$bgPatterns$fa bgPatterns = _Translations$editor$menu$bgPatterns$fa._(_root);
 	@override String get lineThickness => 'ضخامت خط';
 	@override String get lineThicknessDescription => 'ضخامت خط پس زمینه';
-	@override String get watchServer => 'مراقب به روز رسانی ها در سرور باشید';
-	@override String get watchServerReadOnly => 'هنگام تماشای سرور، ویرایش غیرفعال است';
 	@override String get lineHeightDescription => 'همچنین اندازه متن را برای یادداشت های تایپ شده کنترل می کند';
 }
 
@@ -866,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$fa extends Translations$set
 	@override String get inactive => 'غیر فعال';
 	@override String get activeUntilRestart => 'فعال باشید تا زمانی که برنامه را مجدداً راه اندازی کنید';
 	@override String get inactiveUntilRestart => 'تا زمانی که برنامه را مجدداً راه اندازی کنید غیرفعال است';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$fa extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'لطفاً به nts اجازه دسترسی به حساب Nextcloud شما را بدهید';
-	@override String get followPrompts => 'لطفاً دستورات موجود در مرورگر خود را دنبال کنید.';
-	@override String get browserDidntOpen => 'مرورگر باز نشد';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$fa extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'رمز عبور رمزنگاری چیست؟';
-	@override String get a => 'رمز عبور رمزگذاری برای رمزگذاری داده های شما قبل از ارسال به سرور استفاده می شود.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$fa extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'چرا از دو رمز عبور استفاده میشود؟';
-	@override String get a => 'رمز عبور Nextcloud برای دسترسی به ابر استفاده می شود و رمزعبور دوم برای رمزنگاری استفاده میشود';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$fa extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$fa._(TranslationsFa root) : this._root = root, super.internal(root);
-
-	final TranslationsFa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'آیا می توانم از یک رمز عبور برای هر دو استفاده کنم؟';
-	@override String get a => 'بله، اما انجام این کار امنیت کمتری دارد. از آنجایی که رمز عبور Nextcloud شما به سرور ارسال می شود، شخصی که به سرور دسترسی دارد می تواند یادداشت های شما را رمزگشایی کند. فقط در صورتی از همان رمز عبور استفاده کنید که به مالک سرور اعتماد دارید.';
 }
 
 // Path: editor.menu.boxFits

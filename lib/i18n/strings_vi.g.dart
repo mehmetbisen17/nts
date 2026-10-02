@@ -39,10 +39,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$vi sentry = _Translations$sentry$vi._(_root);
 	@override late final _Translations$settings$vi settings = _Translations$settings$vi._(_root);
 	@override late final _Translations$logs$vi logs = _Translations$logs$vi._(_root);
-	@override late final _Translations$login$vi login = _Translations$login$vi._(_root);
-	@override late final _Translations$profile$vi profile = _Translations$profile$vi._(_root);
 	@override late final _Translations$appInfo$vi appInfo = _Translations$appInfo$vi._(_root);
-	@override late final _Translations$update$vi update = _Translations$update$vi._(_root);
 	@override late final _Translations$editor$vi editor = _Translations$editor$vi._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 		'Trái',
 	];
 	@override late final _Translations$settings$reset$vi reset = _Translations$settings$reset$vi._(_root);
-	@override String get resyncEverything => 'Đồng bộ tất cả';
 	@override String get openDataDir => 'Mở thư mục nts';
 	@override late final _Translations$settings$customDataDir$vi customDataDir = _Translations$settings$customDataDir$vi._(_root);
 	@override String get autosaveDisabled => 'Không bao giờ';
@@ -134,52 +130,6 @@ class _Translations$logs$vi extends Translations$logs$en {
 	@override String get useTheApp => 'Khi bạn sử dụng ứng dụng này, các tác vụ bạn thực hiện bạn sẽ được lưu lại ở đây';
 }
 
-// Path: login
-class _Translations$login$vi extends Translations$login$en {
-	_Translations$login$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Đăng nhập';
-	@override late final _Translations$login$form$vi form = _Translations$login$form$vi._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Chưa có tài khoản? '),
-		linkToSignup('Sign up now'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Không phải bạn? '),
-		undoLogin('Choose another account'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$vi status = _Translations$login$status$vi._(_root);
-	@override late final _Translations$login$ncLoginStep$vi ncLoginStep = _Translations$login$ncLoginStep$vi._(_root);
-	@override late final _Translations$login$encLoginStep$vi encLoginStep = _Translations$login$encLoginStep$vi._(_root);
-}
-
-// Path: profile
-class _Translations$profile$vi extends Translations$profile$en {
-	_Translations$profile$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Hồ sơ của tôi';
-	@override String get logout => 'Đăng xuất';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Bạn đã sử dụng ${used} trên tổng số ${total} (${percent}%)';
-	@override String get connectedTo => 'Kết nối tới';
-	@override late final _Translations$profile$quickLinks$vi quickLinks = _Translations$profile$quickLinks$vi._(_root);
-	@override String get faqTitle => 'Các câu hỏi thường gặp';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$vi._(_root),
-		_Translations$profile$faq$1$vi._(_root),
-		_Translations$profile$faq$2$vi._(_root),
-		_Translations$profile$faq$3$vi._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'Bạn đang sử dụng ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$vi extends Translations$appInfo$en {
 	_Translations$appInfo$vi._(TranslationsVi root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$vi extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nỨng dụng này không được bảo hành. Đây là phần mềm tự do, và bạn được chia sẻ lại nó theo các điều kiện nhất định.';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => 'Nhấn vào đây để mua cho tôi một ly cà phê hoặc mua thêm dung lượng lưu trữ';
 	@override String get licenseButton => 'Nhấn vào đây để xem thêm thông tin bản quyền';
 	@override String get privacyPolicyButton => 'Nhấn vào đây để xem chính sách quyền riêng tư';
-}
-
-// Path: update
-class _Translations$update$vi extends Translations$update$en {
-	_Translations$update$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Các bản cập nhật có sẵn';
-	@override String get updateAvailableDescription => 'Đã có phiên bản mới:';
-	@override String get update => 'Cập nhật';
-	@override String get downloadNotAvailableYet => 'Bản cập nhật hiện chưa có sẵn cho nền tảng của bạn. Vui lòng quay lại kiểm tra sau.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$vi extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Ghi chú mới';
-	@override String get showUpdateDialog => 'Xem thông tin cập nhật';
 	@override String get exportNote => 'Xuất tệp';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$vi extends Translations$settings$prefLab
 	@override String get layoutSize => 'Bố cục';
 	@override String get customAccentColor => 'Màu chủ đạo';
 	@override String get hyperlegibleFont => 'Trợ năng: Phông chữ Atkinson Hyperlegible';
-	@override String get shouldCheckForUpdates => 'Kiểm tra phiên bản mới';
-	@override String get shouldAlwaysAlertForUpdates => 'Cập nhật kịp thời';
-	@override String get allowInsecureConnections => 'Cho phép các kết nối không an toàn';
 	@override String get editorToolbarAlignment => 'Ví trị thanh công cụ';
 	@override String get editorToolbarShowInFullscreen => 'Hiển thị thanh công cụ trong chế độ Toàn màn hình';
 	@override String get editorAutoInvert => 'Đảo màu ghi chú trong chế độ tối';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$vi extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Tăng khả năng đọc cho người khiếm thị';
-	@override String get allowInsecureConnections => '(Không khuyến nghị) Cho phép nts kết nối với các máy chủ có chứng chỉ tự ký hoặc không đáng tin cậy';
 	@override String get preferGreyscale => 'Dành cho màn hình e-ink';
 	@override String get autoClearWhiteboardOnExit => 'Xóa bảng vẽ tự do sau khi bạn thoát ứng dụng';
 	@override String get disableEraserAfterUse => 'Tự động sử dụng bút vẽ sau khi dùng tẩy';
@@ -453,7 +384,6 @@ class _Translations$settings$prefDescriptions$vi extends Translations$settings$p
 	@override String get autosave => 'Tự động lưu sau một khoảng thời gian ngắn hoặc không bao giờ';
 	@override String get shapeRecognitionDelay => 'Tần suất cập nhật bản xem trước hình dạng';
 	@override String get autoStraightenLines => 'Tự động nắn thẳng các đường kẻ dài mà không cần phải sử dụng bút vẽ hình chuyên dụng';
-	@override String get shouldAlwaysAlertForUpdates => 'Thông báo cho tôi về các bản cập nhật mới khi chúng được phát hành';
 	@override late final _Translations$settings$prefDescriptions$sentry$vi sentry = _Translations$settings$prefDescriptions$sentry$vi._(_root);
 }
 
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$vi extends Translations$settings$cust
 	@override String get cancel => 'Hủy';
 	@override String get select => 'Chọn';
 	@override String get mustBeEmpty => 'Thư mục được chọn phải là thư mục trống';
-	@override String get mustBeDoneSyncing => 'Hãy đảm bảo quá trình đồng bộ đã hoàn tất trước khi thay đổi thư mục';
 	@override String get unsupported => 'Tính năng hiện chỉ khả dụng cho nhà phát triển phần mềm. Dùng nó có thể dẫn đến mất mát dữ liệu.';
-}
-
-// Path: login.form
-class _Translations$login$form$vi extends Translations$login$form$en {
-	_Translations$login$form$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Bằng việc đăng nhập, bạn đồng ý với '),
-		linkToPrivacyPolicy('Privacy Policy'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$vi extends Translations$login$status$en {
-	_Translations$login$status$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Đăng xuất';
-	@override String get tapToLogin => 'Ấn để đăng nhập bằng Nextcloud';
-	@override String hi({required Object u}) => 'Xin chào, ${u}!';
-	@override String get almostDone => 'Sắp xong rồi, chạm vào màn hình để hoàn tất đăng nhập';
-	@override String get loggedIn => 'Đã đăng nhập bằng Nextcloud';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$vi extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Chọn nơi lưu trữ dữ liệu của bạn:';
-	@override String get saberNcServer => 'Máy chủ Nextcloud của nts';
-	@override String get otherNcServer => 'Các máy chủ Nextcloud khác';
-	@override String get serverUrl => 'Đường dẫn máy chủ';
-	@override String get loginWithSaber => 'Đăng nhập bằng nts';
-	@override String get loginWithNextcloud => 'Đăng nhập bằng Nextcloud';
-	@override late final _Translations$login$ncLoginStep$loginFlow$vi loginFlow = _Translations$login$ncLoginStep$loginFlow$vi._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$vi extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Để bảo vệ dữ liệu của bạn, hãy nhập mật khẩu bạn muốn sử dụng để mã hóa chúng:';
-	@override String get newToSaber => 'Người mới tới? Bạn chỉ cần nhập một mật khẩu mã hóa mới.';
-	@override String get encPassword => 'Mật khẩu mã hóa';
-	@override String get encFaqTitle => 'Các câu hỏi thường gặp';
-	@override String get wrongEncPassword => 'Không thể giải mã với khóa mã hóa được cung cấp. Hãy nhập lại.';
-	@override String get connectionFailed => 'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$vi._(_root),
-		_Translations$login$encLoginStep$encFaq$1$vi._(_root),
-		_Translations$login$encLoginStep$encFaq$2$vi._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$vi extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Trang chủ';
-	@override String get deleteAccount => 'Xóa tài khoản';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$vi extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Tôi có bị mất ghi chú nếu đăng xuất không?';
-	@override String get a => 'Không. Ghi chú của bạn vẫn sẽ được lưu trên cả thiết bị và máy chủ. Tuy nhiên, chúng sẽ không được đồng bộ hóa với máy chủ cho đến khi bạn đăng nhập lại. Hãy đảm bảo quá trình đồng bộ đã hoàn tất trước khi đăng xuất để không bị mất dữ liệu (bạn có thể xem tiến trình đồng bộ tại màn hình chính).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$vi extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Làm sao để thay đổi mật khẩu Nextcloud?';
-	@override String get a => 'Truy cập vào trang web máy chủ của bạn và đăng nhập. Sau đó, đi tới Cài đặt > Bảo mật > Thay đổi mật khẩu. Bạn sẽ cần phải đăng xuất và đăng nhập lại vào nts sau khi thay đổi mật khẩu.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$vi extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Làm sao để thay đổi mật khẩu mã hóa?';
-	@override String get a => '0. Hãy đảm bảo quá trình đồng bộ đã hoàn tất (kiểm tra tiến trình đồng bộ tại màn hình chính).\n1. Đăng xuất khỏi nts.\n2. Truy cập vào trang web máy chủ của bạn và xóa thư mục \'Saber\'. Thao tác này sẽ xóa tất cả ghi chú của bạn khỏi máy chủ.\n3. Đăng nhập lại vào nts. Bạn có thể chọn một mật khẩu mã hóa mới khi đăng nhập.\n4. Đừng quên đăng xuất và đăng nhập lại vào nts trên các thiết bị khác của bạn nữa nhé.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$vi extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Làm sao để xóa tài khoản của tôi?';
-	@override String get a => 'Nhấn vào "${_root.profile.quickLinks.deleteAccount}" ở trên và đăng nhập nếu được yêu cầu.\nNếu bạn đang sử dụng máy chủ chính thức của nts, tài khoản của bạn sẽ được xóa sau thời gian chờ 1 tuần. Trong khoảng thời gian này, bạn có thể liên hệ với tôi qua địa chỉ adilhanney@disroot.org để hủy yêu cầu xóa.\nNếu bạn đang sử dụng máy chủ của bên thứ ba, có thể sẽ không có tùy chọn xóa tài khoản: bạn sẽ cần tham khảo chính sách quyền riêng tư của máy chủ đó để biết thêm thông tin.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$vi extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Khớp hình nền';
 	@override String get backgroundPattern => 'Họa tiết nền';
 	@override String get import => 'Nhập tệp';
-	@override String get watchServer => 'Theo dõi cập nhật từ máy chủ';
-	@override String get watchServerReadOnly => 'Không thể chỉnh sửa khi đang cập nhật từ máy chủ';
 	@override late final _Translations$editor$menu$boxFits$vi boxFits = _Translations$editor$menu$boxFits$vi._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$vi bgPatterns = _Translations$editor$menu$bgPatterns$vi._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$vi extends Translations$set
 	@override String get inactive => 'Đang tắt';
 	@override String get activeUntilRestart => 'Tính năng này sẽ được bật cho đến khi bạn khởi động lại ứng dụng';
 	@override String get inactiveUntilRestart => 'Tính năng này sẽ được tắt cho đến khi bạn khởi động lại ứng dụng';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$vi extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Vui lòng cho phép nts truy cập vào tài khoản Nextcloud của bạn';
-	@override String get followPrompts => 'Vui lòng làm theo các hướng dẫn trên giao diện Nextcloud';
-	@override String get browserDidntOpen => 'Trang đăng nhập không xuất hiện? Hãy ấn vào đây';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$vi extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Mật khẩu mã hóa là gì? Tại sao lại phải dùng hai mật khẩu?';
-	@override String get a => 'Mật khẩu Nextcloud được dùng để truy cập vào lưu trữ đám mây. Còn mật khẩu mã hóa sẽ "trộn lẫn" dữ liệu của bạn trước khi chúng được gửi lên đám mây đó.\nNgay cả khi có ai đó đột nhập được vào tài khoản Nextcloud, các ghi chú của bạn vẫn sẽ an toàn vì đã được mã hóa bằng một mật khẩu riêng biệt. Điều này tạo ra một lớp bảo mật thứ hai để bảo vệ dữ liệu của bạn.\nKhông ai có thể xem ghi chú trên máy chủ nếu không có mật khẩu mã hóa. Tuy nhiên, điều này cũng đồng nghĩa với việc nếu bạn quên mật khẩu mã hóa, bạn sẽ mất quyền truy cập vào dữ liệu của chính mình.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$vi extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Tôi chưa thiết lập mật khẩu mã hóa. Tôi có thể tạo nó ở đâu?';
-	@override String get a => 'Hãy chọn một mật khẩu mã hóa mới và nhập vào ô bên trên.\nnts sẽ tự động tạo các khóa mã hóa cho bạn từ mật khẩu này.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$vi extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$vi._(TranslationsVi root) : this._root = root, super.internal(root);
-
-	final TranslationsVi _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Tôi có thể dùng cùng một mật khẩu với tài khoản Nextcloud không?';
-	@override String get a => 'Được, nhưng hãy lưu ý rằng quản trị viên hoặc bất kỳ ai khác sẽ dễ dàng truy cập vào ghi chú của bạn hơn nếu họ chiếm được quyền truy cập vào tài khoản Nextcloud.';
 }
 
 // Path: editor.menu.boxFits

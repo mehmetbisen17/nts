@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' show FragmentShader;
 
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:nts/components/canvas/_asset_cache.dart';
@@ -16,13 +17,63 @@ import 'package:sbn/has_size.dart';
 
 typedef CanvasKey = GlobalKey<State<InnerCanvas>>;
 
+/// What kind of note it is, saved as `nt` (see [EditorCoreInfo.noteType]).
+enum NoteType(final String id, final Size pageSize) {
+  /// Pages of paper, one after another.
+  pages('', EditorPage.defaultSize),
+
+  /// No paper: one surface to pan around in any direction.
+  /// ponytail: a fixed 20000 square, starting in the middle (about 15
+  /// screens each way); grow it on demand if anyone reaches an edge.
+  whiteboard('whiteboard', Size(20000, 20000)),
+
+  /// One sheet that grows as you write (see [EditorPage.growToFit]).
+  endless('endless', EditorPage.defaultSize),
+
+  /// Landscape 16:9 pages, like lecture slides.
+  slides(
+    'slides',
+    Size(EditorPage.defaultWidth, EditorPage.defaultWidth * 9 / 16),
+  ),
+
+  /// Index cards, each a front page and a back page.
+  flashcards(
+    'flashcards',
+    Size(EditorPage.defaultWidth, EditorPage.defaultWidth * 0.6),
+  );
+
+  /// Whether it's always one page.
+  bool get singlePage => this == whiteboard || this == endless;
+
+  static NoteType fromId(String? id) =>
+      values.firstWhere((type) => type.id == id, orElse: () => pages);
+}
+
 class EditorPage extends ChangeNotifier implements HasSize {
   static const double defaultWidth = 1000;
   static const double defaultHeight = defaultWidth * 1.4;
   static const defaultSize = Size(defaultWidth, defaultHeight);
 
+  /// Not final: an endless page grows (see [growToFit]).
   @override
-  final Size size;
+  Size size;
+
+  /// Whether this is a whiteboard: no paper, and not shrunk to fit the
+  /// screen's width (see [NoteType.whiteboard]). Not saved; set from the
+  /// note's type.
+  var isBoard = false;
+
+  /// How far the space beside the page reaches on each side, where
+  /// images, moved notes and writing can go too (none on a whiteboard).
+  double get sideWidth => isBoard ? 0 : sideWidthOf(size);
+  static double sideWidthOf(Size pageSize) => pageSize.width;
+
+  /// The page and the space beside it.
+  Rect get areaWithSides =>
+      Rect.fromLTRB(-sideWidth, 0, size.width + sideWidth, size.height);
+
+  /// The gap between the page and things moved beside it.
+  static const sideGap = 24.0;
 
   late final CanvasKey innerCanvasKey = CanvasKey();
   RenderBox? _renderBox;
@@ -53,6 +104,10 @@ class EditorPage extends ChangeNotifier implements HasSize {
   /// Replaced (not changed in place) so undo can keep the old list.
   List<PageLink> links;
 
+  /// Typed text that can go anywhere on the page or beside it.
+  /// Replaced (not changed in place) so undo can keep the old list.
+  List<PageTextBox> textBoxes;
+
   /// The tape strokes that show what's under them. Not saved, so every
   /// tape covers its content again when the note opens.
   final revealedTapes = <Stroke>{};
@@ -63,6 +118,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
       strokes.isEmpty &&
       images.isEmpty &&
       links.isEmpty &&
+      textBoxes.isEmpty &&
       quill.controller.document.isEmpty() &&
       backgroundImage == null;
   bool get isNotEmpty => !isEmpty;
@@ -88,6 +144,9 @@ class EditorPage extends ChangeNotifier implements HasSize {
     }
     for (final image in images) {
       maxY = max(maxY, image.dstRect.bottom);
+    }
+    for (final box in textBoxes) {
+      maxY = max(maxY, box.estimatedBounds.bottom);
     }
     if (!quill.controller.document.isEmpty()) {
       // this does not account for text that wraps to the next line
@@ -118,6 +177,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     QuillStruct? quill,
     this.backgroundImage,
     List<PageLink>? links,
+    List<PageTextBox>? textBoxes,
   }) : assert(
          (size == null) || (width == null && height == null),
          "size and width/height shouldn't both be specified",
@@ -127,6 +187,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
        laserStrokes = [],
        images = images ?? [],
        links = links ?? const [],
+       textBoxes = textBoxes ?? const [],
        quill =
            quill ??
            QuillStruct(
@@ -181,7 +242,72 @@ class EditorPage extends ChangeNotifier implements HasSize {
         for (final link in json['lk'] as List? ?? const [])
           PageLink.fromJson(link as Map<String, dynamic>),
       ],
+      textBoxes: [
+        for (final box in json['tb'] as List? ?? const [])
+          PageTextBox.fromJson(box as Map<String, dynamic>),
+      ],
     );
+  }
+
+  /// The lowest point of what's on the page.
+  double get contentBottom => [
+    0.0,
+    for (final stroke in strokes)
+      if (stroke.bounds.isFinite) stroke.bounds.bottom + stroke.options.size,
+    for (final image in images) image.dstRect.bottom,
+    for (final box in textBoxes) box.estimatedBounds.bottom,
+  ].reduce(max);
+
+  /// What's on the page with a margin, at least a page's size: what a
+  /// whiteboard shows in its thumbnail and exports. Its middle if empty.
+  Rect get contentRect {
+    final rects = [
+      for (final stroke in strokes)
+        if (stroke.bounds.isFinite) stroke.bounds.inflate(stroke.options.size),
+      for (final image in images) image.dstRect,
+      for (final box in textBoxes) box.estimatedBounds,
+    ];
+    final content = rects.isEmpty
+        ? Rect.fromCenter(center: size.center(Offset.zero), width: 0, height: 0)
+        : rects.reduce((a, b) => a.expandToInclude(b));
+    final rect = Rect.fromCenter(
+      center: content.center,
+      width: max(content.width + 2 * defaultWidth / 10, defaultWidth),
+      height: max(content.height + 2 * defaultWidth / 10, defaultWidth * 0.75),
+    );
+    return rect.intersect(Offset.zero & size);
+  }
+
+  /// Makes an endless page longer when its content gets near the bottom,
+  /// so there's always half a page or more to write on. Never shrinks it.
+  /// Returns whether it grew.
+  bool growToFit() {
+    final bottom = contentBottom;
+    if (bottom <= size.height - defaultHeight / 2) return false;
+    size = Size(size.width, bottom + defaultHeight);
+    return true;
+  }
+
+  /// Turns text typed the old way (which always started at the top of the
+  /// page) into a text box in the same place, as plain text.
+  /// Nothing changes on disk until the note is next saved.
+  void convertTypedText({required int lineHeight}) {
+    final document = quill.controller.document;
+    if (document.isEmpty()) return;
+    final text = document.toPlainText().trimRight();
+    quill.controller.clear();
+    if (text.isEmpty) return;
+    textBoxes = [
+      ...textBoxes,
+      PageTextBox(
+        id: PageTextBox.nextId(textBoxes),
+        // Where the old text's padding put it
+        position: Offset(lineHeight * 0.5, lineHeight * 1.2),
+        width: size.width - lineHeight,
+        text: text,
+        fontSize: lineHeight * 0.7,
+      ),
+    ];
   }
 
   Map<String, dynamic> toJson(OrderedAssetCache assets) => {
@@ -195,6 +321,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
       'q': quill.controller.document.toDelta().toJson(),
     if (backgroundImage != null) 'b': backgroundImage?.toJson(assets),
     if (links.isNotEmpty) 'lk': [for (final link in links) link.toJson()],
+    if (textBoxes.isNotEmpty) 'tb': [for (final box in textBoxes) box.toJson()],
   };
 
   /// Inserts a stroke, while keeping the strokes sorted by
@@ -341,6 +468,7 @@ class EditorPage extends ChangeNotifier implements HasSize {
     quill: quill ?? this.quill,
     backgroundImage: backgroundImage ?? this.backgroundImage,
     links: links,
+    textBoxes: textBoxes,
   );
 
   /// Clones this page for use in a screenshot.
@@ -452,4 +580,102 @@ class PageLink {
 
   @override
   int get hashCode => Object.hash(rect, url);
+}
+
+/// Typed text in a box that can sit anywhere on a page or beside it,
+/// and move. Replaced (not changed) when edited, like [PageLink].
+class PageTextBox {
+  const new({
+    required this.id,
+    required this.position,
+    required this.width,
+    required this.text,
+    this.fontSize = defaultFontSize,
+    this.color,
+  });
+
+  /// Unique on its page, to keep its widget when it's edited.
+  final int id;
+
+  /// Its top left.
+  final Offset position;
+  final double width;
+  final String text;
+  final double fontSize;
+
+  /// Null for the default ink (black, or white on black pages).
+  final Color? color;
+
+  /// The typed text's size the old way, with the default line height.
+  static const defaultFontSize = 28.0;
+  static const minWidth = 60.0;
+
+  /// The line height, as a multiple of [fontSize]: lines fall
+  /// on ruled lines, like the old typed text.
+  static const lineSpacing = 1 / 0.7;
+
+  /// Roughly where it is, assuming no line wraps.
+  Rect get estimatedBounds => Rect.fromLTWH(
+    position.dx,
+    position.dy,
+    width,
+    max(1, '\n'.allMatches(text).length + 1) * fontSize * lineSpacing,
+  );
+
+  static int nextId(List<PageTextBox> boxes) =>
+      boxes.fold(0, (id, box) => max(id, box.id + 1));
+
+  factory fromJson(Map<String, dynamic> json) => PageTextBox(
+    id: json['id'] as int? ?? 0,
+    position: Offset(
+      (json['x'] as num).toDouble(),
+      (json['y'] as num).toDouble(),
+    ),
+    width: (json['w'] as num).toDouble(),
+    text: json['t'] as String? ?? '',
+    fontSize: (json['fs'] as num?)?.toDouble() ?? defaultFontSize,
+    color: switch (json['c']) {
+      final int value => Color(value),
+      final Int64 value => Color(value.toInt()),
+      _ => null,
+    },
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'x': position.dx,
+    'y': position.dy,
+    'w': width,
+    't': text,
+    if (fontSize != defaultFontSize) 'fs': fontSize,
+    if (color != null) 'c': color!.toARGB32(),
+  };
+
+  PageTextBox copyWith({
+    Offset? position,
+    double? width,
+    String? text,
+    double? fontSize,
+    Color? color,
+  }) => PageTextBox(
+    id: id,
+    position: position ?? this.position,
+    width: width ?? this.width,
+    text: text ?? this.text,
+    fontSize: fontSize ?? this.fontSize,
+    color: color ?? this.color,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is PageTextBox &&
+      other.id == id &&
+      other.position == position &&
+      other.width == width &&
+      other.text == text &&
+      other.fontSize == fontSize &&
+      other.color == color;
+
+  @override
+  int get hashCode => Object.hash(id, position, width, text, fontSize, color);
 }

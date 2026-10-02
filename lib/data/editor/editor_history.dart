@@ -88,11 +88,37 @@ class EditorHistory {
     _isRedoPossible = false;
   }
 
+  /// The latest change in the history, e.g. to [markSaved] once it's written.
+  EditorHistoryItem? get lastChange => _past.lastOrNull;
+
+  /// Marks the state at [change] (from [lastChange]) as the saved one.
+  /// [midChange] if it was saved with unrecorded changes (e.g. halfway
+  /// through typing), so no state in the history matches the file.
+  void markSaved(EditorHistoryItem? change, {bool midChange = false}) {
+    _lastSaved = change;
+    _savedMidChange = midChange;
+  }
+
+  var _savedMidChange = false;
+
   /// Marks the last change as saved to disk.
   /// This does not modify the history stacks, but allows us to know
   /// whether the current state is saved or not.
-  void markLastChangeAsSaved() {
-    _lastSaved = _past.lastOrNull;
+  void markLastChangeAsSaved() => markSaved(_past.lastOrNull);
+
+  /// Whether something changed that isn't in the history yet, e.g. text
+  /// being typed into a text box (recorded when the typing ends).
+  bool get hasUnrecordedChanges => _unrecordedChanges;
+  var _unrecordedChanges = false;
+  void markUnrecordedChange() => _unrecordedChanges = true;
+
+  /// For a save taking its snapshot: whether there were unrecorded changes,
+  /// which now count as saved. (Changes made while the file is being
+  /// written mark it again.)
+  bool takeUnrecordedChanges() {
+    final had = _unrecordedChanges;
+    _unrecordedChanges = false;
+    return had;
   }
 
   /// Whether the current state is saved to disk.
@@ -101,7 +127,9 @@ class EditorHistory {
   /// not whether _past is empty. This is because _past items can be discarded
   /// if the history exceeds [maxHistoryLength].
   bool get isCurrentStateSaved {
-    return _past.lastOrNull == _lastSaved;
+    return !_unrecordedChanges &&
+        !_savedMidChange &&
+        _past.lastOrNull == _lastSaved;
   }
 
   /// Removes the last history item due to a rejected stroke.
@@ -160,6 +188,7 @@ class EditorHistoryItem {
     this.imageRectChange,
     this.fillChange,
     this.linkChange,
+    this.textBoxChange,
   }) : assert(
          type != .move || offset != null,
          'Offset must be provided for move',
@@ -199,6 +228,10 @@ class EditorHistoryItem {
        assert(
          type != .links || linkChange != null,
          'Link change must be provided for links',
+       ),
+       assert(
+         type != .textBoxes || textBoxChange != null,
+         'Text box change must be provided for textBoxes',
        );
 
   final EditorHistoryItemType type;
@@ -219,6 +252,9 @@ class EditorHistoryItem {
   /// The page's links before and after.
   final Change<List<PageLink>>? linkChange;
 
+  /// The page's text boxes before and after.
+  final Change<List<PageTextBox>>? textBoxChange;
+
   EditorHistoryItem copyWith({
     EditorHistoryItemType? type,
     int? pageIndex,
@@ -233,6 +269,7 @@ class EditorHistoryItem {
     Map<EditorImage, Change<Rect>>? imageRectChange,
     Map<Stroke, Change<Color?>>? fillChange,
     Change<List<PageLink>>? linkChange,
+    Change<List<PageTextBox>>? textBoxChange,
   }) {
     return EditorHistoryItem(
       type: type ?? this.type,
@@ -249,6 +286,7 @@ class EditorHistoryItem {
       imageRectChange: imageRectChange ?? this.imageRectChange,
       fillChange: fillChange ?? this.fillChange,
       linkChange: linkChange ?? this.linkChange,
+      textBoxChange: textBoxChange ?? this.textBoxChange,
     );
   }
 }
@@ -274,6 +312,9 @@ enum EditorHistoryItemType {
 
   /// A page's links changed, see [EditorHistoryItem.linkChange].
   links,
+
+  /// A page's text boxes changed, see [EditorHistoryItem.textBoxChange].
+  textBoxes,
 }
 
 /// A change to a page's stroke list: the [removed] strokes were

@@ -9,8 +9,7 @@ import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/flavor_config.dart';
 
 /// This test is to diagnose an issue with sending an `EditorCoreInfo` object
-/// from the isolate to the main thread:
-/// https://github.com/saber-notes/saber/issues/638
+/// from the isolate to the main thread.
 void main() {
   group('Isolate messages:', () {
     FlavorConfig.setup();

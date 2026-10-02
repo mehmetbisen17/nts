@@ -39,10 +39,7 @@ class TranslationsSl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$sl sentry = _Translations$sentry$sl._(_root);
 	@override late final _Translations$settings$sl settings = _Translations$settings$sl._(_root);
 	@override late final _Translations$logs$sl logs = _Translations$logs$sl._(_root);
-	@override late final _Translations$login$sl login = _Translations$login$sl._(_root);
-	@override late final _Translations$profile$sl profile = _Translations$profile$sl._(_root);
 	@override late final _Translations$appInfo$sl appInfo = _Translations$appInfo$sl._(_root);
-	@override late final _Translations$update$sl update = _Translations$update$sl._(_root);
 	@override late final _Translations$editor$sl editor = _Translations$editor$sl._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$sl extends Translations$settings$en {
 		'Levo',
 	];
 	@override late final _Translations$settings$reset$sl reset = _Translations$settings$reset$sl._(_root);
-	@override String get resyncEverything => 'Ponovno sinhroniziraj vse';
 	@override String get openDataDir => 'Odpri mapo nts';
 	@override late final _Translations$settings$customDataDir$sl customDataDir = _Translations$settings$customDataDir$sl._(_root);
 	@override String get autosaveDisabled => 'Nikoli';
@@ -134,52 +130,6 @@ class _Translations$logs$sl extends Translations$logs$en {
 	@override String get useTheApp => 'Dnevniki se bodo pojavili tukaj, ko boš uporabljal aplikacijo';
 }
 
-// Path: login
-class _Translations$login$sl extends Translations$login$en {
-	_Translations$login$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Prijava';
-	@override late final _Translations$login$form$sl form = _Translations$login$form$sl._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Še nimaš računa? '),
-		linkToSignup('Prijavi se zdaj'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Nisi ti? '),
-		undoLogin('Izberi drug račun'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$sl status = _Translations$login$status$sl._(_root);
-	@override late final _Translations$login$ncLoginStep$sl ncLoginStep = _Translations$login$ncLoginStep$sl._(_root);
-	@override late final _Translations$login$encLoginStep$sl encLoginStep = _Translations$login$encLoginStep$sl._(_root);
-}
-
-// Path: profile
-class _Translations$profile$sl extends Translations$profile$en {
-	_Translations$profile$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Moj profil';
-	@override String get logout => 'Odjavi se';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Uporabljaš ${used} od ${total} (${percent}%)';
-	@override String get connectedTo => 'Povezan z';
-	@override late final _Translations$profile$quickLinks$sl quickLinks = _Translations$profile$quickLinks$sl._(_root);
-	@override String get faqTitle => 'Pogosta vprašanja';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$sl._(_root),
-		_Translations$profile$faq$1$sl._(_root),
-		_Translations$profile$faq$2$sl._(_root),
-		_Translations$profile$faq$3$sl._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'Uporabljate ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$sl extends Translations$appInfo$en {
 	_Translations$appInfo$sl._(TranslationsSl root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$sl extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Avtorske pravice © 2022-${buildYear}  Adil Hanney\nTa program je brez kakršnegakoli jamstva. To je prosta programska oprema in vabljeni ste, da jo razširjate pod določenimi pogoji.';
 	@override String get debug => 'RAZROŠČEVANJE';
-	@override String get sponsorButton => 'Dotakni se tukaj, da me sponzoriraš ali kupiš več prostora za shranjevanje';
 	@override String get licenseButton => 'Dotakni se tukaj za več informacij o licenci';
 	@override String get privacyPolicyButton => 'Dotakni se tukaj za ogled politike zasebnosti';
-}
-
-// Path: update
-class _Translations$update$sl extends Translations$update$en {
-	_Translations$update$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Posodobitev na voljo';
-	@override String get updateAvailableDescription => 'Na voljo je nova različica aplikacije:';
-	@override String get update => 'Posodobi';
-	@override String get downloadNotAvailableYet => 'Prenos za tvojo platformo še ni na voljo. Prosim, preveri kmalu.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$sl extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Nov zapisek';
-	@override String get showUpdateDialog => 'Prikaži pogovorno okno za posodobitev';
 	@override String get exportNote => 'Izvozi zapisek';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$sl extends Translations$settings$prefLab
 	@override String get layoutSize => 'Vrsta postavitve';
 	@override String get customAccentColor => 'Barva poudarka po meri';
 	@override String get hyperlegibleFont => 'Pisava Atkinson Hyperlegible';
-	@override String get shouldCheckForUpdates => 'Preveri posodobitve za nts';
-	@override String get shouldAlwaysAlertForUpdates => 'Hitrejše posodobitve';
-	@override String get allowInsecureConnections => 'Dovoli nezavarovane povezave';
 	@override String get editorToolbarAlignment => 'Položaj orodne vrstice';
 	@override String get editorToolbarShowInFullscreen => 'Pokaži orodno vrstico v celozaslonskem načinu';
 	@override String get editorAutoInvert => 'Obrni zapiske v temnem načinu';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$sl extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Poveča čitljivost za uporabnike s slabšim vidom';
-	@override String get allowInsecureConnections => '(Ni priporočljivo) Dovoli nts-u povezovanje s strežniki s samopodpisanimi/nezaupanja vrednimi potrdili';
 	@override String get preferGreyscale => 'Za zaslone e-ink';
 	@override String get autoClearWhiteboardOnExit => 'Počisti tablo, ko zapustiš aplikacijo';
 	@override String get disableEraserAfterUse => 'Po uporabi radirke samodejno preklopi nazaj na pero';
@@ -453,7 +384,6 @@ class _Translations$settings$prefDescriptions$sl extends Translations$settings$p
 	@override String get autosave => 'Samodejno shrani po kratkem zamiku ali nikoli';
 	@override String get shapeRecognitionDelay => 'Kako pogosto posodobiti predogled oblike';
 	@override String get autoStraightenLines => 'Poravna dolge črte brez uporabe pisala za oblike';
-	@override String get shouldAlwaysAlertForUpdates => 'Obvesti me o posodobitvah takoj, ko so na voljo';
 	@override late final _Translations$settings$prefDescriptions$sentry$sl sentry = _Translations$settings$prefDescriptions$sentry$sl._(_root);
 }
 
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$sl extends Translations$settings$cust
 	@override String get cancel => 'Prekliči';
 	@override String get select => 'Izberi';
 	@override String get mustBeEmpty => 'Izbrana mapa mora biti prazna';
-	@override String get mustBeDoneSyncing => 'Prepričaj se, da je sinhronizacija končana, preden zamenjaš mapo';
 	@override String get unsupported => 'Ta funkcija je trenutno samo za razvijalce. Uporaba lahko povzroči izgubo podatkov.';
-}
-
-// Path: login.form
-class _Translations$login$form$sl extends Translations$login$form$en {
-	_Translations$login$form$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'S prijavo se strinjaš s '),
-		linkToPrivacyPolicy('politiko zasebnosti'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$sl extends Translations$login$status$en {
-	_Translations$login$status$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Odjavljen';
-	@override String get tapToLogin => 'Dotakni se za prijavo z Nextcloudom';
-	@override String hi({required Object u}) => 'Živjo, ${u}!';
-	@override String get almostDone => 'Skoraj pripravljeno za sinhronizacijo, dotakni se za dokončanje prijave';
-	@override String get loggedIn => 'Prijavljen z Nextcloudom';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$sl extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Izberi, kje želiš shraniti svoje podatke:';
-	@override String get saberNcServer => 'Nextcloud strežnik nts';
-	@override String get otherNcServer => 'Drug Nextcloud strežnik';
-	@override String get serverUrl => 'URL strežnika';
-	@override String get loginWithSaber => 'Prijava v nts';
-	@override String get loginWithNextcloud => 'Prijava v Nextcloud';
-	@override late final _Translations$login$ncLoginStep$loginFlow$sl loginFlow = _Translations$login$ncLoginStep$loginFlow$sl._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$sl extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Za zaščito tvojih podatkov vnesi geslo za šifriranje:';
-	@override String get newToSaber => 'Si nov v nts-u? Samo vnesi novo geslo za šifriranje.';
-	@override String get encPassword => 'Geslo za šifriranje';
-	@override String get encFaqTitle => 'Pogosta vprašanja';
-	@override String get wrongEncPassword => 'Dešifriranje s podanim geslom ni uspelo. Prosim, poskusi znova vnesti geslo.';
-	@override String get connectionFailed => 'Pri povezovanju s strežnikom je prišlo do napake. Prosim, poskusi znova pozneje.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$sl._(_root),
-		_Translations$login$encLoginStep$encFaq$1$sl._(_root),
-		_Translations$login$encLoginStep$encFaq$2$sl._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$sl extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Domača stran strežnika';
-	@override String get deleteAccount => 'Izbriši račun';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$sl extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ali bom izgubil zapiske, če se odjavim?';
-	@override String get a => 'Ne. Tvoji zapiski bodo ostali tako na tvoji napravi kot na strežniku. S strežnikom se ne bodo sinhronizirali, dokler se znova ne prijaviš. Prepričaj se, da je sinhronizacija končana, preden se odjaviš, da ne izgubiš podatkov (glej napredek sinhronizacije na domačem zaslonu).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$sl extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kako spremenim geslo za Nextcloud?';
-	@override String get a => 'Pojdi na spletno stran tvojega strežnika in se prijavi. Nato pojdi na Nastavitve > Varnost > Spremeni geslo. Po spremembi gesla se boš moral odjaviti in znova prijaviti v nts.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$sl extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kako spremenim geslo za šifriranje?';
-	@override String get a => '0. Prepričaj se, da je sinhronizacija končana (glej napredek sinhronizacije na domačem zaslonu).\n1. Odjavi se iz nts-a.\n2. Pojdi na spletno stran tvojega strežnika in izbriši mapo \'Saber\'. S tem boš izbrisal vse svoje zapiske s strežnika.\n3. Znova se prijavi v nts. Pri prijavi lahko izbereš novo geslo za šifriranje.\n4. Ne pozabi se odjaviti in znova prijaviti v nts tudi na drugih napravah.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$sl extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kako lahko izbrišem svoj račun?';
-	@override String get a => 'Dotakni se gumba "${_root.profile.quickLinks.deleteAccount}" zgoraj in se po potrebi prijavi.\nČe uporabljaš uradni strežnik nts, bo tvoj račun izbrisan po 1 tednu odloga. V tem času me lahko kontaktiraš na adilhanney@disroot.org, da prekličeš izbris.\nČe uporabljaš strežnik drugega ponudnika, morda ni možnosti za izbris tvojega računa: za več informacij preberi politiko zasebnosti strežnika.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$sl extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Prilagoditev slike ozadja';
 	@override String get backgroundPattern => 'Vzorec ozadja';
 	@override String get import => 'Uvozi';
-	@override String get watchServer => 'Spremljaj posodobitve na strežniku';
-	@override String get watchServerReadOnly => 'Urejanje je onemogočeno med spremljanjem strežnika';
 	@override late final _Translations$editor$menu$boxFits$sl boxFits = _Translations$editor$menu$boxFits$sl._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$sl bgPatterns = _Translations$editor$menu$bgPatterns$sl._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$sl extends Translations$set
 	@override String get inactive => 'Neaktivno';
 	@override String get activeUntilRestart => 'Aktivno do ponovnega zagona aplikacije';
 	@override String get inactiveUntilRestart => 'Neaktivno do ponovnega zagona aplikacije';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$sl extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Prosim, pooblasti nts za dostop do tvojega Nextcloud računa';
-	@override String get followPrompts => 'Prosim, sledi navodilom v vmesniku Nextcloud';
-	@override String get browserDidntOpen => 'Prijavna stran se ni odprla? Klikni tukaj';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$sl extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kaj je geslo za šifriranje? Zakaj uporabljati dve gesli?';
-	@override String get a => 'Nextcloud geslo se uporablja za dostop do oblaka. Geslo za šifriranje "premeša" tvoje podatke, preden sploh dosežejo oblak.\nTudi če nekdo pridobi dostop do tvojega Nextcloud računa, tvoji zapiski ostanejo varni in šifrirani z ločenim geslom. To ti zagotavlja drugo raven varnosti za zaščito tvojih podatkov.\nNihče ne more dostopati do tvojih zapiskov na strežniku brez tvojega gesla za šifriranje, vendar to tudi pomeni, da če pozabiš geslo za šifriranje, boš izgubil dostop do svojih podatkov.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$sl extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Še nisem nastavil gesla za šifriranje. Kje ga dobim?';
-	@override String get a => 'Izberi novo geslo za šifriranje in ga vnesi zgoraj.\nnts bo iz tega gesla samodejno ustvaril tvoje šifrirne ključe.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$sl extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$sl._(TranslationsSl root) : this._root = root, super.internal(root);
-
-	final TranslationsSl _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ali lahko uporabim isto geslo kot za moj Nextcloud račun?';
-	@override String get a => 'Da, vendar imej v mislih, da bi bilo skrbniku strežnika ali komu drugemu lažje dostopati do tvojih zapiskov, če pridobijo dostop do tvojega Nextcloud računa.';
 }
 
 // Path: editor.menu.boxFits

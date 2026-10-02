@@ -57,7 +57,7 @@ class AiChart extends StatelessWidget {
       colors: _paper,
       sans: const TextStyle(
         fontFamily: HiganText.sans,
-        fontFamilyFallback: saberSansSerifFontFallbacks,
+        fontFamilyFallback: ntsSansSerifFontFallbacks,
       ),
       scale: size.width / 600,
     ).paint(canvas, size);
@@ -99,7 +99,7 @@ class _ChartPainter extends CustomPainter {
   );
   late final _tickStyle = TextStyle(
     fontFamily: HiganText.mono,
-    fontFamilyFallback: saberMonoFontFallbacks,
+    fontFamilyFallback: ntsMonoFontFallbacks,
     fontSize: 10 * u,
     letterSpacing: 0.4 * u,
     color: colors.textSecondary,

@@ -41,8 +41,6 @@ ar:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -102,8 +100,6 @@ ar:
       reconnect: iCloud · reconnect
 ca:
   home:
-    tooltips:
-      showUpdateDialog(OUTDATED): Show update dialog
     deleteNoteDialog:
       deleteNotes(OUTDATED): Delete $n notes
       deleteName(OUTDATED): Delete $f
@@ -149,7 +145,6 @@ ca:
       sentry(OUTDATED): Error reporting
     prefDescriptions:
       hyperlegibleFont(OUTDATED): Increases legibility for users with low vision
-      allowInsecureConnections(OUTDATED): (Not recommended) Allow nts to connect to servers with self-signed/untrusted certificates
       preferGreyscale(OUTDATED): For e-ink displays
       autoClearWhiteboardOnExit(OUTDATED): Clears the whiteboard after you exit the app
       disableEraserAfterUse(OUTDATED): Automatically switches back to the pen after using the eraser
@@ -164,7 +159,6 @@ ca:
       autosave(OUTDATED): Auto-save after a short delay, or never
       shapeRecognitionDelay(OUTDATED): How often to update the shape preview
       autoStraightenLines(OUTDATED): Straightens long lines without having to use the shape pen
-      shouldAlwaysAlertForUpdates(OUTDATED): Tell me about updates as soon as they're available
       sentry:
         active(OUTDATED): Active
         inactive(OUTDATED): Inactive
@@ -189,13 +183,11 @@ ca:
     reset:
       title(OUTDATED): Reset this setting?
       button(OUTDATED): Reset
-    resyncEverything(OUTDATED): Resync everything
     openDataDir(OUTDATED): Open nts folder
     customDataDir:
       cancel(OUTDATED): Cancel
       select(OUTDATED): Select
       mustBeEmpty(OUTDATED): Selected folder must be empty
-      mustBeDoneSyncing(OUTDATED): Make sure syncing is complete before changing the folder
       unsupported(OUTDATED): This feature is currently only for developers. Using it will likely result in data loss.
     autosaveDisabled(OUTDATED): Never
     shapeRecognitionDisabled(OUTDATED): Never
@@ -223,46 +215,6 @@ ca:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  login:
-    title(OUTDATED): Login
-    form:
-      agreeToPrivacyPolicy(rich)(OUTDATED): By logging in, you agree to the ${linkToPrivacyPolicy(Privacy Policy)}.
-    signup(rich)(OUTDATED): Don't have an account yet? ${linkToSignup(Sign up now)}!
-    notYou(rich)(OUTDATED): Not you? ${undoLogin(Choose another account)}.
-    status:
-      loggedOut(OUTDATED): Logged out
-      tapToLogin(OUTDATED): Tap to log in with Nextcloud
-      hi(OUTDATED): Hi, $u!
-      almostDone(OUTDATED): Almost ready for syncing, tap to finish logging in
-      loggedIn(OUTDATED): Logged in with Nextcloud
-    ncLoginStep:
-      whereToStoreData(OUTDATED): "Choose where you want to store your data:"
-      saberNcServer(OUTDATED): nts's Nextcloud server
-      otherNcServer(OUTDATED): Other Nextcloud server
-      serverUrl(OUTDATED): Server URL
-      loginWithSaber(OUTDATED): Login with nts
-      loginWithNextcloud(OUTDATED): Login with Nextcloud
-      loginFlow:
-        pleaseAuthorize(OUTDATED): Please authorize nts to access your Nextcloud account
-        followPrompts(OUTDATED): Please follow the prompts in the Nextcloud interface
-        browserDidntOpen(OUTDATED): Login page didn't open? Click here
-    encLoginStep:
-      enterEncPassword(OUTDATED): "To protect your data, please enter your encryption password:"
-      newToSaber(OUTDATED): New to nts? Just enter a new encryption password.
-      encPassword(OUTDATED): Encryption password
-      encFaqTitle(OUTDATED): Frequently asked questions
-      wrongEncPassword(OUTDATED): Decryption failed with the provided password. Please try entering it again.
-      connectionFailed(OUTDATED): Something went wrong connecting to the server. Please try again later.
-  profile:
-    title(OUTDATED): My profile
-    logout(OUTDATED): Log out
-    quotaUsage(OUTDATED): You're using $used of $total ($percent%)
-    quotaUsageUncapped(OUTDATED): You're using $used
-    connectedTo(OUTDATED): Connected to
-    quickLinks:
-      serverHomepage(OUTDATED): Server homepage
-      deleteAccount(OUTDATED): Delete account
-    faqTitle(OUTDATED): Frequently asked questions
   editor:
     toolbar:
       toggleColors(OUTDATED): Toggle colors (Ctrl C)
@@ -295,7 +247,6 @@ ca:
       lineHeight(OUTDATED): Line height
       lineHeightDescription(OUTDATED): Also controls the text size for typed notes
       backgroundImageFit(OUTDATED): Background image fit
-      watchServerReadOnly(OUTDATED): Editing is disabled while watching the server
       boxFits:
         fill(OUTDATED): Stretch
         cover(OUTDATED): Cover
@@ -459,8 +410,6 @@ de:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -553,8 +502,6 @@ eo:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -628,13 +575,11 @@ es:
         inactive(OUTDATED): Inactive
         activeUntilRestart(OUTDATED): Active until you restart the app
         inactiveUntilRestart(OUTDATED): Inactive until you restart the app
-    resyncEverything(OUTDATED): Resync everything
     openDataDir(OUTDATED): Open nts folder
     customDataDir:
       cancel(OUTDATED): Cancel
       select(OUTDATED): Select
       mustBeEmpty(OUTDATED): Selected folder must be empty
-      mustBeDoneSyncing(OUTDATED): Make sure syncing is complete before changing the folder
       unsupported(OUTDATED): This feature is currently only for developers. Using it will likely result in data loss.
     autosaveDisabled(OUTDATED): Never
     shapeRecognitionDisabled(OUTDATED): Never
@@ -662,48 +607,6 @@ es:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  login:
-    notYou(rich)(OUTDATED): Not you? ${undoLogin(Choose another account)}.
-    status:
-      hi(OUTDATED): Hi, $u!
-      almostDone(OUTDATED): Almost ready for syncing, tap to finish logging in
-    ncLoginStep:
-      whereToStoreData(OUTDATED): "Choose where you want to store your data:"
-      saberNcServer(OUTDATED): nts's Nextcloud server
-      otherNcServer(OUTDATED): Other Nextcloud server
-      serverUrl(OUTDATED): Server URL
-      loginWithSaber(OUTDATED): Login with nts
-      loginWithNextcloud(OUTDATED): Login with Nextcloud
-      loginFlow:
-        pleaseAuthorize(OUTDATED): Please authorize nts to access your Nextcloud account
-        followPrompts(OUTDATED): Please follow the prompts in the Nextcloud interface
-        browserDidntOpen(OUTDATED): Login page didn't open? Click here
-    encLoginStep:
-      enterEncPassword(OUTDATED): "To protect your data, please enter your encryption password:"
-      newToSaber(OUTDATED): New to nts? Just enter a new encryption password.
-      encPassword(OUTDATED): Encryption password
-      encFaqTitle(OUTDATED): Frequently asked questions
-      wrongEncPassword(OUTDATED): Decryption failed with the provided password. Please try entering it again.
-      connectionFailed(OUTDATED): Something went wrong connecting to the server. Please try again later.
-      encFaq(OUTDATED):
-      - q: What is an encryption password? Why use two passwords?
-        a: |-
-          The Nextcloud password is used to access the cloud. The encryption password "scrambles" your data before it ever reaches the cloud.
-          Even if someone gains access to your Nextcloud account, your notes will remain safe and encrypted with a separate password. This provides you a second layer of security to protect your data.
-          No-one can access your notes on the server without your encryption password, but this also means that if you forget your encryption password, you will lose access to your data.
-      - q: I haven't set an encryption password yet. Where do I get it?
-        a: |-
-          Choose a new encryption password and enter it above.
-          nts will generate your encryption keys from this password automatically.
-      - q: Can I use the same password as my Nextcloud account?
-        a: Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.
-  profile:
-    quotaUsage(OUTDATED): You're using $used of $total ($percent%)
-    quotaUsageUncapped(OUTDATED): You're using $used
-    connectedTo(OUTDATED): Connected to
-    faqTitle(OUTDATED): Frequently asked questions
-  update:
-    downloadNotAvailableYet(OUTDATED): The download isn't available yet for your platform. Please check back shortly.
   editor:
     pens:
       fountainPen(OUTDATED): Fountain pen
@@ -718,8 +621,6 @@ es:
       lineHeightDescription(OUTDATED): Also controls the text size for typed notes
       lineThickness(OUTDATED): Line thickness
       lineThicknessDescription(OUTDATED): Background line thickness
-      watchServer(OUTDATED): Watch for updates on the server
-      watchServerReadOnly(OUTDATED): Editing is disabled while watching the server
     readOnlyBanner:
       watchingServer(OUTDATED): You are currently watching for updates on the server. Editing is disabled in this mode.
       corrupted(OUTDATED): Failed to load note. It may be corrupted or still being downloaded.
@@ -818,13 +719,11 @@ fa:
         inactive(OUTDATED): Inactive
         activeUntilRestart(OUTDATED): Active until you restart the app
         inactiveUntilRestart(OUTDATED): Inactive until you restart the app
-    resyncEverything(OUTDATED): Resync everything
     openDataDir(OUTDATED): Open nts folder
     customDataDir:
       cancel(OUTDATED): Cancel
       select(OUTDATED): Select
       mustBeEmpty(OUTDATED): Selected folder must be empty
-      mustBeDoneSyncing(OUTDATED): Make sure syncing is complete before changing the folder
       unsupported(OUTDATED): This feature is currently only for developers. Using it will likely result in data loss.
     autosaveDisabled(OUTDATED): Never
     shapeRecognitionDisabled(OUTDATED): Never
@@ -852,48 +751,6 @@ fa:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  login:
-    notYou(rich)(OUTDATED): Not you? ${undoLogin(Choose another account)}.
-    status:
-      hi(OUTDATED): Hi, $u!
-      almostDone(OUTDATED): Almost ready for syncing, tap to finish logging in
-    ncLoginStep:
-      whereToStoreData(OUTDATED): "Choose where you want to store your data:"
-      saberNcServer(OUTDATED): nts's Nextcloud server
-      otherNcServer(OUTDATED): Other Nextcloud server
-      serverUrl(OUTDATED): Server URL
-      loginWithSaber(OUTDATED): Login with nts
-      loginWithNextcloud(OUTDATED): Login with Nextcloud
-      loginFlow:
-        pleaseAuthorize(OUTDATED): Please authorize nts to access your Nextcloud account
-        followPrompts(OUTDATED): Please follow the prompts in the Nextcloud interface
-        browserDidntOpen(OUTDATED): Login page didn't open? Click here
-    encLoginStep:
-      enterEncPassword(OUTDATED): "To protect your data, please enter your encryption password:"
-      newToSaber(OUTDATED): New to nts? Just enter a new encryption password.
-      encPassword(OUTDATED): Encryption password
-      encFaqTitle(OUTDATED): Frequently asked questions
-      wrongEncPassword(OUTDATED): Decryption failed with the provided password. Please try entering it again.
-      connectionFailed(OUTDATED): Something went wrong connecting to the server. Please try again later.
-      encFaq(OUTDATED):
-      - q: What is an encryption password? Why use two passwords?
-        a: |-
-          The Nextcloud password is used to access the cloud. The encryption password "scrambles" your data before it ever reaches the cloud.
-          Even if someone gains access to your Nextcloud account, your notes will remain safe and encrypted with a separate password. This provides you a second layer of security to protect your data.
-          No-one can access your notes on the server without your encryption password, but this also means that if you forget your encryption password, you will lose access to your data.
-      - q: I haven't set an encryption password yet. Where do I get it?
-        a: |-
-          Choose a new encryption password and enter it above.
-          nts will generate your encryption keys from this password automatically.
-      - q: Can I use the same password as my Nextcloud account?
-        a: Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.
-  profile:
-    quotaUsage(OUTDATED): You're using $used of $total ($percent%)
-    quotaUsageUncapped(OUTDATED): You're using $used
-    connectedTo(OUTDATED): Connected to
-    faqTitle(OUTDATED): Frequently asked questions
-  update:
-    downloadNotAvailableYet(OUTDATED): The download isn't available yet for your platform. Please check back shortly.
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -903,8 +760,6 @@ fa:
       lineHeightDescription(OUTDATED): Also controls the text size for typed notes
       lineThickness(OUTDATED): Line thickness
       lineThicknessDescription(OUTDATED): Background line thickness
-      watchServer(OUTDATED): Watch for updates on the server
-      watchServerReadOnly(OUTDATED): Editing is disabled while watching the server
     readOnlyBanner:
       watchingServer(OUTDATED): You are currently watching for updates on the server. Editing is disabled in this mode.
       corrupted(OUTDATED): Failed to load note. It may be corrupted or still being downloaded.
@@ -973,8 +828,6 @@ fr:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1045,8 +898,6 @@ he:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1124,8 +975,6 @@ hu:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1196,8 +1045,6 @@ it:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1287,10 +1134,6 @@ ja:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
-  update:
-    downloadNotAvailableYet(OUTDATED): The download isn't available yet for your platform. Please check back shortly.
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1370,8 +1213,6 @@ nl:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1449,8 +1290,6 @@ pl:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1535,8 +1374,6 @@ ru:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1621,8 +1458,6 @@ sl:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1707,8 +1542,6 @@ th:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1835,8 +1668,6 @@ tr:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -1903,7 +1734,6 @@ uk:
       settings(OUTDATED): Settings
     tooltips:
       newNote(OUTDATED): New note
-      showUpdateDialog(OUTDATED): Show update dialog
     create:
       newNote(OUTDATED): New note
       importNote(OUTDATED): Import note
@@ -1984,9 +1814,6 @@ uk:
       layoutSize(OUTDATED): Layout type
       customAccentColor(OUTDATED): Custom accent color
       hyperlegibleFont(OUTDATED): Atkinson Hyperlegible font
-      shouldCheckForUpdates(OUTDATED): Check for nts updates
-      shouldAlwaysAlertForUpdates(OUTDATED): Faster updates
-      allowInsecureConnections(OUTDATED): Allow insecure connections
       editorToolbarAlignment(OUTDATED): Toolbar position
       editorToolbarShowInFullscreen(OUTDATED): Show the toolbar in fullscreen mode
       editorAutoInvert(OUTDATED): Invert notes in dark mode
@@ -2007,7 +1834,6 @@ uk:
       sentry(OUTDATED): Error reporting
     prefDescriptions:
       hyperlegibleFont(OUTDATED): Increases legibility for users with low vision
-      allowInsecureConnections(OUTDATED): (Not recommended) Allow nts to connect to servers with self-signed/untrusted certificates
       preferGreyscale(OUTDATED): For e-ink displays
       autoClearWhiteboardOnExit(OUTDATED): Clears the whiteboard after you exit the app
       disableEraserAfterUse(OUTDATED): Automatically switches back to the pen after using the eraser
@@ -2022,7 +1848,6 @@ uk:
       autosave(OUTDATED): Auto-save after a short delay, or never
       shapeRecognitionDelay(OUTDATED): How often to update the shape preview
       autoStraightenLines(OUTDATED): Straightens long lines without having to use the shape pen
-      shouldAlwaysAlertForUpdates(OUTDATED): Tell me about updates as soon as they're available
       sentry:
         active(OUTDATED): Active
         inactive(OUTDATED): Inactive
@@ -2047,13 +1872,11 @@ uk:
     reset:
       title(OUTDATED): Reset this setting?
       button(OUTDATED): Reset
-    resyncEverything(OUTDATED): Resync everything
     openDataDir(OUTDATED): Open nts folder
     customDataDir:
       cancel(OUTDATED): Cancel
       select(OUTDATED): Select
       mustBeEmpty(OUTDATED): Selected folder must be empty
-      mustBeDoneSyncing(OUTDATED): Make sure syncing is complete before changing the folder
       unsupported(OUTDATED): This feature is currently only for developers. Using it will likely result in data loss.
     autosaveDisabled(OUTDATED): Never
     shapeRecognitionDisabled(OUTDATED): Never
@@ -2081,59 +1904,13 @@ uk:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  login:
-    title(OUTDATED): Login
-    form:
-      agreeToPrivacyPolicy(rich)(OUTDATED): By logging in, you agree to the ${linkToPrivacyPolicy(Privacy Policy)}.
-    signup(rich)(OUTDATED): Don't have an account yet? ${linkToSignup(Sign up now)}!
-    notYou(rich)(OUTDATED): Not you? ${undoLogin(Choose another account)}.
-    status:
-      loggedOut(OUTDATED): Logged out
-      tapToLogin(OUTDATED): Tap to log in with Nextcloud
-      hi(OUTDATED): Hi, $u!
-      almostDone(OUTDATED): Almost ready for syncing, tap to finish logging in
-      loggedIn(OUTDATED): Logged in with Nextcloud
-    ncLoginStep:
-      whereToStoreData(OUTDATED): "Choose where you want to store your data:"
-      saberNcServer(OUTDATED): nts's Nextcloud server
-      otherNcServer(OUTDATED): Other Nextcloud server
-      serverUrl(OUTDATED): Server URL
-      loginWithSaber(OUTDATED): Login with nts
-      loginWithNextcloud(OUTDATED): Login with Nextcloud
-      loginFlow:
-        pleaseAuthorize(OUTDATED): Please authorize nts to access your Nextcloud account
-        followPrompts(OUTDATED): Please follow the prompts in the Nextcloud interface
-        browserDidntOpen(OUTDATED): Login page didn't open? Click here
-    encLoginStep:
-      enterEncPassword(OUTDATED): "To protect your data, please enter your encryption password:"
-      newToSaber(OUTDATED): New to nts? Just enter a new encryption password.
-      encPassword(OUTDATED): Encryption password
-      encFaqTitle(OUTDATED): Frequently asked questions
-      wrongEncPassword(OUTDATED): Decryption failed with the provided password. Please try entering it again.
-      connectionFailed(OUTDATED): Something went wrong connecting to the server. Please try again later.
-  profile:
-    title(OUTDATED): My profile
-    logout(OUTDATED): Log out
-    quotaUsage(OUTDATED): You're using $used of $total ($percent%)
-    quotaUsageUncapped(OUTDATED): You're using $used
-    connectedTo(OUTDATED): Connected to
-    quickLinks:
-      serverHomepage(OUTDATED): Server homepage
-      deleteAccount(OUTDATED): Delete account
-    faqTitle(OUTDATED): Frequently asked questions
   appInfo:
     licenseNotice(OUTDATED): |-
       nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
       This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.
     debug(OUTDATED): DEBUG
-    sponsorButton(OUTDATED): Tap here to sponsor me or buy more storage
     licenseButton(OUTDATED): Tap here to view more license information
     privacyPolicyButton(OUTDATED): Tap here to view the privacy policy
-  update:
-    updateAvailable(OUTDATED): Update available
-    updateAvailableDescription(OUTDATED): "A new version of the app is available:"
-    update(OUTDATED): Update
-    downloadNotAvailableYet(OUTDATED): The download isn't available yet for your platform. Please check back shortly.
   editor:
     toolbar:
       toggleColors(OUTDATED): Toggle colors (Ctrl C)
@@ -2210,8 +1987,6 @@ uk:
       backgroundImageFit(OUTDATED): Background image fit
       backgroundPattern(OUTDATED): Background pattern
       import(OUTDATED): Import
-      watchServer(OUTDATED): Watch for updates on the server
-      watchServerReadOnly(OUTDATED): Editing is disabled while watching the server
       boxFits:
         fill(OUTDATED): Stretch
         cover(OUTDATED): Cover
@@ -2325,8 +2100,6 @@ vi:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -2402,13 +2175,11 @@ pt-BR:
         inactiveUntilRestart(OUTDATED): Inactive until you restart the app
     layoutSizes:
       tablet(OUTDATED): Tablet
-    resyncEverything(OUTDATED): Resync everything
     openDataDir(OUTDATED): Open nts folder
     customDataDir:
       cancel(OUTDATED): Cancel
       select(OUTDATED): Select
       mustBeEmpty(OUTDATED): Selected folder must be empty
-      mustBeDoneSyncing(OUTDATED): Make sure syncing is complete before changing the folder
       unsupported(OUTDATED): This feature is currently only for developers. Using it will likely result in data loss.
     autosaveDisabled(OUTDATED): Never
     shapeRecognitionDisabled(OUTDATED): Never
@@ -2436,48 +2207,6 @@ pt-BR:
     debuggingInfo(OUTDATED): Logs contain information useful for debugging and development
     noLogs(OUTDATED): No logs yet
     useTheApp(OUTDATED): Logs will appear here as you use the app
-  login:
-    notYou(rich)(OUTDATED): Not you? ${undoLogin(Choose another account)}.
-    status:
-      hi(OUTDATED): Hi, $u!
-      almostDone(OUTDATED): Almost ready for syncing, tap to finish logging in
-    ncLoginStep:
-      whereToStoreData(OUTDATED): "Choose where you want to store your data:"
-      saberNcServer(OUTDATED): nts's Nextcloud server
-      otherNcServer(OUTDATED): Other Nextcloud server
-      serverUrl(OUTDATED): Server URL
-      loginWithSaber(OUTDATED): Login with nts
-      loginWithNextcloud(OUTDATED): Login with Nextcloud
-      loginFlow:
-        pleaseAuthorize(OUTDATED): Please authorize nts to access your Nextcloud account
-        followPrompts(OUTDATED): Please follow the prompts in the Nextcloud interface
-        browserDidntOpen(OUTDATED): Login page didn't open? Click here
-    encLoginStep:
-      enterEncPassword(OUTDATED): "To protect your data, please enter your encryption password:"
-      newToSaber(OUTDATED): New to nts? Just enter a new encryption password.
-      encPassword(OUTDATED): Encryption password
-      encFaqTitle(OUTDATED): Frequently asked questions
-      wrongEncPassword(OUTDATED): Decryption failed with the provided password. Please try entering it again.
-      connectionFailed(OUTDATED): Something went wrong connecting to the server. Please try again later.
-      encFaq(OUTDATED):
-      - q: What is an encryption password? Why use two passwords?
-        a: |-
-          The Nextcloud password is used to access the cloud. The encryption password "scrambles" your data before it ever reaches the cloud.
-          Even if someone gains access to your Nextcloud account, your notes will remain safe and encrypted with a separate password. This provides you a second layer of security to protect your data.
-          No-one can access your notes on the server without your encryption password, but this also means that if you forget your encryption password, you will lose access to your data.
-      - q: I haven't set an encryption password yet. Where do I get it?
-        a: |-
-          Choose a new encryption password and enter it above.
-          nts will generate your encryption keys from this password automatically.
-      - q: Can I use the same password as my Nextcloud account?
-        a: Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.
-  profile:
-    quotaUsage(OUTDATED): You're using $used of $total ($percent%)
-    quotaUsageUncapped(OUTDATED): You're using $used
-    connectedTo(OUTDATED): Connected to
-    faqTitle(OUTDATED): Frequently asked questions
-  update:
-    downloadNotAvailableYet(OUTDATED): The download isn't available yet for your platform. Please check back shortly.
   editor:
     pens:
       pencil(OUTDATED): Pencil
@@ -2499,8 +2228,6 @@ pt-BR:
       lineHeightDescription(OUTDATED): Also controls the text size for typed notes
       lineThickness(OUTDATED): Line thickness
       lineThicknessDescription(OUTDATED): Background line thickness
-      watchServer(OUTDATED): Watch for updates on the server
-      watchServerReadOnly(OUTDATED): Editing is disabled while watching the server
       bgPatterns:
         cornell(OUTDATED): Cornell
     readOnlyBanner:
@@ -2578,8 +2305,6 @@ zh-Hans-CN:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line
@@ -2657,8 +2382,6 @@ zh-Hant-TW:
     failed: Couldn't connect to the iCloud folder.
     stillDownloading: This note is still downloading from iCloud. Try again in a moment.
     savedAsCopy: This note was changed on another device, so your changes were saved as '$name'.
-  profile:
-    quotaUsageUncapped(OUTDATED): You're using $used
   editor:
     eraserOptions:
       wholeLine: Whole line

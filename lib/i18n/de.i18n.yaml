@@ -10,7 +10,6 @@ home:
     settings: Einstellungen
   tooltips:
     newNote: Notiz erstellen
-    showUpdateDialog: Update-Info einblenden
     exportNote: Notiz exportieren
   create:
     newNote: Neue Notiz
@@ -95,9 +94,6 @@ settings:
     layoutSize: Größe des Layouts
     customAccentColor: Benutzerdefinierte Akzentfarbe
     hyperlegibleFont: Verbesserte Lesbarkeit der Schrift
-    shouldCheckForUpdates: Suche nach Updates für nts
-    shouldAlwaysAlertForUpdates: Schneller aktualisieren
-    allowInsecureConnections: Unsichere Verbindung erlauben
     editorToolbarAlignment: Position der Toolleiste
     editorToolbarShowInFullscreen: Toolleiste im Vollbildmodus einblenden
     editorAutoInvert: Notizfarbe im Dark Modus anpassen
@@ -118,7 +114,6 @@ settings:
     sentry: Fehlerberichterstattung
   prefDescriptions:
     hyperlegibleFont: Verbessert die Lesbarkeit für Menschen mit geringer Sehkraft
-    allowInsecureConnections: nts erlauben, unsichere Zertifikaten zu verwenden (Nicht empfohlen)
     preferGreyscale: Optimierung für E-Ink-Displays
     autoClearWhiteboardOnExit: Löscht das Whiteboard beim Beenden der App
     disableEraserAfterUse: Nach dem Nutzen des Radierers automatisch zum Stift zurückwechseln
@@ -133,7 +128,6 @@ settings:
     autosave: Automatisches Backup in kurzen Abständen (wenn aktiviert)
     shapeRecognitionDelay: Aktualisierungshäufigkeit der Vorschau
     autoStraightenLines: Lange Linien auch ohne Formen-Stift automatisch begradigen
-    shouldAlwaysAlertForUpdates: Über neue Updates informiert bleiben
     sentry:
       active: Aktiviert
       inactive: Nicht aktiviert
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Diese Einstellung zurücksetzen?
     button: Zurücksetzen
-  resyncEverything: Alles neu Synchronisieren
   openDataDir: nts-Ordner öffnen
   customDataDir:
     cancel: Abbrechen
     select: Auswählen
     mustBeEmpty: Ausgewählter Ordner muss leer sein
-    mustBeDoneSyncing: Stelle sicher, dass die Synchronisierung abgeschlossen ist, bevor du den Ordner wechselst
     unsupported: Die Funktion ist zur Zeit nur für Entwickler gedacht. Die Verwendung führt wahrscheinlich zu Datenverlust.
   autosaveDisabled: Nie
   shapeRecognitionDisabled: Nie
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: Protokolle enthalten hilfreiche Informationen zur Fehlerbehebung und Weiterentwicklung
   noLogs: Keine Protokolle vorhanden!
   useTheApp: Protokolle erscheinen hier während der Nutzung der App
-login:
-  title: Login
-  form:
-    agreeToPrivacyPolicy(rich): Indem du dich anmeldest, stimmst du der ${linkToPrivacyPolicy(Datenschutzrichtlinie)} zu.
-  signup(rich): Du hast noch kein Konto? ${linkToSignup(Erstelle jetzt eins)}!
-  notYou(rich): Nicht du? ${undoLogin(Wähle ein anderes Konto)}.
-  status:
-    loggedOut: Nicht angemeldet
-    tapToLogin: Hier tippen, um dich mit Nextcloud anzumelden
-    hi: Hi, $u!
-    almostDone: Fast bereit zum Synchronisieren. Tippe, um die Anmeldung abzuschließen
-    loggedIn: Mit Nextcloud angemeldet
-  ncLoginStep:
-    whereToStoreData: "Wähle, wo du deine Daten speichern willst:"
-    saberNcServer: Nextcloud-Server von nts
-    otherNcServer: Anderer Nextcloud-Server
-    serverUrl: Server URL
-    loginWithSaber: Mit nts anmelden
-    loginWithNextcloud: Mit Nextcloud anmelden
-    loginFlow:
-      pleaseAuthorize: Bitte gib nts Zugriff auf dein Nextcloud Konto
-      followPrompts: Bitte folge den Anweisungen in der Nextcloud-Oberfläche
-      browserDidntOpen: Die Anmeldeseite hat sich nicht geöffnet? Klicke hier
-  encLoginStep:
-    enterEncPassword: "Gib dein Verschlüsselungspasswort an, um deine Daten zu schützen:"
-    newToSaber: Neu bei nts? Gib einfach ein neues Verschlüsselungspasswort an.
-    encPassword: Verschlüsselungspasswort
-    encFaqTitle: Häufig gestellte Fragen
-    wrongEncPassword: Entschlüsselung mit dem angegebenen Passwort fehlgeschlagen. Bitte versuche es erneut einzugeben.
-    connectionFailed: Verbindung zum Server fehlgeschlagen. Bitte versuche es später erneut.
-    encFaq:
-    - q: Was ist ein Verschlüsselungspasswort? Wozu zwei Passwörter?
-      a: |-
-        Mit dem Nextcloud-Passwort greifst du auf die Cloud zu. Das Verschlüsselungspasswort schützt deine Daten, bevor sie jemals die Cloud erreichen.
-        Selbst wenn jemand Zugriff zu deinem Nextcloud-Konto erlangt, bleiben deine Notizen sicher und verschlüsselt mit einem separaten Passwort. Das bietet dir eine weitere Sicherheitsschicht zum Schutz deiner Daten.
-        Niemand kann ohne dein Verschlüsselungspasswort auf deine Notizen auf dem Server zugreifen. Das bedeutet allerdings auch, dass du den Zugriff auf deine Daten verlierst, falls du dein Verschlüsselungspasswort vergisst.
-    - q: Ich habe noch kein Verschlüsselungspasswort festgelegt. Wo bekomme ich das her?
-      a: |-
-        Wähle ein neues Verschlüsselungspasswort und gib es oben ein.
-        nts wird mit diesem Passwort automatisch deine Schlüssel generieren.
-    - q: Kann ich das gleiche Passwort wie bei meinem Nextcloud-Konto verwenden?
-      a: Ja, aber sei dir bewusst, dass es so für den Serveradministrator oder jemand anderen einfacher wäre, auf deine Notizen zuzugreifen, falls dieser Zugriff auf dein Nextcloud-Konto erlangt.
-profile:
-  title: Mein Profil
-  logout: Abmelden
-  quotaUsage: Du verwendest $used von $total ($percent%)
-  connectedTo: Verbunden mit
-  quickLinks:
-    serverHomepage: Server-Startseite
-    deleteAccount: Account löschen
-  faqTitle: Häufig gestellte Fragen
-  faq:
-  - q: Verliere ich meine Notizen, wenn ich mich abmelde?
-    a: Nein. Deine Notizen bleiben auf deinem Gerät und auf dem Server. Sie werden erst wieder synchronisiert, wenn du dich erneut anmeldest. Um Datenverlust zu vermeiden, solltest du sicherstellen, dass alles korrekt synchronisiert wurde, bevor du dich abmeldest. Dazu kannst du auf dem Startbildschirm den Synchronisationsfortschritt überprüfen.
-  - q: Wie ändere ich mein Nextcloud-Passwort?
-    a: Öffne die Server-Startseite und melde dich an. Unter Einstellungen > Sicherheit > Passwort, kannst du dein Passwort ändern. Nachdem du dein Passwort geändert hast, musst du dich in nts ab- und wieder anmelden.
-  - q: Wie ändere ich mein Verschlüsselungspasswort?
-    a: |-
-      0. Bitte stelle zuerst sicher, dass alle Daten korrekt synchronisiert wurden, damit du keine Daten verlierst (du kannst den Fortschritt auf dem Startbildschirm prüfen).
-      1. Melde dich in nts ab.
-      2. Öffne die Server-Startseite und lösche den „Saber“-Order. Dadurch werden alle Notizen vom Server gelöscht.
-      3. Melde dich wieder in nts an. Du wirst nach einem neuen Verschlüsselungspasswort gefragt.
-      4. Vergiss nicht dich auf anderen Geräten in nts ab- und wieder anzumelden.
-  - q: Wie lösche ich meinen Account?
-    a: |-
-      Drücke oben den „@:profile.quickLinks.deleteAccount“-Button und melde dich gegebenenfalls an.
-      Wenn du den offiziellen nts-Server nutzt, wird dein Account automatisch nach einer Woche gelöscht. Du kannst mich während dieser Woche unter adilhanney@disroot.org kontaktieren um die Löschung rückgängig zu machen.
-      Wenn du einen anderen Server nutzt, kann es sein, dass du deinen Account nicht löschen kannst: Für mehr Information kannst du in der Datenschutzbestimmung des Servers nachgucken.
-  quotaUsageUncapped(OUTDATED): Du verwendest $used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Dieses Programm kommt ohne jegliche Gewährleistung. Dies ist freie Software und du bist herzlich eingeladen, diese unter bestimmten Bedingungen weiterzuverteilen.
   debug: DEBUG
-  sponsorButton: Hier tippen, um mich zu unterstützen oder mehr Speicherplatz zu kaufen
   licenseButton: Hier tippen, um weitere Lizenzinformationen anzuzeigen
   privacyPolicyButton: Hier tippen, um die Datenschutzrichtlinie anzuzeigen
-update:
-  updateAvailable: Aktualisierung verfügbar
-  updateAvailableDescription: "Eine neue Version der App ist verfügbar, mit folgenden Änderungen:"
-  update: Aktualisieren
-  downloadNotAvailableYet: Der Download ist für deine Platform noch nicht verfügbar. Bitte schaue in Kürze noch einmal nach.
 editor:
   toolbar:
     toggleColors: Farben umschalten (Strg + C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: Background image fit
     backgroundPattern: Hintergrundmuster
     import: Importieren
-    watchServer: Halte nach Aktualisierungen auf dem Server Ausschau
-    watchServerReadOnly: Bearbeiten ist deaktiviert, solange du den Server beobachtest
     boxFits:
       fill: Dehnen
       cover: Abdecken

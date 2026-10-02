@@ -10,7 +10,6 @@ home:
     settings: הגדרות
   tooltips:
     newNote: פתק חדש
-    showUpdateDialog: הצגת חלונית עדכון
     exportNote: ייצוא פתק
   create:
     newNote: פתק חדש
@@ -95,9 +94,6 @@ settings:
     layoutSize: סוג פריסה
     customAccentColor: צבע הדגשה מותאם אישית
     hyperlegibleFont: גופן Atkinson Hyperreadible
-    shouldCheckForUpdates: לבדוק אם יש עדכונים ל־nts
-    shouldAlwaysAlertForUpdates: עדכונים מהירים יותר
-    allowInsecureConnections: לאפשר חיבורים לא מאובטחים
     editorToolbarAlignment: מיקום סרגל הכלים
     editorToolbarShowInFullscreen: הצגת סרגל הכלים במצב מסך מלא
     editorAutoInvert: היפוך צבעי הפתקים במצב כהה
@@ -118,7 +114,6 @@ settings:
     sentry: דיווח על שגיאות
   prefDescriptions:
     hyperlegibleFont: מגביר את הקריאות למשתמשים עם ראייה לקויה
-    allowInsecureConnections: (לא מומלץ) לאפשר ל־nts להתחבר לשרתים עם חתימה עצמית או תעודות שאינן מהימנות
     preferGreyscale: עבור תצוגות דיו אלקטרוני
     autoClearWhiteboardOnExit: מנקה את לוח הציור לאחר היציאה מהאפליקציה
     disableEraserAfterUse: מעבר אוטומטי חזרה לעט לאחר שימוש במחק
@@ -133,7 +128,6 @@ settings:
     autosave: שמירה אוטומטית לאחר פרק זמן קצר, או אף פעם
     shapeRecognitionDelay: כל כמה זמן לעדכן את התצוגה המקדימה של הצורות
     autoStraightenLines: מיישר קווים ארוכים ללא צורך להשתמש בעט הצורות
-    shouldAlwaysAlertForUpdates: ספר לי על עדכונים ברגע שהם יהיו זמינים
     sentry:
       active: פעיל
       inactive: לא פעיל
@@ -158,13 +152,11 @@ settings:
   reset:
     title: אפס הגדרה זו?
     button: אפס
-  resyncEverything: סנכרון מחדש של הכול
   openDataDir: פתיחת תיקיית nts
   customDataDir:
     cancel: ביטול
     select: בחירה
     mustBeEmpty: על התיקייה שנבחרה להיות ריקה
-    mustBeDoneSyncing: יש לוודא שהסנכרון הושלם לפני שמשנים את התיקייה
     unsupported: תכונה זו מיועדת כרגע רק למפתחים. השימוש בה יגרום ככל הנראה אובדן נתונים.
   autosaveDisabled: אף פעם
   shapeRecognitionDisabled: אף פעם
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: היומן מכיל מידע שימושי לניפוי שגיאות ולפיתוח
   noLogs: אין כאן פלט יומן!
   useTheApp: פלט היומן יופיע כאן ככל שייעשה ביישום יותר שימוש
-login:
-  title: התחבר
-  form:
-    agreeToPrivacyPolicy(rich): ההתחברות מבטאת את הסכמתך ל${linkToPrivacyPolicy(מדיניות הפרטיות)}.
-  signup(rich): אין לך עוד משתמש ${linkToSignup(הירשם עכשיו)}!
-  notYou(rich): זה לא חשבונך? אפשר ${undoLogin(לבחור חשבון אחר)}.
-  status:
-    loggedOut: מנותק
-    tapToLogin: יש ללחוץ כדי להיכנס עם Nextcloud
-    hi: אהלן, $u!
-    almostDone: הסנכרון כמעט מוכן, יש ללחוץ בשביל להשלים את ההתחברות
-    loggedIn: נכנסת עם Nextcloud
-  ncLoginStep:
-    whereToStoreData: "נא לבחור היכן ברצונך לאחסן את הנתונים:"
-    saberNcServer: שרת ה־Nextcloud של nts
-    otherNcServer: שרת Nextcloud אחר
-    serverUrl: כתובת שרת
-    loginWithSaber: התחברות עם nts
-    loginWithNextcloud: התחברות עם Nextcloud
-    loginFlow:
-      pleaseAuthorize: נא לתת ל־nts הרשאה לגשת לחשבון Nextcloud שלך
-      followPrompts: נא לעקוב אחר ההוראות הבאות בממשק של Nextcloud
-      browserDidntOpen: עמוד ההתחברות לא נפתח? נא ללחוץ כאן
-  encLoginStep:
-    enterEncPassword: "לצורך הגנה על הנתונים שלך, נא להקליד את סיסמת ההצפנה שלך:"
-    newToSaber: פעם ראשונה ב־nts? אפשר פשוט להקליד סיסמת הצפנה חדשה.
-    encPassword: סיסמת הצפנה
-    encFaqTitle: שאלות ותשובות
-    wrongEncPassword: פענוח ההצפנה עם הסיסמה שסופקה נכשל. נא לנסות להקליד אותה שוב.
-    connectionFailed: משהו השתבש בעת ההתחברות לשרת. נא לנסות שוב מאוחר יותר.
-    encFaq:
-    - q: מהי סיסמת הצפנה? מדוע להשתמש בשתי סיסמאות?
-      a: |-
-        הסיסמה ל־Nextcloud משמשת לגישה לענן. סיסמת ההצפנה „מבלגנת” את הנתונים שלך ביישום לפני שהם מגיעים לענן.
-        אפילו אם מישהו משיג גישה לחשבון ה־Nextcloud שלך, הפתקים שלך יישארו בטוחים ומוצפנים עם סיסמה נפרדת. דבר זה מעניק לך שכבת אבטחה שנייה להגנה על הנתונים שלך.
-        ללא סיסמת ההצפנה שלך, לאף אחד לא תהיה גישה לפתקים שלך בשרת, אך זה גם אומר שאם סיסמת ההצפנה שלך תישכח, לא תהיה לך יותר גישה לנתונים.
-    - q: עדיין לא הגדרתי סיסמת הצפנה? היכן מקבלים אחת?
-      a: |-
-        נא לבחור סיסמת הצפנה חדשה ולהקליד אותה למעלה.
-        ‏nts ייצור את מפתחות ההצפנה שלך באופן אוטומטי מסיסמה זו.
-    - q: האם אפשר להשתמש באותה סיסמה כמו לחשבון Nextcloud שלי?
-      a: כן, אך יש לקחת בחשבון שיהיה יותר קל למנהלי השרת או לאנשים אחרים לגשת לפתקים שלך אם הם משיגים גישה לחשבונך ב־Nextcloud.
-profile:
-  title: הפרופיל שלי
-  logout: התנתק
-  quotaUsage: נעשה שימוש ב־$used מתוך $total (‏$percent‏%)
-  connectedTo: התחברת אל
-  quickLinks:
-    serverHomepage: עמוד הבית של השרת
-    deleteAccount: מחק משתמש
-  faqTitle: שאלות ותשובות
-  faq:
-  - q: אני אאבד את הפתקים שלי אם אני אתנתק?
-    a: לא. ההערות שלך יישארו גם במכשיר וגם בשרת. הם לא יסונכרנו עם השרת עד שתתחבר חזרה. ודא שהסנכרון הושלם לפני היציאה כדי שלא תאבד נתונים (ראה את התקדמות הסנכרון במסך הבית).
-  - q: איך לשנות את הסיסמה שלי ל־Nextcloud?
-    a: עבור לאתר השרת שלך והתחבר. לאחר מכן עבור אל הגדרות > אבטחה > שנה סיסמה. תצטרך להתנתק ולהיכנס שוב ל-nts לאחר שינוי הסיסמה שלך.
-  - q: איך אני משנה את הסיסמא המוצפנת שלי?
-    a: |-
-      0. לוודא שהסנכרון הושלם (ניתן לראות את התקדמות הסנכרון במסך הבית).
-      1. להתנתק מ־nts.
-      2. לעבור לאתר האינטרנט של השרת ולמחוק את תיקיית ‚Saber’ שלך. פעולה זו תמחק את כל הפתקים שלך מהשרת.
-      3. להתחבר שוב אל nts. אפשר לבחור סיסמת הצפנה חדשה בעת הכניסה.
-      4. לא לשכוח להתנתק ולהתחבר שוב אל nts גם במכשירים האחרים שלך.
-  - q: איך אני יכול למחוק את החשבון שלי?
-    a: |-
-      יש להקיש על הכפתור „@:profile.quickLinks.deleteAccount” ולהתחבר במידת הצורך.
-      אם משתמשים בשרת הרשמי של nts, החשבון שיוצרים יימחק לאחר תקופת חסד של שבוע. אפשר ליצור איתי קשר בכתובת adilhanney@disroot.org במהלך תקופה זו כדי לבטל את המחיקה.
-      אם משתמשים בשרת צד שלישי, ייתכן שאין אפשרות למחוק את החשבון: יש לעיין במדיניות הפרטיות של השרת למידע נוסף.
-  quotaUsageUncapped(OUTDATED): אתה משתמש ב-$used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  כל הזכויות שמורות © 2022-$buildYear  עַאדִל האני
     תוכנית זו מגיעה ללא כל אחריות. זוהי תוכנה חופשית ואפשר להפיץ אותה מחדש בתנאים מסוימים.
   debug: דִּיבָּג
-  sponsorButton: אפשר להקיש כאן כדי לתת לי חסות או לקנות שטח אחסון נוסף
   licenseButton: אפשר להקיש כאן כדי להציג פרטי רישיון נוספים
   privacyPolicyButton: אפשר להקיש כאן כדי להציג את מדיניות הפרטיות
-update:
-  updateAvailable: עדכון זמין
-  updateAvailableDescription: "גרסה חדשה של היישום זמינה עם שינויים אלה:"
-  update: עדכן
-  downloadNotAvailableYet: ההורדה עדיין אינה זמינה לפלטפורמה שלך. נא לבדוק שוב בעוד זמן קצר.
 editor:
   toolbar:
     toggleColors: החלפת מצב צבע (Ctrl C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: התאמת תמונת רקע
     backgroundPattern: תבנית רקע
     import: יבוא
-    watchServer: מעקב אחר עדכונים בשרת
-    watchServerReadOnly: העריכה מושתת בעת מעקב אחר השרת
     boxFits:
       fill: מתיחה
       cover: כיסוי

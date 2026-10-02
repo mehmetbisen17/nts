@@ -10,7 +10,6 @@ home:
     settings: Paramètres
   tooltips:
     newNote: Nouvelle note
-    showUpdateDialog: Afficher le dialogue de mise à jour
     exportNote: Exporter la note
   create:
     newNote: Nouvelle note
@@ -95,9 +94,6 @@ settings:
     layoutSize: Type de disposition
     customAccentColor: Couleur d'accentuation personnalisée
     hyperlegibleFont: Fonte Hyperlegible
-    shouldCheckForUpdates: Rechercher automatiquement les mises à jour
-    shouldAlwaysAlertForUpdates: M'alerter à chaque mise à jour
-    allowInsecureConnections: Autoriser les connexions non sécurisées
     editorToolbarAlignment: Position de la barre d'outils
     editorToolbarShowInFullscreen: Afficher la barre d'outils en mode plein écran
     editorAutoInvert: Inverser les couleurs en mode sombre
@@ -118,7 +114,6 @@ settings:
     sentry: Rapport d’erreurs
   prefDescriptions:
     hyperlegibleFont: La fonte Atkinson Hyperlegible améliore la lisibilité pour les personnes malvoyantes
-    allowInsecureConnections: (Déconseillé) Autoriser nts à se connecter à des serveurs dont les certificats sont auto-signés/non-sécurisé
     preferGreyscale: Pour les couleurs de stylos proposées
     autoClearWhiteboardOnExit: Il restera synchronisé avec vos autres appareils
     disableEraserAfterUse: Revenir automatiquement au stylo après usage de la gomme
@@ -133,7 +128,6 @@ settings:
     autosave: Sauvegarde automatique après un court délai, ou jamais
     shapeRecognitionDelay: Avec quelle fréquence mettre à jour la prévisualisation de forme
     autoStraightenLines: Redresse les lignes longues sans avoir à utiliser le stylo de forme
-    shouldAlwaysAlertForUpdates: Me prévenir dès qu'une mise à jour est disponible
     sentry:
       active: Actif
       inactive: Inactif
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Rétablir les valeurs par défaut ?
     button: Défaut
-  resyncEverything: Tout re-syncroniser
   openDataDir: Ouvrir le dossier nts
   customDataDir:
     cancel: Annuler
     select: Sélectionner
     mustBeEmpty: Le dossier sélectionné doit être vide
-    mustBeDoneSyncing: Assurez-vous que la synchronisation est complète avant de changer le dossier
     unsupported: Cette fonctionnalité est actuellement réservée aux développeurs. L'utiliser peut entraîner des pertes de données.
   autosaveDisabled: Jamais
   shapeRecognitionDisabled: Jamais
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: Les journaux contiennent des informations utiles pour le débogage et le développement
   noLogs: Pas de journaux ici !
   useTheApp: Les journaux apparaîtront ici lorsque vous utilisez l'application
-login:
-  title: Connexion
-  form:
-    agreeToPrivacyPolicy(rich): En vous connectant, vous acceptez les ${linkToPrivacyPolicy(Privacy Policy)}.
-  signup(rich): Pas encore de compte ? ${linkToSignup(Sign up now)} !
-  notYou(rich): Pas toi ? ${undoLogin(Choisissez un autre compte)}.
-  status:
-    loggedOut: Déconnecté
-    tapToLogin: Appuyer pour vous connecter avec Nextcloud
-    hi: Salut, $u !
-    almostDone: Presque prêt pour la synchronisation, appuyez pour terminer la connexion
-    loggedIn: Connecté avec Nextcloud
-  ncLoginStep:
-    whereToStoreData: "Choisissez où vous souhaitez stocker vos données :"
-    saberNcServer: Le serveur Nextcloud de nts
-    otherNcServer: Autre serveur Nextcloud
-    serverUrl: Adresse du serveur
-    loginWithSaber: Se connecter avec nts
-    loginWithNextcloud: Se connecter avec Nextcloud
-    loginFlow:
-      pleaseAuthorize: Veuillez autoriser nts pour accéder à votre compte Nextcloud
-      followPrompts: Veuillez suivre les indications dans l'interface Nextcloud
-      browserDidntOpen: La page de connexion n'est pas ouverte ? Cliquez ici
-  encLoginStep:
-    enterEncPassword: "Pour protéger vos données, saisissez votre mot de passe de chiffrement :"
-    newToSaber: Nouveau sur nts ? Entrez simplement un nouveau mot de passe de chiffrement.
-    encPassword: Mot de passe de chiffrement
-    encFaqTitle: Foire aux questions
-    wrongEncPassword: Le décryptage a échoué avec le mot de passe fourni. Veuillez réessayer.
-    connectionFailed: Quelque chose s'est mal connecté au serveur. Veuillez réessayer plus tard.
-    encFaq:
-    - q: Qu'est-ce qu'un mot de passe de chiffrement ? Pourquoi utiliser deux mots de passe ?
-      a: |-
-        Le mot de passe Nextcloud est utilisé pour accéder au cloud. Le mot de passe de chiffrement crypte vos données lors de la transmission au nuage.
-        Même si quelqu'un accède à votre compte Nextcloud, vos notes demeureront en sécurité et cryptées avec un mot de passe séparé. Cela vous offre une deuxième couche de sécurité pour protéger vos données.
-        Personne ne peut accéder à vos notes sur le serveur sans votre mot de passe de chiffrement, mais cela signifie aussi que si vous oubliez votre mot de passe de chiffrement, vous perdrez accès à vos données.
-    - q: Je n'ai pas encore défini de mot de passe de chiffrement. Où est-ce qu'il se trouve ?
-      a: |-
-        Choisissez un nouveau mot de passe de chiffrement et entrez-le ci-dessus.
-        nts va générer vos clés de chiffrement à partir de ce mot de passe automatiquement.
-    - q: Puis-je utiliser le même mot de passe que mon compte Nextcloud ?
-      a: Oui, mais gardez à l'esprit qu'il serait plus facile pour l'administrateur du serveur ou quelqu'un d'autre d'accéder à vos notes s'ils accèdent à votre compte Nextcloud.
-profile:
-  title: Mon profil
-  logout: Déconnexion
-  quotaUsage: Vous utilisez $used sur $total ($percent%)
-  connectedTo: Connecté à
-  quickLinks:
-    serverHomepage: Page d'accueil du serveur
-    deleteAccount: Supprimer le compte
-  faqTitle: Foire aux questions
-  faq:
-  - q: Vais-je perdre mes notes si je me déconnecte ?
-    a: Non. Vos notes seront conservées à la fois sur votre poste et sur le serveur. Elles ne seront pas synchronisées avec le serveur jusqu'à votre prochaine connexion. Assurez-vous que la synchronisation soit terminée avant de vous déconnecter pour ne perdre aucune donnée (consultez la barre de progression sur l'écran d'accueil).
-  - q: Comment changer mon mot de passe Nextcloud ?
-    a: Allez sur le site web du serveur et connectez-vous. Allez dans Paramètres > Sécurité > Changer mon mot de passe. Vous devrez vous déconnecter et vous reconnecter dans nts après avoir changé votre mot de passe.
-  - q: Comment changer mon mot de passe de chiffrement ?
-    a: |-
-      0. Assurez-vous que la synchronisation soit terminée (regardez la barre de progression sur l'écran d'accueil).
-      1. Déconnectez-vous de nts.
-      2. Sur le site web du serveur supprimez votre dossier 'Saber'. Cela supprimera toutes vos notes sur le serveur.
-      3. Connectez-vous à nouveau dans nts. Vous pourrez choisir un nouveau mot de passe de chiffrement à la connexion.
-      4. N'oubliez pas de vous déconnecter et vous re-connecter dans nts sur votre poste également.
-  - q: Comment puis-je supprimer mon compte ?
-    a: |-
-      Cliquez sur le button "@:profile.quickLinks.deleteAccount" ci-dessus, et connectez-vous si nécessaire.
-      Si vous utilisez le serveur nts officiel, votre compte sera supprimé au bout d'une semaine . Durant cette période, vous pourrez me contacter à adilhanney@disroot.org pour annuler la suppression.
-      Si vous utilisez un autre serveur, il n'est pas certain que vous puissiez supprimer votre compte dessus : il vous faudra consulter les règles de confidentialité du serveur pour plus d'informations.
-  quotaUsageUncapped(OUTDATED): Vous utilisez $used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Ce programme est livré sans aucune garantie. Il s'agit d'un logiciel libre, et vous pouvez le diffuser sous certaines conditions.
   debug: DEBUG
-  sponsorButton: Appuyer ici pour me soutenir ou acheter ou acheter plus d'espace de stockage
   licenseButton: Appuyer ici pour plus d'information de licence
   privacyPolicyButton: Appuyez ici pour voir la politique de confidentialité
-update:
-  updateAvailable: Mise à jour disponible
-  updateAvailableDescription: "Une nouvelle version de cette application est disponible, avec les changements suivants :"
-  update: Mettre à jour
-  downloadNotAvailableYet: Le téléchargement n'est pas encore disponible sur votre plateforme. Veuillez vérifier.
 editor:
   toolbar:
     toggleColors: Afficher/cacher les couleurs (Ctrl C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: Adaptation de l'image de fond
     backgroundPattern: Texture de fond
     import: Importer
-    watchServer: Regardez les mises à jour du serveur
-    watchServerReadOnly: L'édition est désactivée pendant la consultation du serveur
     boxFits:
       fill: S'ajuste
       cover: Couvre

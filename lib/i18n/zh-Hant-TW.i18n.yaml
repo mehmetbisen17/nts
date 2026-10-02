@@ -10,7 +10,6 @@ home:
     settings: 設定
   tooltips:
     newNote: 新增筆記
-    showUpdateDialog: 顯示更新對話框
     exportNote: 匯出筆記
   create:
     newNote: 新增筆記
@@ -95,9 +94,6 @@ settings:
     layoutSize: 佈局大小
     customAccentColor: 自訂主題色
     hyperlegibleFont: Atkinson Hyperlegible 字型
-    shouldCheckForUpdates: 自動檢查 nts 更新
-    shouldAlwaysAlertForUpdates: 更快的更新
-    allowInsecureConnections: 允許不安全連線
     editorToolbarAlignment: 編輯器工具列的對齊方式
     editorToolbarShowInFullscreen: 在全螢幕模式中顯示編輯器工具列
     editorAutoInvert: 在深色模式下使用反轉色筆記背景
@@ -118,7 +114,6 @@ settings:
     sentry: 錯誤回報
   prefDescriptions:
     hyperlegibleFont: Atkinson Hyperlegible 字型為低視力讀者提高易讀性
-    allowInsecureConnections: （不推薦）允許 nts 連線到有自行簽署/不受信任憑證的伺服器
     preferGreyscale: 用於電子紙螢幕
     autoClearWhiteboardOnExit: 在您結束應用程式後清除白板
     disableEraserAfterUse: 使用橡皮擦後自動切換回筆
@@ -133,7 +128,6 @@ settings:
     autosave: 在短暫延遲後自動儲存，或永不儲存
     shapeRecognitionDelay: 多久更新一次形狀預覽
     autoStraightenLines: 不需要使用造型筆即可拉直線條
-    shouldAlwaysAlertForUpdates: 一旦有更新請告訴我
     sentry:
       active: 啟用
       inactive: 停用
@@ -158,13 +152,11 @@ settings:
   reset:
     title: 重設此設定？
     button: 重設
-  resyncEverything: 全部重新同步
   openDataDir: 開啟 nts 資料夾
   customDataDir:
     cancel: 取消
     select: 選取
     mustBeEmpty: 選取的資料夾必須是空的
-    mustBeDoneSyncing: 變更資料夾之前確保同步已完成
     unsupported: 此功能目前僅適用於開發者，使用它可能會導致資料遺失。
   autosaveDisabled: 永不
   shapeRecognitionDisabled: 永不
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: 紀錄檔包含對除錯與開發有用的資訊
   noLogs: 此處沒有紀錄檔！
   useTheApp: 當您使用此應用程式時，紀錄檔將顯示於此處
-login:
-  title: 登入
-  form:
-    agreeToPrivacyPolicy(rich): 登入即表示您同意 ${linkToPrivacyPolicy(隱私權政策)}。
-  signup(rich): 還沒有帳號？ ${linkToSignup(立即註冊)}！
-  notYou(rich): 不是你？ ${undoLogin(選擇另一個帳號)}。
-  status:
-    loggedOut: 已登出
-    tapToLogin: 點擊以使用 Nextcloud 登入
-    hi: 嗨，$u!
-    almostDone: 即將同步，點擊即可完成登入
-    loggedIn: 已使用 Nextcloud 登入
-  ncLoginStep:
-    whereToStoreData: 選擇您要儲存資料的位置：
-    saberNcServer: nts 的 Nextcloud 伺服器
-    otherNcServer: 其他 Nextcloud 伺服器
-    serverUrl: 伺服器網址
-    loginWithSaber: 使用 nts 登入
-    loginWithNextcloud: 使用 Nextcloud 登入
-    loginFlow:
-      pleaseAuthorize: 請授權 nts 存取您的 Nextcloud 帳號
-      followPrompts: 請依照 Nextcloud 介面的提示進行操作
-      browserDidntOpen: 登入頁面打不開？點擊這裡
-  encLoginStep:
-    enterEncPassword: 為了保護您的資料，請輸入您的加密密碼：
-    newToSaber: 第一次使用 nts？只需輸入新的加密密碼即可。
-    encPassword: 加密密碼
-    encFaqTitle: 常見問題
-    wrongEncPassword: 使用提供的密碼解密失敗。請嘗試再次輸入。
-    connectionFailed: 連線伺服器時出現問題。請稍後再試。
-    encFaq:
-    - q: 什麼是加密密碼？為什麼要使用兩個密碼？
-      a: |-
-        Nextcloud 密碼用於存取雲端。加密密碼會在資料到達雲端之前加密您的資料。
-        即使有其他人存取您的 Nextcloud 帳號，您的筆記也將保持安全並使用單獨的密碼進行加密。這為您提供了第二層安全保護來保護您的資料。
-        如果沒有加密密碼，任何人都無法存取伺服器上的筆記，但這也意味著如果您忘記加密密碼，您將無法存取您的資料。
-    - q: 我還沒設定加密密碼。該去哪裡取得呢？
-      a: |-
-        選擇一個新的加密密碼並在上方輸入。
-        nts 將自動根據該密碼產生您的加密金鑰。
-    - q: 我可以使用與 Nextcloud 帳號相同的密碼嗎？
-      a: 可以，但請記住如果伺服器管理員或其他人獲得了您的 Nextcloud 帳號的存取權限，他們將更容易存取您的筆記。
-profile:
-  title: 我的個人檔案
-  logout: 登出
-  quotaUsage: 您已使用 $used，共 $total ($percent%)
-  connectedTo: 連線到
-  quickLinks:
-    serverHomepage: 伺服器首頁
-    deleteAccount: 刪除帳號
-  faqTitle: 常見問題
-  faq:
-  - q: 如果我登出了，我的筆記會不會不見？
-    a: 您的筆記將同時儲存在您的裝置與伺服器上。直到您重新登入，它們才會被同步到伺服器上。在登出前，請確保同步工作已經完成，這樣您就不會遺失任何資料（在主畫面上可以看到同步進度）。
-  - q: 如何變更我的 Nextcloud 密碼？
-    a: 進入您的伺服器網站並登入，然後進入「設定」→「安全」→「變更密碼」。更改密碼後，您必須登出並重新登入 nts。
-  - q: 如何變更我的加密密碼？
-    a: |-
-      0. 確定同步處理已完成（請參閱主畫面上的同步處理進度）。
-      1. 登出 nts，在登出前確保同步已經完成，這樣您就不會丟失任何資料（在主畫面上可以看到同步進度）。
-      2. 進入您的伺服器網站並登入，刪除「Saber」資料夾，這將從伺服器上刪除您所有的筆記。
-      3. 重新登入 nts，您可以在登入時選擇一個新的加密密碼。
-      4. 也不要忘記在您的其他裝置上登出並重新登入 nts。
-  - q: 如何刪除我的帳號？
-    a: |-
-      點選上面的「@:profile.quickLinks.deleteAccount」按鈕，如果需要請登入。
-      如果您使用的是官方 nts 伺服器，您的帳戶將在一週的寬限期後被刪除，您可以在此期間用電子郵件聯絡我：adilhanney@disroot.org，以取消刪除。
-      如果您使用的是第三方伺服器，則可能沒有刪除帳號的選項，您需要檢視伺服器的隱私權政策以了解更多資訊。
-  quotaUsageUncapped(OUTDATED): 您正在使用 $used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  版權所有 © 2022-$buildYear  Adil Hanney
     本程式不提供任何形式的保證。這是一款自由軟體，您可在特定條件下自由轉散發。
   debug: DEBUG
-  sponsorButton: 點擊此處贊助我或購買更多儲存空間
   licenseButton: 點擊此處檢視更多授權條款資訊
   privacyPolicyButton: 點擊此處檢視隱私權政策
-update:
-  updateAvailable: 可用更新
-  updateAvailableDescription: 新版本的應用程式已推出：
-  update: 更新
-  downloadNotAvailableYet: 您的平台尚無法下載。請稍後再回來檢視。
 editor:
   toolbar:
     toggleColors: 切換顏色 (Ctrl C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: 背景影像調整
     backgroundPattern: 背景圖案
     import: 匯入
-    watchServer: 監視伺服器的更新
-    watchServerReadOnly: 監視伺服器時無法進行編輯
     boxFits:
       fill: 拉伸
       cover: 覆蓋

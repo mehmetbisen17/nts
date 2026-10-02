@@ -8,9 +8,9 @@
 
     <name>nts</name>
     <summary>Handwritten notes with AI help</summary>
-    <url type="homepage">REPLACE_WITH_REPO_URL</url>
-    <url type="bugtracker">REPLACE_WITH_REPO_URL/issues</url>
-    <url type="vcs-browser">REPLACE_WITH_REPO_URL</url>
+    <url type="homepage">https://github.com/mehmetbisen17/nts</url>
+    <url type="bugtracker">https://github.com/mehmetbisen17/nts/issues</url>
+    <url type="vcs-browser">https://github.com/mehmetbisen17/nts</url>
 
     <developer id="com.mehmetbisen">
         <name>Mehmet Bisen</name>

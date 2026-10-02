@@ -12,6 +12,7 @@ import 'package:logging/logging.dart';
 import 'package:nts/components/canvas/pencil_shader.dart';
 import 'package:nts/components/theming/dynamic_material_app.dart';
 import 'package:nts/data/ai/ai_registry.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/file_manager/sandbox_migration.dart';
 import 'package:nts/data/flavor_config.dart';
@@ -37,8 +38,7 @@ Future<void> main(List<String> args) async {
   /// To set the flavor config e.g. for the Play Store, use:
   /// flutter build \
   ///   --dart-define=FLAVOR="Google Play" \
-  ///   --dart-define=APP_STORE="Google Play" \
-  ///   --dart-define=UPDATE_CHECK="false"
+  ///   --dart-define=APP_STORE="Google Play"
   FlavorConfig.setupFromEnvironment();
 
   await initSentry(() => appRunner(args));
@@ -168,6 +168,10 @@ class const App({super.key}) extends StatefulWidget {
         builder: (context, state) => Editor(
           path: state.uri.queryParameters['path'],
           pdfPath: state.uri.queryParameters['pdfPath'],
+          noteType: switch (state.uri.queryParameters['type']) {
+            final id? => NoteType.fromId(id),
+            null => null,
+          },
         ),
       ),
       GoRoute(

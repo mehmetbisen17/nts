@@ -94,7 +94,7 @@ abstract final class SelectionClipboard {
           ..id = coreInfo.nextImageId++
           ..onMoveImage = editor.onMoveImage
           ..onDeleteImage = editor.onDeleteImage
-          ..onMiscChange = editor.autosaveAfterDelay,
+          ..onMiscChange = editor.autosaveUnrecordedChange,
     ];
 
     editor.commit(

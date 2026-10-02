@@ -39,10 +39,7 @@ class TranslationsZhHansCn extends Translations with BaseTranslations<AppLocale,
 	@override late final Translations$sentry$zh_Hans_CN sentry = Translations$sentry$zh_Hans_CN.internal(_root);
 	@override late final Translations$settings$zh_Hans_CN settings = Translations$settings$zh_Hans_CN.internal(_root);
 	@override late final Translations$logs$zh_Hans_CN logs = Translations$logs$zh_Hans_CN.internal(_root);
-	@override late final Translations$login$zh_Hans_CN login = Translations$login$zh_Hans_CN.internal(_root);
-	@override late final Translations$profile$zh_Hans_CN profile = Translations$profile$zh_Hans_CN.internal(_root);
 	@override late final Translations$appInfo$zh_Hans_CN appInfo = Translations$appInfo$zh_Hans_CN.internal(_root);
-	@override late final Translations$update$zh_Hans_CN update = Translations$update$zh_Hans_CN.internal(_root);
 	@override late final Translations$editor$zh_Hans_CN editor = Translations$editor$zh_Hans_CN.internal(_root);
 }
 
@@ -113,7 +110,6 @@ class Translations$settings$zh_Hans_CN extends Translations$settings$en {
 		'左',
 	];
 	@override late final Translations$settings$reset$zh_Hans_CN reset = Translations$settings$reset$zh_Hans_CN.internal(_root);
-	@override String get resyncEverything => '重新同步所有';
 	@override String get openDataDir => '打开 nts 文件夹';
 	@override late final Translations$settings$customDataDir$zh_Hans_CN customDataDir = Translations$settings$customDataDir$zh_Hans_CN.internal(_root);
 	@override String get autosaveDisabled => '禁用';
@@ -134,52 +130,6 @@ class Translations$logs$zh_Hans_CN extends Translations$logs$en {
 	@override String get useTheApp => '使用应用时日志将显示在此处';
 }
 
-// Path: login
-class Translations$login$zh_Hans_CN extends Translations$login$en {
-	Translations$login$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '登录';
-	@override late final Translations$login$form$zh_Hans_CN form = Translations$login$form$zh_Hans_CN.internal(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: '还没有帐户？ '),
-		linkToSignup('立即注册'),
-		const TextSpan(text: '！'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: '不是您吗？'),
-		undoLogin('Choose another account'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final Translations$login$status$zh_Hans_CN status = Translations$login$status$zh_Hans_CN.internal(_root);
-	@override late final Translations$login$ncLoginStep$zh_Hans_CN ncLoginStep = Translations$login$ncLoginStep$zh_Hans_CN.internal(_root);
-	@override late final Translations$login$encLoginStep$zh_Hans_CN encLoginStep = Translations$login$encLoginStep$zh_Hans_CN.internal(_root);
-}
-
-// Path: profile
-class Translations$profile$zh_Hans_CN extends Translations$profile$en {
-	Translations$profile$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '我的用户资料';
-	@override String get logout => '注销';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => '您已使用 ${used}，共 ${total}（${percent}%）';
-	@override String get connectedTo => '连接到';
-	@override late final Translations$profile$quickLinks$zh_Hans_CN quickLinks = Translations$profile$quickLinks$zh_Hans_CN.internal(_root);
-	@override String get faqTitle => '常见问题解答';
-	@override List<dynamic> get faq => [
-		Translations$profile$faq$0$zh_Hans_CN.internal(_root),
-		Translations$profile$faq$1$zh_Hans_CN.internal(_root),
-		Translations$profile$faq$2$zh_Hans_CN.internal(_root),
-		Translations$profile$faq$3$zh_Hans_CN.internal(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => '你正在使用 ${used}';
-}
-
 // Path: appInfo
 class Translations$appInfo$zh_Hans_CN extends Translations$appInfo$en {
 	Translations$appInfo$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class Translations$appInfo$zh_Hans_CN extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  版权所有 © 2022-${buildYear}  Adil Hanney\n本程序不附带任何担保。这是自由软件，您可以在特定条件下重新分发它。';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => '点击此处赞助我或购买更多存储空间';
 	@override String get licenseButton => '点击此处查看更多许可证信息';
 	@override String get privacyPolicyButton => '点击此处查看隐私政策';
-}
-
-// Path: update
-class Translations$update$zh_Hans_CN extends Translations$update$en {
-	Translations$update$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => '可用更新';
-	@override String get updateAvailableDescription => '该应用的新版本可用，具有以下变更：';
-	@override String get update => '更新';
-	@override String get downloadNotAvailableYet => '您的平台暂无可用的下载版本，请稍后再查看。';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class Translations$home$tooltips$zh_Hans_CN extends Translations$home$tooltips$e
 
 	// Translations
 	@override String get newNote => '新建笔记';
-	@override String get showUpdateDialog => '显示更新对话框';
 	@override String get exportNote => '导出笔记';
 }
 
@@ -410,9 +345,6 @@ class Translations$settings$prefLabels$zh_Hans_CN extends Translations$settings$
 	@override String get layoutSize => '布局大小';
 	@override String get customAccentColor => '自定义主题色';
 	@override String get hyperlegibleFont => '易读字体';
-	@override String get shouldCheckForUpdates => '自动检查 nts 更新';
-	@override String get shouldAlwaysAlertForUpdates => '更快的更新提醒';
-	@override String get allowInsecureConnections => '允许不安全的连接';
 	@override String get editorToolbarAlignment => '编辑工具栏对齐方式';
 	@override String get editorToolbarShowInFullscreen => '在全屏模式中显示编辑菜单栏';
 	@override String get editorAutoInvert => '在深色模式下使用反色笔记背景';
@@ -441,7 +373,6 @@ class Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$set
 
 	// Translations
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible 字体为低视力读者提高易读性';
-	@override String get allowInsecureConnections => '（不推荐）允许 nts 连接到具有自签名/不受信任证书的服务器';
 	@override String get preferGreyscale => '用于电子墨水显示器';
 	@override String get autoClearWhiteboardOnExit => '这将会同步到您的其他设备';
 	@override String get disableEraserAfterUse => '使用橡皮擦后自动切换回笔';
@@ -453,7 +384,6 @@ class Translations$settings$prefDescriptions$zh_Hans_CN extends Translations$set
 	@override String get autosave => '短暂延迟后自动保存，或永不保存';
 	@override String get shapeRecognitionDelay => '形状预览更新频率';
 	@override String get autoStraightenLines => '拉直长线，无需使用形状笔';
-	@override String get shouldAlwaysAlertForUpdates => '在更新可用时尽快告诉我';
 	@override late final Translations$settings$prefDescriptions$sentry$zh_Hans_CN sentry = Translations$settings$prefDescriptions$sentry$zh_Hans_CN.internal(_root);
 }
 
@@ -512,127 +442,7 @@ class Translations$settings$customDataDir$zh_Hans_CN extends Translations$settin
 	@override String get cancel => '取消';
 	@override String get select => '选择';
 	@override String get mustBeEmpty => '所选文件夹必须为空';
-	@override String get mustBeDoneSyncing => '更改文件夹前，请确保同步已完成';
 	@override String get unsupported => '此功能目前仅限开发者使用，可能导致数据丢失。';
-}
-
-// Path: login.form
-class Translations$login$form$zh_Hans_CN extends Translations$login$form$en {
-	Translations$login$form$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: '登录即表示您同意 '),
-		linkToPrivacyPolicy('隐私政策'),
-		const TextSpan(text: '。'),
-	]);
-}
-
-// Path: login.status
-class Translations$login$status$zh_Hans_CN extends Translations$login$status$en {
-	Translations$login$status$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => '已注销';
-	@override String get tapToLogin => '点击以使用 Nextcloud 登录';
-	@override String hi({required Object u}) => '欢迎，${u}!';
-	@override String get almostDone => '即将准备好同步，点击完成登录';
-	@override String get loggedIn => '已使用 Nextcloud 登录';
-}
-
-// Path: login.ncLoginStep
-class Translations$login$ncLoginStep$zh_Hans_CN extends Translations$login$ncLoginStep$en {
-	Translations$login$ncLoginStep$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => '选择数据存储位置：';
-	@override String get saberNcServer => 'nts 的 Nextcloud 服务器';
-	@override String get otherNcServer => '其他 Nextcloud 服务器';
-	@override String get serverUrl => '服务器 URL';
-	@override String get loginWithSaber => '使用 nts 登录';
-	@override String get loginWithNextcloud => '使用 Nextcloud 登录';
-	@override late final Translations$login$ncLoginStep$loginFlow$zh_Hans_CN loginFlow = Translations$login$ncLoginStep$loginFlow$zh_Hans_CN.internal(_root);
-}
-
-// Path: login.encLoginStep
-class Translations$login$encLoginStep$zh_Hans_CN extends Translations$login$encLoginStep$en {
-	Translations$login$encLoginStep$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => '为了保护您的数据，请输入您的加密密码：';
-	@override String get newToSaber => 'nts 新手？只需输入新的加密密码即可。';
-	@override String get encPassword => '加密密码';
-	@override String get encFaqTitle => '常见问题解答';
-	@override String get wrongEncPassword => '使用提供的密码解密失败。请再次尝试输入。';
-	@override String get connectionFailed => '连接到服务器时出错。请稍后重试。';
-	@override List<dynamic> get encFaq => [
-		Translations$login$encLoginStep$encFaq$0$zh_Hans_CN.internal(_root),
-		Translations$login$encLoginStep$encFaq$1$zh_Hans_CN.internal(_root),
-		Translations$login$encLoginStep$encFaq$2$zh_Hans_CN.internal(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class Translations$profile$quickLinks$zh_Hans_CN extends Translations$profile$quickLinks$en {
-	Translations$profile$quickLinks$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => '服务器主页';
-	@override String get deleteAccount => '删除帐户';
-}
-
-// Path: profile.faq.0
-class Translations$profile$faq$0$zh_Hans_CN extends Translations$profile$faq$0$en {
-	Translations$profile$faq$0$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如果我注销，我的笔记会丢失吗？';
-	@override String get a => '不会。您的笔记将保留在您的设备和服务器上。在您重新登录之前，它们不会与服务器同步。请确保在注销前完成同步，以免丢失任何数据（请在主屏幕上查看同步进度）。';
-}
-
-// Path: profile.faq.1
-class Translations$profile$faq$1$zh_Hans_CN extends Translations$profile$faq$1$en {
-	Translations$profile$faq$1$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如何更改我的 Nextcloud 密码？';
-	@override String get a => '转到您的服务器网站并登录。然后转到设置 > 安全 > 更改密码。更改密码后，您需要注销并重新登录 nts。';
-}
-
-// Path: profile.faq.2
-class Translations$profile$faq$2$zh_Hans_CN extends Translations$profile$faq$2$en {
-	Translations$profile$faq$2$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如何更改我的加密密码？';
-	@override String get a => '0. 请确保在注销前完成同步，以免丢失任何数据（在主屏幕上查看同步进度）。\n1.退出 nts 登录。\n2.转到您的服务器网站并删除您的“Saber”文件夹。这将从服务器中删除您的所有笔记。\n3.重新登录 nts。您可以在登录时选择一个新的加密密码。\n4.不要忘记在您的其他设备上注销并重新登录 nts。';
-}
-
-// Path: profile.faq.3
-class Translations$profile$faq$3$zh_Hans_CN extends Translations$profile$faq$3$en {
-	Translations$profile$faq$3$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如何删除我的帐户？';
-	@override String get a => '点击上面的 "${_root.profile.quickLinks.deleteAccount}" 按钮，并在需要时登录。\n如果您使用的是官方 nts 服务器，您的帐户将在 1 周的宽限期后被删除。在此期间，您可以通过 adilhanney@disroot.org 与我联系以取消删除。\n如果您使用的是第三方服务器，则可能没有删除帐户的选项：您需要咨询服务器的隐私政策以获取更多信息。';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class Translations$editor$menu$zh_Hans_CN extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => '背景图像拟合';
 	@override String get backgroundPattern => '背景图案';
 	@override String get import => '导入';
-	@override String get watchServer => '监视服务器上的更新';
-	@override String get watchServerReadOnly => '监视服务器时禁用编辑';
 	@override late final Translations$editor$menu$boxFits$zh_Hans_CN boxFits = Translations$editor$menu$boxFits$zh_Hans_CN.internal(_root);
 	@override late final Translations$editor$menu$bgPatterns$zh_Hans_CN bgPatterns = Translations$editor$menu$bgPatterns$zh_Hans_CN.internal(_root);
 }
@@ -868,51 +676,6 @@ class Translations$settings$prefDescriptions$sentry$zh_Hans_CN extends Translati
 	@override String get inactive => '已禁用';
 	@override String get activeUntilRestart => '重启前保持启用';
 	@override String get inactiveUntilRestart => '重启前保持禁用';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class Translations$login$ncLoginStep$loginFlow$zh_Hans_CN extends Translations$login$ncLoginStep$loginFlow$en {
-	Translations$login$ncLoginStep$loginFlow$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => '请授权 nts 访问您的 Nextcloud 帐户';
-	@override String get followPrompts => '请按照 Nextcloud 界面中的提示操作';
-	@override String get browserDidntOpen => '登录页面没有打开？点击这里';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class Translations$login$encLoginStep$encFaq$0$zh_Hans_CN extends Translations$login$encLoginStep$encFaq$0$en {
-	Translations$login$encLoginStep$encFaq$0$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '什么是加密密码？为什么要使用两个密码？';
-	@override String get a => 'Nextcloud 密码用于访问云。加密密码会在您的数据到达云之前对其进行“加扰”。\n即使有人获得了您的 Nextcloud 帐户的访问权限，您的笔记也将保持安全并使用单独的密码进行加密。这为您提供了第二层安全保护，以保护您的数据。\n没有您的加密密码，任何人都无法访问您在服务器上的笔记，但这也意味着如果您忘记了加密密码，您将无法访问您的数据。';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class Translations$login$encLoginStep$encFaq$1$zh_Hans_CN extends Translations$login$encLoginStep$encFaq$1$en {
-	Translations$login$encLoginStep$encFaq$1$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '我还没有设置加密密码。我在哪里可以买到它？';
-	@override String get a => '选择新的加密密码并在上面输入。\nnts 将从此密码自动生成您的加密密钥。';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class Translations$login$encLoginStep$encFaq$2$zh_Hans_CN extends Translations$login$encLoginStep$encFaq$2$en {
-	Translations$login$encLoginStep$encFaq$2$zh_Hans_CN.internal(TranslationsZhHansCn root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHansCn _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '我可以使用与我的 Nextcloud 帐户相同的密码吗？';
-	@override String get a => '是的，但请记住，如果服务器管理员或其他人可以访问您的 Nextcloud 帐户，他们将更容易访问您的笔记。';
 }
 
 // Path: editor.menu.boxFits

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:nts/components/canvas/_circle_stroke.dart';
 import 'package:nts/components/canvas/_rectangle_stroke.dart';
 import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/extensions/color_extensions.dart';
 import 'package:nts/data/tools/highlighter.dart';
 import 'package:nts/data/tools/insert_space.dart';
 import 'package:nts/data/tools/laser_pointer.dart';
+import 'package:nts/data/tools/pen.dart';
 import 'package:nts/data/tools/select.dart';
 import 'package:nts/data/tools/shape_pen.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
@@ -32,6 +34,7 @@ class CanvasPainter extends CustomPainter {
     required this.currentScale,
     required this.defaultTextStyle,
     this.linkColor,
+    this.cardLabel,
   });
 
   final bool invert;
@@ -51,6 +54,9 @@ class CanvasPainter extends CustomPainter {
   /// (e.g. in exports, where they wouldn't work).
   final Color? linkColor;
 
+  /// E.g. "3 · FRONT" in the top left of a flashcard, or null.
+  final String? cardLabel;
+
   @override
   void paint(Canvas canvas, Size size) {
     final canvasRect = Offset.zero & size;
@@ -64,6 +70,27 @@ class CanvasPainter extends CustomPainter {
     _drawInsertSpace(canvas, size);
     _drawSelection(canvas);
     _drawPageIndicator(canvas, size);
+    _drawCardLabel(canvas);
+  }
+
+  void _drawCardLabel(Canvas canvas) {
+    final label = cardLabel;
+    if (label == null) return;
+    final builder =
+        ui.ParagraphBuilder(ui.ParagraphStyle(textDirection: .ltr, maxLines: 1))
+          ..pushStyle(
+            ui.TextStyle(
+              color: Colors.black.withInversion(invert).withValues(alpha: 0.4),
+              fontSize: 18,
+              letterSpacing: 1.5,
+              fontFamily: defaultTextStyle.fontFamily,
+              fontFamilyFallback: defaultTextStyle.fontFamilyFallback,
+            ),
+          )
+          ..addText(label);
+    final paragraph = builder.build()
+      ..layout(const ui.ParagraphConstraints(width: 400));
+    canvas.drawParagraph(paragraph, const Offset(20, 16));
   }
 
   @override
@@ -82,10 +109,18 @@ class CanvasPainter extends CustomPainter {
         showPageIndicator != oldDelegate.showPageIndicator ||
         pageIndex != oldDelegate.pageIndex ||
         totalPages != oldDelegate.totalPages ||
-        currentScale != oldDelegate.currentScale;
+        currentScale != oldDelegate.currentScale ||
+        cardLabel != oldDelegate.cardLabel;
   }
 
-  void _drawHighlighterStrokes(Canvas canvas, Rect canvasRect) {
+  void _drawHighlighterStrokes(Canvas canvas, Rect pageRect) {
+    // The layers reach beside the page too, or highlighter there is clipped
+    final canvasRect = Rect.fromLTRB(
+      pageRect.left - page.sideWidth,
+      pageRect.top,
+      pageRect.right + page.sideWidth,
+      pageRect.bottom,
+    );
     final layerPaint = Paint()
       ..blendMode = invert ? BlendMode.lighten : BlendMode.darken
       ..color = Colors.white.withAlpha(Highlighter.alpha);
@@ -193,9 +228,36 @@ class CanvasPainter extends CustomPainter {
       paint.maskFilter = _getPencilMaskFilter(currentStroke!.options.size);
     }
 
-    // Current stroke always uses high quality
-    canvas.drawPath(currentStroke!.highQualityPath, paint);
+    // Held still: the shape it snaps to, instead of the wobbly stroke
+    switch (Pen.snapPreview) {
+      case final CircleStroke circle:
+        canvas.drawCircle(
+          circle.center,
+          circle.radius,
+          _outline(paint, circle),
+        );
+      case final RectangleStroke rect:
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            rect.rect,
+            Radius.circular(rect.options.size / 4),
+          ),
+          _outline(paint, rect),
+        );
+      case final Stroke shape:
+        canvas.drawPath(shape.highQualityPath, paint);
+      case null:
+        // Current stroke always uses high quality
+        canvas.drawPath(currentStroke!.highQualityPath, paint);
+    }
   }
+
+  static Paint _outline(Paint fill, Stroke stroke) => Paint()
+    ..color = fill.color
+    ..shader = fill.shader
+    ..maskFilter = fill.maskFilter
+    ..style = .stroke
+    ..strokeWidth = stroke.options.size;
 
   void _drawLaserStroke(Canvas canvas, LaserStroke stroke) {
     canvas.drawPath(
@@ -383,10 +445,11 @@ class CanvasPainter extends CustomPainter {
       currentScale >= _zoomThreshold && (strokeSize * currentScale) >= 3;
 
   static const _zoomThreshold = 0.9;
-  Path _selectPath(Stroke stroke) => switch (currentScale) {
-    < _zoomThreshold => stroke.lowQualityPath,
-    _ => stroke.highQualityPath,
-  };
+
+  /// Always the smooth path: the low quality one (every 4th point, no
+  /// smoothing) made zoomed-out handwriting jagged and hard to read.
+  /// Paths are cached per stroke, so this only costs the first paint.
+  Path _selectPath(Stroke stroke) => stroke.highQualityPath;
 }
 
 /// Fills the closed strokes that have a [Stroke.fillColor].
@@ -416,4 +479,161 @@ class CanvasFillPainter extends CustomPainter {
   /// notifying [repaint], and this is cheap.
   @override
   bool shouldRepaint(CanvasFillPainter oldDelegate) => true;
+}
+
+/// Cards behind what's beside the page (see [EditorPage.areaWithSides]):
+/// one per group of things that touch, in the page's colour so ink is as
+/// readable as it was on the page, and edged with [accent] so it's clear
+/// what sits beside the page.
+class SideCardsPainter extends CustomPainter {
+  const new({
+    super.repaint,
+    required this.page,
+    required this.invert,
+    required this.pageColor,
+    required this.accent,
+    required this.backdrop,
+  });
+
+  final EditorPage page;
+  final bool invert;
+
+  /// The page's colour before [invert]ing it.
+  final Color pageColor;
+  final Color accent;
+
+  /// The colour around the pages, which a card must stand out from.
+  final Color backdrop;
+
+  static const _radius = Radius.circular(14);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final pageColor = this.pageColor.withInversion(invert);
+    final border = Paint()
+      ..style = .stroke
+      ..strokeWidth = 1.5
+      ..color = accent.withValues(alpha: 0.5);
+    for (final (rect, ink) in sideGroups(page)) {
+      final card = RRect.fromRectAndRadius(rect, _radius);
+      canvas
+        ..drawRRect(
+          card,
+          Paint()
+            ..color = cardColor(
+              pageColor,
+              [for (final color in ink) color.withInversion(invert)],
+              accent,
+              backdrop: backdrop,
+            ),
+        )
+        ..drawRRect(card, border);
+    }
+  }
+
+  /// [pageColor] with a hint of [accent], unless some of the [ink] is hard
+  /// to read on it (e.g. light ink moved off a dark PDF): then paper or
+  /// dark, whichever all the ink stands out on best. Nudged lighter or
+  /// darker if it would look just like the [backdrop] around the pages
+  /// (e.g. black pages in Night), so the card itself shows.
+  static Color cardColor(
+    Color pageColor,
+    List<Color> ink,
+    Color accent, {
+    Color? backdrop,
+  }) {
+    const paper = Color(0xFFF4F2ED), dark = Color(0xFF1B1A19);
+    double worst(Color card) => ink.isEmpty
+        ? 21
+        : ink
+              .map(
+                (color) => _contrast(
+                  color.computeLuminance(),
+                  card.computeLuminance(),
+                ),
+              )
+              .reduce(min);
+    var card = Color.lerp(pageColor, accent, 0.05)!;
+    if (worst(card) < 3) {
+      card = [card, paper, dark].reduce((a, b) => worst(b) > worst(a) ? b : a);
+    }
+    if (backdrop != null &&
+        _contrast(card.computeLuminance(), backdrop.computeLuminance()) <
+            1.25) {
+      final lighter = card.computeLuminance() < 0.5;
+      card = Color.lerp(card, lighter ? Colors.white : Colors.black, 0.1)!;
+    }
+    return card;
+  }
+
+  static double _contrast(double a, double b) =>
+      (max(a, b) + 0.05) / (min(a, b) + 0.05);
+
+  /// What's beside [page], grouped where it touches (within [gap]):
+  /// each group's card and the colours of its ink.
+  /// Cards stop at the page's edge.
+  /// ponytail: merges pairs until none touch, O(n²) per pass; fine for
+  /// the handful of things people put beside a page.
+  static List<(Rect, List<Color>)> sideGroups(
+    EditorPage page, {
+    double gap = 16,
+  }) {
+    final width = page.size.width;
+    bool beside(Rect rect) => rect.center.dx < 0 || rect.center.dx > width;
+    final groups = <(Rect, List<Color>)>[
+      for (final stroke in page.strokes)
+        if (stroke.toolId != .laserPointer &&
+            stroke.bounds.isFinite &&
+            beside(stroke.bounds))
+          (
+            stroke.bounds.inflate(stroke.options.size / 2 + gap),
+            [if (stroke.toolId != .highlighter) stroke.color],
+          ),
+      for (final image in page.images)
+        if (beside(image.dstRect)) (image.dstRect.inflate(gap), const []),
+      for (final box in page.textBoxes)
+        if (TextBoxes.boundsOf(box) case final bounds when beside(bounds))
+          (bounds.inflate(gap), [box.color ?? Colors.black]),
+    ];
+
+    for (var merged = true; merged;) {
+      merged = false;
+      outer:
+      for (var i = 0; i < groups.length; i++) {
+        for (var j = i + 1; j < groups.length; j++) {
+          final (a, inkA) = groups[i];
+          final (b, inkB) = groups[j];
+          if (a.center.dx < 0 != b.center.dx < 0) continue; // other side
+          if (!a.overlaps(b)) continue;
+          groups[i] = (a.expandToInclude(b), [...inkA, ...inkB]);
+          groups.removeAt(j);
+          merged = true;
+          break outer;
+        }
+      }
+    }
+
+    return [
+      for (final (rect, ink) in groups)
+        (
+          rect.center.dx < 0
+              ? Rect.fromLTRB(
+                  rect.left,
+                  rect.top,
+                  min(rect.right, -2),
+                  rect.bottom,
+                )
+              : Rect.fromLTRB(
+                  max(rect.left, width + 2),
+                  rect.top,
+                  rect.right,
+                  rect.bottom,
+                ),
+          ink,
+        ),
+    ];
+  }
+
+  @override
+  bool shouldRepaint(SideCardsPainter oldDelegate) => true;
 }

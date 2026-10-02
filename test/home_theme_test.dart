@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
-import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/components/theming/nts_theme.dart';
 import 'package:nts/data/flavor_config.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/pages/home/home.dart';
@@ -14,7 +14,7 @@ void main() {
           FlavorConfig.setup();
           stows.sentryConsent.value = .granted;
 
-          final theme = SaberTheme.createThemeFromSeed(
+          final theme = NtsTheme.createThemeFromSeed(
             Colors.yellow,
             brightness,
             platform,
@@ -22,7 +22,7 @@ void main() {
           await tester.pumpWidget(
             ScreenshotApp.withConditionalTitlebar(
               device: GoldenScreenshotDevices.androidPhone.device,
-              title: 'Saber',
+              title: 'nts',
               theme: theme,
               home: Theme(
                 data: theme,

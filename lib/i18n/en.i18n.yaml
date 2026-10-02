@@ -11,7 +11,6 @@ home:
     settings: Settings
   tooltips:
     newNote: New note
-    showUpdateDialog: Show update dialog
     exportNote: Export note
   create:
     newNote: New note
@@ -103,9 +102,6 @@ settings:
     layoutSize: Layout type
     customAccentColor: Custom accent color
     hyperlegibleFont: Atkinson Hyperlegible font
-    shouldCheckForUpdates: Check for nts updates
-    shouldAlwaysAlertForUpdates: Faster updates
-    allowInsecureConnections: Allow insecure connections
     editorToolbarAlignment: Toolbar position
     editorToolbarShowInFullscreen: Show the toolbar in fullscreen mode
     editorAutoInvert: Invert notes in dark mode
@@ -126,7 +122,6 @@ settings:
     sentry: Error reporting
   prefDescriptions:
     hyperlegibleFont: Increases legibility for users with low vision
-    allowInsecureConnections: (Not recommended) Allow nts to connect to servers with self-signed/untrusted certificates
     preferGreyscale: For e-ink displays
     autoClearWhiteboardOnExit: Clears the whiteboard after you exit the app
     disableEraserAfterUse: Automatically switches back to the pen after using the eraser
@@ -143,7 +138,6 @@ settings:
     autosave: Auto-save after a short delay, or never
     shapeRecognitionDelay: How often to update the shape preview
     autoStraightenLines: Straightens long lines without having to use the shape pen
-    shouldAlwaysAlertForUpdates: Tell me about updates as soon as they're available
     sentry:
       active: Active
       inactive: Inactive
@@ -168,13 +162,11 @@ settings:
   reset:
     title: Reset this setting?
     button: Reset
-  resyncEverything: Resync everything
   openDataDir: Open nts folder
   customDataDir:
     cancel: Cancel
     select: Select
     mustBeEmpty: Selected folder must be empty
-    mustBeDoneSyncing: Make sure syncing is complete before changing the folder
     unsupported: This feature is currently only for developers. Using it will likely result in data loss.
   autosaveDisabled: Never
   shapeRecognitionDisabled: Never
@@ -202,88 +194,13 @@ logs:
   debuggingInfo: Logs contain information useful for debugging and development
   noLogs: No logs yet
   useTheApp: Logs will appear here as you use the app
-login:
-  title: Login
-  form:
-    agreeToPrivacyPolicy(rich): By logging in, you agree to the ${linkToPrivacyPolicy(Privacy Policy)}.
-  signup(rich): Don't have an account yet? ${linkToSignup(Sign up now)}!
-  notYou(rich): Not you? ${undoLogin(Choose another account)}.
-  status:
-    loggedOut: Logged out
-    tapToLogin: Tap to log in with Nextcloud
-    hi: Hi, $u!
-    almostDone: Almost ready for syncing, tap to finish logging in
-    loggedIn: Logged in with Nextcloud
-  ncLoginStep:
-    whereToStoreData: "Choose where you want to store your data:"
-    saberNcServer: nts's Nextcloud server
-    otherNcServer: Other Nextcloud server
-    serverUrl: Server URL
-    loginWithSaber: Login with nts
-    loginWithNextcloud: Login with Nextcloud
-    loginFlow:
-      pleaseAuthorize: Please authorize nts to access your Nextcloud account
-      followPrompts: Please follow the prompts in the Nextcloud interface
-      browserDidntOpen: Login page didn't open? Click here
-  encLoginStep:
-    enterEncPassword: "To protect your data, please enter your encryption password:"
-    newToSaber: New to nts? Just enter a new encryption password.
-    encPassword: Encryption password
-    encFaqTitle: Frequently asked questions
-    wrongEncPassword: Decryption failed with the provided password. Please try entering it again.
-    connectionFailed: Something went wrong connecting to the server. Please try again later.
-    encFaq:
-    - q: What is an encryption password? Why use two passwords?
-      a: |-
-        The Nextcloud password is used to access the cloud. The encryption password "scrambles" your data before it ever reaches the cloud.
-        Even if someone gains access to your Nextcloud account, your notes will remain safe and encrypted with a separate password. This provides you a second layer of security to protect your data.
-        No-one can access your notes on the server without your encryption password, but this also means that if you forget your encryption password, you will lose access to your data.
-    - q: I haven't set an encryption password yet. Where do I get it?
-      a: |-
-        Choose a new encryption password and enter it above.
-        nts will generate your encryption keys from this password automatically.
-    - q: Can I use the same password as my Nextcloud account?
-      a: Yes, but keep in mind that it would be easier for the server administrator or someone else to access your notes if they gain access to your Nextcloud account.
-profile:
-  title: My profile
-  logout: Log out
-  quotaUsage: You're using $used of $total ($percent%)
-  quotaUsageUncapped: You're using $used
-  connectedTo: Connected to
-  quickLinks:
-    serverHomepage: Server homepage
-    deleteAccount: Delete account
-  faqTitle: Frequently asked questions
-  faq:
-  - q: Will I lose my notes if I log out?
-    a: No. Your notes will remain both on your device and on the server. They won't be synced with the server until you log back in. Make sure syncing is complete before logging out so you don't lose any data (see the sync progress on the home screen).
-  - q: How do I change my Nextcloud password?
-    a: Go to your server website and log in. Then go to Settings > Security > Change password. You'll need to log out and log back in to nts after changing your password.
-  - q: How do I change my encryption password?
-    a: |-
-      0. Make sure syncing is complete (see the sync progress on the home screen).
-      1. Log out of nts.
-      2. Go to your server website and delete your 'Saber' folder. This will delete all your notes from the server.
-      3. Log back in to nts. You can choose a new encryption password when logging in.
-      4. Don't forget to log out and log back in to nts on your other devices too.
-  - q: How can I delete my account?
-    a: |-
-      Tap on the "@:profile.quickLinks.deleteAccount" button above, and login if needed.
-      If you are using the official nts server, your account will be deleted after a 1 week grace period. You can contact me at adilhanney@disroot.org during this period to cancel the deletion.
-      If you are using a third party server, there might not be an option to delete your account: you'll need to consult the server's privacy policy for more information.
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.
   debug: DEBUG
-  sponsorButton: Tap here to sponsor me or buy more storage
   licenseButton: Tap here to view more license information
   privacyPolicyButton: Tap here to view the privacy policy
-update:
-  updateAvailable: Update available
-  updateAvailableDescription: "A new version of the app is available:"
-  update: Update
-  downloadNotAvailableYet: The download isn't available yet for your platform. Please check back shortly.
 editor:
   toolbar:
     toggleColors: Toggle colors (Ctrl C)
@@ -360,8 +277,6 @@ editor:
     backgroundImageFit: Background image fit
     backgroundPattern: Background pattern
     import: Import
-    watchServer: Watch for updates on the server
-    watchServerReadOnly: Editing is disabled while watching the server
     boxFits:
       fill: Stretch
       cover: Cover
@@ -628,3 +543,77 @@ ai:
     automaticNone: No account signed in yet
     mayCostExtra: may cost extra
     picture: picture
+nts:
+  folderStyle:
+    title: Colour & icon
+    colour: Colour
+    emblem: Icon
+    none: None
+    done: Done
+    colours(map):
+      lily: Spider lily red
+      persimmon: Persimmon
+      ochre: Ochre
+      moss: Moss
+      teal: Teal
+      indigo: Indigo
+      wisteria: Wisteria
+      plum: Plum
+      stone: Stone
+    emblems(map):
+      spiderLily: Spider lily
+      lotus: Lotus
+      blossom: Blossom
+      bloom: Bloom
+      leaf: Leaf
+      sprout: Sprout
+      moon: Moon
+      star: Star
+      book: Book
+      science: Science
+      math: Maths
+      code: Code
+  side:
+    moveLeft: Move beside the page, on the left
+    moveRight: Move beside the page, on the right
+    backOnPage: Move back onto the page
+    addLeft: Left side
+    addRight: Right side
+  textBox:
+    hint: Type here
+    move: Move
+    width: Width
+    smaller: Smaller text
+    bigger: Bigger text
+    delete: Delete text box
+  flashcards:
+    study: Study
+    cardOf: card $n / $total
+    shuffle: Shuffle
+    empty: Write on a card's front and back, then study them here.
+    previous: Previous card
+    next: Next card
+    showBack: Show back
+    showFront: Show front
+    front: Front
+    back: Back
+    addCard: Add a card
+  noteTypes:
+    title: New note
+    more: More kinds of notes
+    pdfNeedsPages: PDFs can be added to notebooks and slides
+    pages:
+      name: Notebook
+      description: Pages of paper, one after another
+    whiteboard:
+      name: Whiteboard
+      description: No paper, room in every direction
+    endless:
+      name: Endless page
+      description: One long sheet that grows as you write
+    slides:
+      name: Slides
+      description: Landscape 16:9 pages
+    flashcards:
+      name: Flashcards
+      description: Cards with a front and a back, to study

@@ -11,7 +11,6 @@ home:
   tooltips:
     newNote: Nova nota
     exportNote: Exportar nota
-    showUpdateDialog(OUTDATED): Mostrar diàlog de actualització
   create:
     newNote: Nota Nova
     importNote: Importar nota
@@ -93,9 +92,6 @@ settings:
   prefLabels:
     locale: Llengua
     layoutSize: Format
-    shouldCheckForUpdates: Comprova si hi ha actualitzacions disponibles per nts
-    shouldAlwaysAlertForUpdates: Actualitzacions més ràpides
-    allowInsecureConnections: Permet connexions no segures
     appTheme(OUTDATED): tema de l'aplicació
     platform(OUTDATED): tipus de teme
     customAccentColor(OUTDATED): Color d'accent personnalisée
@@ -129,7 +125,6 @@ settings:
       activeUntilRestart(OUTDATED): Actiu fins a que reinicies l'aplicació
       inactiveUntilRestart(OUTDATED): Inactiu fins que reinicies l'aplicació
     hyperlegibleFont(OUTDATED): Increxeix la legibilitat per als usuaris amb baixa visió
-    allowInsecureConnections(OUTDATED): (No recomanhat) Permitir a nts conectar a serveis amb certs autogenerades/no fiables
     preferGreyscale(OUTDATED): Per a dispositius e-ink
     autoClearWhiteboardOnExit(OUTDATED): Borra la llista blanca després de sortir de l'aplicació
     disableEraserAfterUse(OUTDATED): Automàticament torna al bolífer després de utilitzar l'efaçador
@@ -140,7 +135,6 @@ settings:
     autosave(OUTDATED): Auto-guardat després d'un retard curt, o mai
     shapeRecognitionDelay(OUTDATED): Quetre freqüentament actualitzar la previsualització de la forma
     autoStraightenLines(OUTDATED): Rectifica les línies llonges sense avoir a utilitzar el rotuli de forma
-    shouldAlwaysAlertForUpdates(OUTDATED): Diga-me sobre as atualizações assim que estiverem disponíveis
   themeModes:
     system(OUTDATED): Sistema
     light(OUTDATED): Llum
@@ -158,7 +152,6 @@ settings:
     cancel(OUTDATED): Cancelar
     select(OUTDATED): Seleccionar
     mustBeEmpty(OUTDATED): La carpeta seleccionada debe estar vacía
-    mustBeDoneSyncing(OUTDATED): Asegúrate de que la sincronización esté completa antes de cambiar la carpeta
     unsupported(OUTDATED): Aquesta funcició és actualment només per desenvolupadors. L'ús d'ella pot resultar en pèrdua de dades.
   axisDirections(OUTDATED):
   - Sot
@@ -166,7 +159,6 @@ settings:
   - Fons
   - Esquerra
   systemLanguage(OUTDATED): Automàtic
-  resyncEverything(OUTDATED): Resincronitza tot
   openDataDir(OUTDATED): Obre la carpeta nts
   autosaveDisabled(OUTDATED): Né jamais
   shapeRecognitionDisabled(OUTDATED): Né jamais
@@ -176,75 +168,13 @@ logs:
   debuggingInfo(OUTDATED): Els logs contenen informació útil per depurar i desenvolupar
   noLogs(OUTDATED): No hi ha aquí!
   useTheApp(OUTDATED): Els logs apareixeran aquí mentre utilitzes l'aplicació
-login:
-  form:
-    agreeToPrivacyPolicy(rich,OUTDATED): Al iniciar sesión, aceptas la ${linkToPrivacyPolicy(Política de privacidad)}.
-  status:
-    loggedOut(OUTDATED): Desconnectat
-    tapToLogin(OUTDATED): Toca per iniciar la sessió amb Nextcloud
-    hi(OUTDATED): Hola, $u!
-    almostDone(OUTDATED): Pràcticament preparat per a sincronització, toca per finalitzar la connexió
-    loggedIn(OUTDATED): Ingessat amb Nextcloud
-  ncLoginStep:
-    loginFlow:
-      pleaseAuthorize(OUTDATED): Permeta a nts accedir a la teva compte de Nextcloud
-      followPrompts(OUTDATED): Si us plauseguda les instruccions a l'interfície de Nextcloud
-      browserDidntOpen(OUTDATED): La pàgina de connexió no s'ha obert? Clic aquí
-    whereToStoreData(OUTDATED): "Escollreu on où voleu guardar els teus dades:"
-    saberNcServer(OUTDATED): Serveur Nextcloud de nts
-    otherNcServer(OUTDATED): Un servidor Nextcloud
-    serverUrl(OUTDATED): URL del servidor
-    loginWithSaber(OUTDATED): Inglesar amb nts
-    loginWithNextcloud(OUTDATED): Inglesar amb Nextcloud
-  encLoginStep:
-    encFaq:
-    - q(OUTDATED): Què és una contrasenya de cifratge? Per què utilitzar dues contrasenyes?
-      a(OUTDATED): |-
-        La contrasenya de Nextcloud es la que se utiliza para acceder a la nube. La contrasenya de cifrado "scrambles" tus datos antes de que lleguen a la nube.
-        Incluso si alguien obtiene acceso a tu cuenta de Nextcloud, tus notas seguirán a salvo y cifradas con una contraseña separada. Esto te proporciona una segunda capa de seguridad para proteger tus datos.
-        Nadie puede acceder a tus notas en el servidor sin tu contraseña de cifrado, pero esto también significa que si olvidas tu contraseña de cifrado, perderás el acceso a tus datos.
-    - q(OUTDATED): No he menet altrepass de cifratge fins ara. On l'obtenc?
-      a(OUTDATED): |-
-        Escoll un nou contrasen de cifratge i introduïu-lo a la sota.
-        nts generarà les teves clau de cifratge automàticament a partir d'aquest contrasen.
-    - q(OUTDATED): Pucso el mate de la teva compte de Nextcloud?
-      a(OUTDATED): Sí, pero ten en cuenta que sería más fácil para el administrador del servidor o alguien más acceder a tus notas si obtienen acceso a tu cuenta de Nextcloud.
-    enterEncPassword(OUTDATED): "Per protegere i tuoi dati, inserisci la tua password di crittografia:"
-    newToSaber(OUTDATED): Nou en nts? Simplement ingresa una nova contrasenya de cifratura.
-    encPassword(OUTDATED): contraseña de cifrado
-    encFaqTitle(OUTDATED): Preguntes freqüents
-    wrongEncPassword(OUTDATED): Descodificació fallada amb la contrasenya proporcionada. Si us plau, intenteu introduir-la de nou.
-    connectionFailed(OUTDATED): Vaixament va tenir lloc connectar-se al servidor. Si us plau, intenteu de nou més tard.
-  title(OUTDATED): Inloguin
-  signup(rich,OUTDATED): No tens aún? ${linkToSignup(Registra't-te ara)}.
-  notYou(rich,OUTDATED): No tu? ${undoLogin(Elegir otra cuenta)}.
-profile:
-  quickLinks:
-    serverHomepage(OUTDATED): pàgina d'accés del servidor
-    deleteAccount(OUTDATED): Borrar compte
-  faq:
-  - q(OUTDATED): Trobaré si perdré les mes notes si je me déconnecte ?
-  title(OUTDATED): El meu perfil
-  logout(OUTDATED): Desconnectar
-  quotaUsage(OUTDATED): Estàs utilitzant $used de $total ($percent%)
-  connectedTo(OUTDATED): Connectat a
-  faqTitle(OUTDATED): Preguntes freqüents
-  quotaUsageUncapped(OUTDATED): Estàs utilitzant $used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Aquest programa no compta amb cap garantia. És programari lliure, i estàs en el teu dret de distribuir-ho sota certes condicions.
   debug: DEBUG
-  sponsorButton: Prem aquí per a mostrar-me el teu suport o ampliar l'emmagatzematge
   licenseButton: Prem aquí per a més informació sobre la llicència
   privacyPolicyButton: Prem aquí per a consultar la política de privacitat
-update:
-  updateAvailable: Actualització disponible
-  updateAvailableDescription: "Ja hi ha disponible una nova versió de l'aplicació:"
-  update: Actualitzar
-  downloadNotAvailableYet: |-
-    Per a la teva plataforma, la descàrrega encara no està disponible.
-    Siusplau, torna a intentar-ho més endavant.
 editor:
   toolbar:
     select: Seleccionar
@@ -312,7 +242,6 @@ editor:
     lineThicknessDescription: Gruix de la línia del fons
     backgroundPattern: Patró de fons
     import: Importa
-    watchServer: Cerca actualitzacions disponibles al servidor
     boxFits:
       fill(OUTDATED): Estirar
       cover(OUTDATED): Tapa
@@ -332,7 +261,6 @@ editor:
     lineHeight(OUTDATED): altura de línea
     lineHeightDescription(OUTDATED): També controla el màxim de text per a les notes tapates.
     backgroundImageFit(OUTDATED): imatge de fons ajustat
-    watchServerReadOnly(OUTDATED): L'edició està desactivada mentre siva el servidor
   readOnlyBanner:
     title: Mode de Lectura
     watchingServer(OUTDATED): Actualmente se están buscando actualizaciones en el servidor. La edición está deshabilitada en este modo.

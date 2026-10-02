@@ -10,7 +10,6 @@ home:
     settings: Instellingen
   tooltips:
     newNote: Nieuwe notitie
-    showUpdateDialog: Laat de laatste updates zien
     exportNote: Exporteer notitie
   create:
     newNote: Nieuwe notitie
@@ -95,9 +94,6 @@ settings:
     layoutSize: Indeling type
     customAccentColor: Aangepaste accent kleur
     hyperlegibleFont: Atkinson Hyperlegible lettertype
-    shouldCheckForUpdates: Controleer op updates
-    shouldAlwaysAlertForUpdates: Snellere updates
-    allowInsecureConnections: Sta onversleutelde verbindingen toe
     editorToolbarAlignment: Werkbalk positie
     editorToolbarShowInFullscreen: Laat de werkbalk zien in volledig scherm modus
     editorAutoInvert: Inverteer notities in donkere modus
@@ -118,7 +114,6 @@ settings:
     sentry: Fouten rapportering
   prefDescriptions:
     hyperlegibleFont: Verbetert leesbaarheid voor gebruikers met weinig zicht
-    allowInsecureConnections: (Niet aangeraden) Laat nts met zelf getekende servers verbinden
     preferGreyscale: Voor e-ink schermen
     autoClearWhiteboardOnExit: Maakt het whiteboard leeg nadat de app is verlaten
     disableEraserAfterUse: Automatisch terug gaan naar schrijven na gum gebruik
@@ -133,7 +128,6 @@ settings:
     autosave: Automatisch opslaan na een bepaalde tijd, of nooit
     shapeRecognitionDelay: Hoe vaak de vorm herkenning updaten
     autoStraightenLines: Lange lijnen recht maken zonder vorm pen te gebruiken
-    shouldAlwaysAlertForUpdates: Laat het meteen weten als er updates zijn
     sentry:
       active: Actief
       inactive: Inactief
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Instelling terug zetten?
     button: Terugzetten
-  resyncEverything: Alles hersynchroniseren
   openDataDir: nts map openen
   customDataDir:
     cancel: Stop
     select: Selecteer
     mustBeEmpty: Geselecteerde map moet leeg zijn
-    mustBeDoneSyncing: Zorg ervoor dat alles is gesynchroniseerd voordat u de map verandert
     unsupported: Deze functie is momenteel alleen voor ontwikkelaars. Het gebruik ervan zal waarschijnlijk leiden tot gegevensverlies.
   autosaveDisabled: Nooit
   shapeRecognitionDisabled: Nooit
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: Logs bevatten informatie voor fouten vinden in de app en ontwikkelen van de app
   noLogs: Er zijn nog geen logs!
   useTheApp: Logs zullen hier verschijnen als je de app gebruikt
-login:
-  title: Login
-  form:
-    agreeToPrivacyPolicy(rich): Door in te loggen bent u eens met het ${linkToPrivacyPolicy(Privacy Policy)}.
-  signup(rich): Nog geen account? ${linkToSignup(Registreer nu)}!
-  notYou(rich): Niet u? ${undoLogin(Kies een ander account)}.
-  status:
-    loggedOut: Uitgelogd
-    tapToLogin: Klik om in te loggen met Nextcloud
-    hi: Hi, $u!
-    almostDone: Bijna klaar om te synchroniseren, klik om in te loggen
-    loggedIn: Ingelogd met Nextcloud
-  ncLoginStep:
-    whereToStoreData: "Kies welke opslag te gebruiken:"
-    saberNcServer: nts' Nextcloud server
-    otherNcServer: Andere Nextcloud server
-    serverUrl: Server URL
-    loginWithSaber: Inloggen met nts
-    loginWithNextcloud: Inloggen met Nextcloud
-    loginFlow:
-      pleaseAuthorize: Autoriseer nts bij je Nextcloud account
-      followPrompts: Volg de instructies op de Nextcloud pagina
-      browserDidntOpen: Is de login pagina niet geopend? Klik hier
-  encLoginStep:
-    enterEncPassword: "Om uw gegevens te beschermen, geef hier uw versleutelingswachtwoord op:"
-    newToSaber: Nieuw bij nts? Bedenk gewoon een nieuw wachtwoord.
-    encPassword: Versleutelingswachtwoord
-    encFaqTitle: Vaak gevraagd
-    wrongEncPassword: Ontsleuteling gefaald met gegeven wachtwoord, probeer opnieuw.
-    connectionFailed: Er ging iets fout met de verbinding met de server. Probeer later opnieuw.
-    encFaq:
-    - q: Wat is een versleutelingswachtwoord? Waarom moet ik twee wachtwoorden gebruiken?
-      a: |-
-        Het Nextcloud-wachtwoord wordt gebruikt om toegang te krijgen tot de cloud. Het encryptiewachtwoord versleutelt je data voordat deze de cloud bereikt.
-        Zelfs als iemand toegang krijgt tot je Nextcloud-account, blijven je notities veilig en versleuteld met een apart wachtwoord. Dit biedt je een tweede beveiligingslaag om je data te beschermen.
-        Niemand kan je notities op de server inzien zonder je encryptiewachtwoord, maar dit betekent ook dat als je je encryptiewachtwoord vergeet, je de toegang tot je gegevens verliest.
-    - q: Ik heb nog geen versleutelingswachtwoord gebruikt, waar krijg ik deze?
-      a: |-
-        Kies een nieuw versleutelingswachtwoord en voer hem hierboven in.
-        nts zal automatisch versleutelingssleutels maken van dit wachtwoord.
-    - q: Kan ik hetzelfde wachtwoord als my Nextcloud wachtwoord gebruiken?
-      a: Ja, maar houd er rekening mee dat het makkelijker is voor de serverbeheerder of iemand anders om toegang te krijgen tot je notities als ze toegang krijgen tot je Nextcloud-account.
-profile:
-  title: Mijn profiel
-  logout: Uitloggen
-  quotaUsage: $used van $total in gebruik ($percent%)
-  connectedTo: Verbonden met
-  quickLinks:
-    serverHomepage: Server thuispagina
-    deleteAccount: Verwijder account
-  faqTitle: Vaak gevraagd
-  faq:
-  - q: Ben ik mijn notities kwijt als ik uitlog?
-    a: Nee. Je notities blijven zowel op je apparaat als op de server staan. Ze worden pas gesynchroniseerd met de server als je weer inlogt. Zorg dat de synchronisatie voltooid is voordat je uitlogt, zodat je geen data verliest (zie de synchronisatievoortgang op het startscherm).
-  - q: Hoe verander ik mijn Nextcloud wachtwoord?
-    a: Ga naar de website van je server en log in. Ga dan naar Instellingen > Beveiliging > Wachtwoord wijzigen. Je moet uitloggen en weer inloggen op nts nadat je je wachtwoord hebt veranderd.
-  - q: Hoe verander ik mijn versleutelingswachtwoord?
-    a: |-
-      0. Zorg dat de synchronisatie voltooid is (zie de voortgang van synchronisatie op het startscherm).
-      1. Log uit bij nts.
-      2. Ga naar de website van je server en verwijder je 'Saber'-map. Dit verwijdert al je notities van de server.
-      3. Log weer in op nts. Je kunt een nieuw encryptiewachtwoord kiezen bij het inloggen.
-      4. Vergeet niet uit te loggen en weer in te loggen op nts op je andere apparaten.
-  - q: Hoe kan ik mijn account verwijderen?
-    a: |-
-      Tik op de knop "@:profile.quickLinks.deleteAccount" hierboven en log in indien nodig.
-      Als je de officiële nts-server gebruikt, wordt je account na een periode van 1 week verwijderd. Je kunt me in deze periode op adilhanney@disroot.org contacteren om de verwijdering te annuleren.
-      Als je een server van derden gebruikt, is er mogelijk geen optie om je account te verwijderen: je moet het privacybeleid van de server raadplegen voor meer informatie.
-  quotaUsageUncapped(OUTDATED): Je gebruikt $used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     This program comes with absolutely no warranty. This is free software, and you are welcome to redistribute it under certain conditions.
   debug: DEBUG
-  sponsorButton: Klik hier om mij te sponsoren of om meer opslag te kopen
   licenseButton: Klik hier om meer licentie informatie te zien
   privacyPolicyButton: Klik hier voor het privacy policy
-update:
-  updateAvailable: Update beschikbaar
-  updateAvailableDescription: "Een nieuwe versie van de app is beschikbaar:"
-  update: Update
-  downloadNotAvailableYet: De download is nog niet beschikbaar voor jouw platform. Kijk later hier weer.
 editor:
   toolbar:
     toggleColors: Verander kleur (Ctrl C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: Achtergrond afbeelding plaats
     backgroundPattern: Achtergrond patroon
     import: Importeer
-    watchServer: Synchroniseer updates van de server
-    watchServerReadOnly: Bewerken is uitgeschakeld terwijl je synchroniseert met de server
     boxFits:
       fill: Span
       cover: Bedek

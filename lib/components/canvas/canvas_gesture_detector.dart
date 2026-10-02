@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:nts/components/canvas/hud/canvas_hud.dart';
 import 'package:nts/components/canvas/interactive_canvas.dart';
+import 'package:nts/components/canvas/side_hit_region.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/extensions/change_notifier_extensions.dart';
 import 'package:nts/data/extensions/matrix4_extensions.dart';
@@ -27,6 +29,7 @@ class CanvasGestureDetector extends StatefulWidget {
     required this.onDrawUpdate,
     required this.onDrawEnd,
     this.onTapUp,
+    this.tapDevices,
     this.onPointerDown,
     this.onSecondaryTap,
     required this.updatePointerData,
@@ -56,6 +59,10 @@ class CanvasGestureDetector extends StatefulWidget {
   /// Taps that aren't draw gestures, e.g. in read-only notes.
   /// Only set this when needed: it makes drawing wait for the tap to fail.
   final GestureTapUpCallback? onTapUp;
+
+  /// The pointers that can tap ([onTapUp]), or null for all. E.g. not
+  /// touches once the Pencil is in use, so a resting palm can't tap.
+  final Set<PointerDeviceKind>? tapDevices;
 
   /// Where a pointer went down, which can be before [onDrawStart]
   /// (e.g. if the gesture had to move before it was accepted).
@@ -343,6 +350,7 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
 
   @override
   void initState() {
+    _reach = [for (final page in widget.pages) _reachOf(page)];
     setInitialTransform();
     widget._transformationController.addListener(onTransformChanged);
     _assignKeybindings();
@@ -353,11 +361,53 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
   /// Wait for note to be loaded before setting the initial transform.
   @override
   void didUpdateWidget(CanvasGestureDetector oldWidget) {
+    _reach = [for (final page in widget.pages) _reachOf(page)];
     if (oldWidget.initialPageIndex != widget.initialPageIndex ||
         oldWidget.filePath != widget.filePath) {
       setInitialTransform();
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  /// How far each page's content reaches beside it (left, right), in page
+  /// units, so the canvas can pan to it. Measured when the editor
+  /// rebuilds (e.g. after each stroke), not while panning.
+  var _reach = <(double, double)>[];
+
+  static (double, double) _reachOf(EditorPage page) {
+    var left = 0.0, right = 0.0;
+    void include(Rect rect) {
+      if (!rect.isFinite) return;
+      left = max(left, -rect.left);
+      right = max(right, rect.right - page.size.width);
+    }
+
+    for (final stroke in page.strokes) {
+      include(stroke.bounds.inflate(stroke.options.size));
+    }
+    for (final image in page.images) {
+      include(image.dstRect);
+    }
+    for (final box in page.textBoxes) {
+      include(box.estimatedBounds);
+    }
+    // With some room around it
+    const margin = 2 * EditorPage.sideGap;
+    return (left > 0 ? left + margin : 0, right > 0 ? right + margin : 0);
+  }
+
+  /// The left and right of everything on the canvas (the pages and what's
+  /// beside them) in the canvas' coordinates, at least [width] apart.
+  (double, double) _contentX(double width) {
+    var left = 0.0, right = width;
+    for (final (i, page) in widget.pages.indexed) {
+      final fit = page.isBoard ? 1.0 : min(1.0, width / page.size.width);
+      final pageLeft = (width - page.size.width * fit) / 2;
+      final (reachLeft, reachRight) = _reach.elementAtOrNull(i) ?? (0.0, 0.0);
+      left = min(left, pageLeft - reachLeft * fit);
+      right = max(right, pageLeft + (page.size.width + reachRight) * fit);
+    }
+    return (left, right);
   }
 
   /// Sets the initial transform so that we're scrolled to the correct page.
@@ -377,6 +427,14 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
       if (zoomLockedValue != null) {
         zoomLockedValue = transformCacheItem.transform.approxScale;
       }
+    } else if (widget.pages.firstOrNull case final board? when board.isBoard) {
+      // A whiteboard opens in its middle
+      final height = MediaQuery.sizeOf(context).height;
+      widget._transformationController.value = Matrix4.translationValues(
+        0,
+        height / 2 - (Editor.gapBetweenPages * 2 + board.size.height / 2),
+        0,
+      );
     } else if (widget.initialPageIndex != null) {
       // if we're opening a different note, scroll to the last recorded page
       CanvasGestureDetector.scrollToPage(
@@ -407,22 +465,23 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
     if (diffFrom1 < 0.05 && diffFrom1 > 0.001)
       _snapZoomTimer = Timer(const Duration(milliseconds: 200), resetZoom);
 
-    if (scale < 1) {
-      // horizontally center pages if zoomed out
-      final center = containerBounds.maxWidth * (1 - scale) / 2;
-      adjustmentX = center - translation.x;
+    // Horizontally, center everything if it fits on screen, otherwise
+    // don't allow scrolling past it (the pages and what's beside them)
+    final width = containerBounds.maxWidth;
+    final (left, right) = _contentX(width);
+    if ((right - left) * scale <= width) {
+      adjustmentX = (width - (left + right) * scale) / 2 - translation.x;
     } else {
-      // if zoomed in, don't allow scrolling past the edges
-      late final minX = containerBounds.maxWidth * (1 - scale);
-      if (translation.x > 0) {
-        adjustmentX = -translation.x;
+      final minX = width - right * scale, maxX = -left * scale;
+      if (translation.x > maxX) {
+        adjustmentX = maxX - translation.x;
       } else if (translation.x < minX) {
         adjustmentX = minX - translation.x;
       }
-
-      if (translation.y > 0) {
-        adjustmentY = -translation.y;
-      }
+    }
+    // if zoomed in, don't allow scrolling past the top
+    if (scale >= 1 && translation.y > 0) {
+      adjustmentY = -translation.y;
     }
 
     if (adjustmentX.abs() > 0.1 || adjustmentY.abs() > 0.1) {
@@ -564,43 +623,58 @@ class CanvasGestureDetectorState extends State<CanvasGestureDetector> {
           onPointerHover: _listenerPointerHoverEvent,
           child: GestureDetector(
             onTapUp: widget.onTapUp,
+            supportedDevices: widget.tapDevices,
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints containerBounds) {
                 this.containerBounds = containerBounds;
 
-                return InteractiveCanvasViewer.builder(
-                  minScale: zoomLockedValue ?? CanvasGestureDetector.kMinScale,
-                  maxScale: zoomLockedValue ?? CanvasGestureDetector.kMaxScale,
-                  panEnabled: !singleFingerPanLock,
-                  panAxis: axisAlignedPanLock ? PanAxis.aligned : PanAxis.free,
+                // Images beside the pages can be touched too
+                return SideHitRegion(
+                  child: InteractiveCanvasViewer.builder(
+                    minScale:
+                        zoomLockedValue ?? CanvasGestureDetector.kMinScale,
+                    maxScale:
+                        zoomLockedValue ?? CanvasGestureDetector.kMaxScale,
+                    panEnabled: !singleFingerPanLock,
+                    panAxis: axisAlignedPanLock
+                        ? PanAxis.aligned
+                        : PanAxis.free,
 
-                  // Smoother scrolling fling gesture than the default
-                  interactionEndFrictionCoefficient: 0.1,
+                    // Smoother scrolling fling gesture than the default
+                    interactionEndFrictionCoefficient: 0.1,
 
-                  // we need a non-zero boundary margin so we can zoom out
-                  // past the size of the page (for minScale < 1)
-                  boundaryMargin: .symmetric(
-                    vertical: 0,
-                    horizontal: screenSize.width * 2,
+                    // we need a non-zero boundary margin so we can zoom out
+                    // past the size of the page (for minScale < 1)
+                    boundaryMargin: .symmetric(
+                      vertical: 0,
+                      // A whiteboard runs far off both sides
+                      horizontal: max(
+                        screenSize.width * 2,
+                        widget.pages.fold(
+                          0.0,
+                          (widest, page) => max(widest, page.size.width),
+                        ),
+                      ),
+                    ),
+
+                    transformationController: widget._transformationController,
+
+                    isDrawGesture: widget.isDrawGesture,
+                    onInteractionEnd: widget.onInteractionEnd,
+                    onDrawStart: widget.onDrawStart,
+                    onDrawUpdate: widget.onDrawUpdate,
+                    onDrawEnd: widget.onDrawEnd,
+
+                    builder: (BuildContext context, Quad viewport) {
+                      return _PagesBuilder(
+                        pages: widget.pages,
+                        pageBuilder: widget.pageBuilder,
+                        placeholderPageBuilder: widget.placeholderPageBuilder,
+                        boundingBox: _axisAlignedBoundingBox(viewport),
+                        containerWidth: containerBounds.maxWidth,
+                      );
+                    },
                   ),
-
-                  transformationController: widget._transformationController,
-
-                  isDrawGesture: widget.isDrawGesture,
-                  onInteractionEnd: widget.onInteractionEnd,
-                  onDrawStart: widget.onDrawStart,
-                  onDrawUpdate: widget.onDrawUpdate,
-                  onDrawEnd: widget.onDrawEnd,
-
-                  builder: (BuildContext context, Quad viewport) {
-                    return _PagesBuilder(
-                      pages: widget.pages,
-                      pageBuilder: widget.pageBuilder,
-                      placeholderPageBuilder: widget.placeholderPageBuilder,
-                      boundingBox: _axisAlignedBoundingBox(viewport),
-                      containerWidth: containerBounds.maxWidth,
-                    );
-                  },
                 );
               },
             ),
@@ -691,14 +765,17 @@ class _PagesBuilder extends StatelessWidget {
     double topOfPage = Editor.gapBetweenPages * 2;
     for (int pageIndex = 0; pageIndex < pages.length; pageIndex++) {
       final page = pages[pageIndex];
-      final pageWidth = min(
-        page.size.width,
-        containerWidth,
-      ); // because of FittedBox
+      // A FittedBox shrinks pages to fit, but not a whiteboard
+      final pageWidth = page.isBoard
+          ? page.size.width
+          : min(page.size.width, containerWidth);
       final pageHeight = pageWidth / page.size.width * page.size.height;
       final bottomOfPage = topOfPage + pageHeight;
 
-      final isFocused = page.quill.focusNode.hasFocus;
+      // (Kept while a text box on it is being typed in)
+      final isFocused =
+          page.quill.focusNode.hasFocus ||
+          TextBoxes.focused.value?.$1 == pageIndex;
       final isInViewport =
           boundingBox.bottom >= topOfPage && boundingBox.top <= bottomOfPage;
       final shouldRender = isFocused || isInViewport;

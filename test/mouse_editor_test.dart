@@ -21,6 +21,7 @@ import 'package:nts/components/canvas/image/editor_image.dart';
 import 'package:nts/components/canvas/interactive_canvas.dart';
 import 'package:nts/components/canvas/pencil_shader.dart';
 import 'package:nts/components/canvas/ruler.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/toolbar/floating_bar.dart';
 import 'package:nts/components/toolbar/toolbar.dart';
 import 'package:nts/data/editor/page.dart';
@@ -87,9 +88,7 @@ void main() {
   setupMockPathProvider();
   setupMockWindowManager();
   FlavorConfig.setup();
-  FileManager.documentsDirectory =
-      '$tmpDir/mouse_editor_test/'
-      '${FileManager.appRootDirectoryPrefix}';
+  FileManager.documentsDirectory = '$tmpDir/mouse_editor_test/nts';
 
   setUpAll(PencilShader.init);
 
@@ -1001,7 +1000,7 @@ void main() {
   });
 
   group('text and bars by mouse:', () {
-    testWidgets('the text tool: a click places the cursor', (tester) async {
+    testWidgets('the text tool: a click starts a text box', (tester) async {
       final editor = await _pumpEditor(tester);
       await tester.tap(
         find.descendant(
@@ -1017,8 +1016,10 @@ void main() {
         kind: PointerDeviceKind.mouse,
       );
       await tester.pumpAndSettle();
-      expect(editor.coreInfo.pages.first.quill.focusNode.hasFocus, isTrue);
-      expect(editor.coreInfo.pages.first.strokes, isEmpty);
+      final page = editor.coreInfo.pages.first;
+      expect(page.textBoxes, hasLength(1));
+      expect(TextBoxes.focused.value, (0, page.textBoxes.single.id));
+      expect(page.strokes, isEmpty);
     }, variant: _mac);
 
     testWidgets('dragging the toolbar grip moves it, without ink', (
@@ -1076,6 +1077,13 @@ void main() {
     ) async {
       final editor = await _pumpEditor(tester);
       await _keys(tester, [], LogicalKeyboardKey.keyT);
+      // Typing in a new box
+      await tester.tapAt(
+        _global(editor, const Offset(300, 300)),
+        kind: PointerDeviceKind.mouse,
+      );
+      await tester.pumpAndSettle();
+      expect(TextBoxes.focused.value, isNotNull);
       await _keys(tester, [cmd], LogicalKeyboardKey.keyE);
       await _keys(tester, [cmd], LogicalKeyboardKey.equal);
       await _keys(tester, [cmd], LogicalKeyboardKey.keyF);
@@ -1102,14 +1110,19 @@ void main() {
   });
 
   group('menus and paste:', () {
-    testWidgets("right-click in the note's text: the text's menu", (
-      tester,
-    ) async {
+    testWidgets("right-click in a text box: the text's menu", (tester) async {
       final editor = await _pumpEditor(tester);
       final page = editor.coreInfo.pages.first;
       page.strokes.add(_stroke(_line));
+      page.textBoxes = [
+        const PageTextBox(
+          id: 0,
+          position: Offset(250, 280),
+          width: 300,
+          text: 'hello world',
+        ),
+      ];
       await _keys(tester, [], LogicalKeyboardKey.keyT);
-      page.quill.controller.replaceText(0, 0, 'hello world', null);
       await tester.pump();
       await _mouse(tester, editor, const [
         Offset(300, 300),
@@ -1118,9 +1131,8 @@ void main() {
       expect(find.text(t.editor.mouse.selectAll), findsNothing);
       expect(find.text(t.editor.toolbar.undo), findsNothing);
       expect(editor.currentTool, Tool.textEditing);
-      // but the text's own: cut, copy, paste
+      // but the text's own (cut, copy, and paste if there's something)
       expect(find.text('Copy'), findsOneWidget);
-      expect(find.text('Paste'), findsOneWidget);
     }, variant: _mac);
 
     testWidgets('Paste goes where the right-click was, on that page', (

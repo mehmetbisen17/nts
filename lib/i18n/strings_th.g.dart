@@ -39,10 +39,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$th sentry = _Translations$sentry$th._(_root);
 	@override late final _Translations$settings$th settings = _Translations$settings$th._(_root);
 	@override late final _Translations$logs$th logs = _Translations$logs$th._(_root);
-	@override late final _Translations$login$th login = _Translations$login$th._(_root);
-	@override late final _Translations$profile$th profile = _Translations$profile$th._(_root);
 	@override late final _Translations$appInfo$th appInfo = _Translations$appInfo$th._(_root);
-	@override late final _Translations$update$th update = _Translations$update$th._(_root);
 	@override late final _Translations$editor$th editor = _Translations$editor$th._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$th extends Translations$settings$en {
 		'ซ้าย',
 	];
 	@override late final _Translations$settings$reset$th reset = _Translations$settings$reset$th._(_root);
-	@override String get resyncEverything => 'ซิงค์ทุกอย่างใหม่';
 	@override String get openDataDir => 'เปิดโฟลเดอร์ nts';
 	@override late final _Translations$settings$customDataDir$th customDataDir = _Translations$settings$customDataDir$th._(_root);
 	@override String get autosaveDisabled => 'เคย';
@@ -134,51 +130,6 @@ class _Translations$logs$th extends Translations$logs$en {
 	@override String get useTheApp => 'บันทึกการใช้งานแอปจะปรากฏที่นี่ขณะที่คุณใช้งาน';
 }
 
-// Path: login
-class _Translations$login$th extends Translations$login$en {
-	_Translations$login$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'เข้าสู่ระบบ';
-	@override late final _Translations$login$form$th form = _Translations$login$form$th._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'ยังไม่มีบัญชีใช่ไหม? '),
-		linkToSignup('สมัครตอนนี้'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'ไม่ใช่คุณใช่ไหม? '),
-		undoLogin('เลือกบัญชีอื่น'),
-	]);
-	@override late final _Translations$login$status$th status = _Translations$login$status$th._(_root);
-	@override late final _Translations$login$ncLoginStep$th ncLoginStep = _Translations$login$ncLoginStep$th._(_root);
-	@override late final _Translations$login$encLoginStep$th encLoginStep = _Translations$login$encLoginStep$th._(_root);
-}
-
-// Path: profile
-class _Translations$profile$th extends Translations$profile$en {
-	_Translations$profile$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'โปรไฟล์ของฉัน';
-	@override String get logout => 'ออกจากระบบ';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'คุณกำลังใช้ ${used} จาก ${total} (${percent}%)';
-	@override String get connectedTo => 'เชื่อมต่อไปยัง';
-	@override late final _Translations$profile$quickLinks$th quickLinks = _Translations$profile$quickLinks$th._(_root);
-	@override String get faqTitle => 'คำถามที่พบบ่อย';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$th._(_root),
-		_Translations$profile$faq$1$th._(_root),
-		_Translations$profile$faq$2$th._(_root),
-		_Translations$profile$faq$3$th._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'คุณกำลังใช้ ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$th extends Translations$appInfo$en {
 	_Translations$appInfo$th._(TranslationsTh root) : this._root = root, super.internal(root);
@@ -188,22 +139,8 @@ class _Translations$appInfo$th extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'สงวนลิขสิทธิ์ nts (modified from Saber) © 2022-${buildYear} Adil Hanney\nโปรแกรมนี้ไม่มีการรับประกันใดๆ ทั้งสิ้น นี่คือซอฟต์แวร์ฟรี และคุณสามารถแจกจ่ายต่อได้ภายใต้เงื่อนไขบางประการ';
 	@override String get debug => 'แก้ไขข้อผิดพลาด';
-	@override String get sponsorButton => 'คลิกที่นี่เพื่อสนับสนุนฉัน หรือซื้อพื้นที่จัดเก็บเพิ่มเติม';
 	@override String get licenseButton => 'คลิกที่นี่เพื่อดูข้อมูลใบอนุญาตเพิ่มเติม';
 	@override String get privacyPolicyButton => 'แตะที่นี่เพื่อดูนโยบายความเป็นส่วนตัว';
-}
-
-// Path: update
-class _Translations$update$th extends Translations$update$en {
-	_Translations$update$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'มีอัปเดตแล้ว';
-	@override String get updateAvailableDescription => 'แอปเวอร์ชันใหม่พร้อมใช้งานแล้ว:';
-	@override String get update => 'อัปเดต';
-	@override String get downloadNotAvailableYet => 'ไฟล์ดาวน์โหลดยังไม่พร้อมให้บริการสำหรับแพลตฟอร์มของคุณ โปรดตรวจสอบอีกครั้งในภายหลัง';
 }
 
 // Path: editor
@@ -250,7 +187,6 @@ class _Translations$home$tooltips$th extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'บันทึกใหม่';
-	@override String get showUpdateDialog => 'แสดงหน้าต่างอัปเดต';
 	@override String get exportNote => 'หมายเหตุส่งออก';
 }
 
@@ -409,9 +345,6 @@ class _Translations$settings$prefLabels$th extends Translations$settings$prefLab
 	@override String get layoutSize => 'ประเภทเค้าโครง';
 	@override String get customAccentColor => 'กำหนดสีเน้นเอง';
 	@override String get hyperlegibleFont => 'แบบอักษร Atkinson Hyperlegible';
-	@override String get shouldCheckForUpdates => 'ตรวจสอบอัปเดต nts';
-	@override String get shouldAlwaysAlertForUpdates => 'อัปเดตเร็วขึ้น';
-	@override String get allowInsecureConnections => 'อนุญาตเชื่อมต่อที่ไม่ปลอดภัย';
 	@override String get editorToolbarAlignment => 'ตำแหน่งแถบเครื่องมือ';
 	@override String get editorToolbarShowInFullscreen => 'แสดงแถบเครื่องมือในโหมดเต็มหน้าจอ';
 	@override String get editorAutoInvert => 'กลับด้านโน้ตในโหมดมืด';
@@ -440,7 +373,6 @@ class _Translations$settings$prefDescriptions$th extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'เพิ่มความชัดเจนในการอ่านสำหรับผู้ใช้ที่มีสายตาเลือนราง';
-	@override String get allowInsecureConnections => '(ไม่แนะนำ) อนุญาตให้ nts เชื่อมต่อกับเซิร์ฟเวอร์ที่มีใบรับรองด้วยตนเอง/ไม่น่าเชื่อถือ';
 	@override String get preferGreyscale => 'สำหรับแสดงผลอี-อิงค์';
 	@override String get autoClearWhiteboardOnExit => 'ล้างกระดานไวท์บอร์ดหลังจากที่คุณออกจากแอป';
 	@override String get disableEraserAfterUse => 'สลับกลับไปใช้ปากกาโดยอัตโนมัติหลังจากใช้ยางลบเสร็จ';
@@ -452,7 +384,6 @@ class _Translations$settings$prefDescriptions$th extends Translations$settings$p
 	@override String get autosave => 'บันทึกอัตโนมัติหลังจากหน่วงเวลาเล็กน้อย หรือไม่บันทึกเลยก็ได้';
 	@override String get shapeRecognitionDelay => 'อัปเดตตัวอย่างรูปร่างบ่อยแค่ไหน';
 	@override String get autoStraightenLines => 'ยืดเส้นยาวให้ตรงโดยไม่ต้องใช้ปากกาเขียนรูปทรง';
-	@override String get shouldAlwaysAlertForUpdates => 'แจ้งข้อมูลอัปเดตให้ฉันทราบทันทีที่มีข้อมูลเพิ่มเติม';
 	@override late final _Translations$settings$prefDescriptions$sentry$th sentry = _Translations$settings$prefDescriptions$sentry$th._(_root);
 }
 
@@ -511,127 +442,7 @@ class _Translations$settings$customDataDir$th extends Translations$settings$cust
 	@override String get cancel => 'ยกเลิก';
 	@override String get select => 'เลือก';
 	@override String get mustBeEmpty => 'โฟลเดอร์ที่เลือกต้องว่างเปล่า';
-	@override String get mustBeDoneSyncing => 'ตรวจสอบให้แน่ใจว่าซิงค์เสร็จสมบูรณ์ก่อนที่จะเปลี่ยนโฟลเดอร์';
 	@override String get unsupported => 'ฟีเจอร์นี้ใช้งานได้เฉพาะนักพัฒนาเท่านั้น การใช้งานอาจทำให้ข้อมูลสูญหายได้';
-}
-
-// Path: login.form
-class _Translations$login$form$th extends Translations$login$form$en {
-	_Translations$login$form$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'เมื่อเข้าสู่ระบบ คุณยอมรับ '),
-		linkToPrivacyPolicy('ข้อตกลงและเงื่อนไขของนโยบายความเป็นส่วนตัว '),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$th extends Translations$login$status$en {
-	_Translations$login$status$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'ออกจากระบบแล้ว';
-	@override String get tapToLogin => 'แตะเพื่อเข้าสู่ระบบด้วย Nextcloud';
-	@override String hi({required Object u}) => 'สวัสดี ${u}!';
-	@override String get almostDone => 'พร้อมสำหรับการซิงค์แล้ว แตะเพื่อเข้าสู่ระบบให้เสร็จสมบูรณ์';
-	@override String get loggedIn => 'เข้าสู่ระบบด้วย Nextcloud';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$th extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'เลือกตำแหน่งที่ต้องการจัดเก็บข้อมูล:';
-	@override String get saberNcServer => 'เซิร์ฟเวอร์ Nextcloud ของ nts';
-	@override String get otherNcServer => 'เซิร์ฟเวอร์ Nextcloud อื่นๆ';
-	@override String get serverUrl => 'URL เซิร์ฟเวอร์';
-	@override String get loginWithSaber => 'เข้าสู่ระบบด้วย nts';
-	@override String get loginWithNextcloud => 'เข้าสู่ระบบด้วย Nextcloud';
-	@override late final _Translations$login$ncLoginStep$loginFlow$th loginFlow = _Translations$login$ncLoginStep$loginFlow$th._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$th extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'เพื่อปกป้องข้อมูลของคุณ โปรดป้อนรหัสผ่านเข้ารหัสของคุณ:';
-	@override String get newToSaber => 'เพิ่งเคยใช้ nts ใช่ไหม? เพียงแค่ป้อนรหัสผ่านเข้ารหัสใหม่';
-	@override String get encPassword => 'เข้ารหัส รหัสผ่าน';
-	@override String get encFaqTitle => 'คำถามที่พบบ่อย';
-	@override String get wrongEncPassword => 'ถอดรหัสล้มเหลวด้วยรหัสผ่านที่ให้มา โปรดลองป้อนรหัสผ่านอีกครั้ง';
-	@override String get connectionFailed => 'เกิดข้อผิดพลาดเชื่อมต่อกับเซิร์ฟเวอร์ โปรดลองใหม่อีกครั้งในภายหลัง';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$th._(_root),
-		_Translations$login$encLoginStep$encFaq$1$th._(_root),
-		_Translations$login$encLoginStep$encFaq$2$th._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$th extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'หน้าแรกของเซิร์ฟเวอร์';
-	@override String get deleteAccount => 'ลบบัญชี';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$th extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ถ้าฉันออกจากระบบ ฉันจะเสียบันทึกของฉันไปไหม?';
-	@override String get a => 'ไม่ ข้อมูลของคุณจะยังคงอยู่ทั้งในอุปกรณ์ของคุณและบนเซิร์ฟเวอร์ ข้อมูลจะไม่ถูกซิงค์กับเซิร์ฟเวอร์จนกว่าคุณจะเข้าสู่ระบบอีกครั้ง โปรดตรวจสอบให้แน่ใจว่าการซิงค์เสร็จสมบูรณ์ก่อนออกจากระบบ เพื่อป้องกันการสูญเสียข้อมูล (ดูความคืบหน้าการซิงค์บนหน้าจอหลัก)';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$th extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ฉันจะเปลี่ยนรหัสผ่าน Nextcloud ของฉันได้อย่างไร?';
-	@override String get a => 'เข้าไปที่เว็บไซต์เซิร์ฟเวอร์ของคุณแล้วล็อกอิน จากนั้นไปที่ การตั้งค่า > ความปลอดภัย > เปลี่ยนรหัสผ่าน คุณจะต้องล็อกเอาต์แล้วล็อกอินกลับเข้าไปใน nts อีกครั้งหลังจากเปลี่ยนรหัสผ่านเสร็จแล้ว';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$th extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ฉันจะเปลี่ยนรหัสผ่านเข้ารหัสได้อย่างไร?';
-	@override String get a => '0. ตรวจสอบให้แน่ใจว่าการซิงค์เสร็จสมบูรณ์แล้ว (ดูความคืบหน้าการซิงค์บนหน้าจอหลัก)\n1. ออกจากระบบ nts\n2. ไปที่เว็บไซต์เซิร์ฟเวอร์ของคุณและลบโฟลเดอร์ \'Saber\' การทำเช่นนี้จะลบโน้ตทั้งหมดของคุณออกจากเซิร์ฟเวอร์\n3. เข้าสู่ระบบ nts อีกครั้ง คุณสามารถเลือกรหัสผ่านการเข้ารหัสใหม่ได้เมื่อเข้าสู่ระบบ\n4. อย่าลืมออกจากระบบและเข้าสู่ระบบ nts บนอุปกรณ์อื่นๆ ของคุณ';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$th extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ฉันจะลบบัญชีของฉันได้อย่างไร?';
-	@override String get a => 'แตะที่ปุ่ม "${_root.profile.quickLinks.deleteAccount}" ด้านบน แล้วล็อกอินหากจำเป็น\nหากคุณใช้เซิร์ฟเวอร์ nts อย่างเป็นทางการ บัญชีของคุณจะถูกลบหลังจาก 1 สัปดาห์ คุณสามารถติดต่อได้ที่ adilhanney@disroot.org ในช่วงเวลานี้เพื่อยกเลิกการลบ\nหากคุณใช้เซิร์ฟเวอร์ของบุคคลที่สาม อาจไม่มีตัวเลือกในการลบบัญชีของคุณ คุณจะต้องตรวจสอบนโยบายความเป็นส่วนตัวของเซิร์ฟเวอร์เพื่อดูข้อมูลเพิ่มเติม';
 }
 
 // Path: editor.toolbar
@@ -759,8 +570,6 @@ class _Translations$editor$menu$th extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'ภาพพื้นหลังพอดี';
 	@override String get backgroundPattern => 'ลวดลายพื้นหลัง';
 	@override String get import => 'นำเข้า';
-	@override String get watchServer => 'คอยตรวจสอบการอัปเดตบนเซิร์ฟเวอร์';
-	@override String get watchServerReadOnly => 'การแก้ไขจะถูกปิดใช้งานในขณะที่กำลังเฝ้าดูเซิร์ฟเวอร์';
 	@override late final _Translations$editor$menu$boxFits$th boxFits = _Translations$editor$menu$boxFits$th._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$th bgPatterns = _Translations$editor$menu$bgPatterns$th._(_root);
 }
@@ -866,51 +675,6 @@ class _Translations$settings$prefDescriptions$sentry$th extends Translations$set
 	@override String get inactive => 'ไม่ใช้งาน';
 	@override String get activeUntilRestart => 'ใช้งานได้จนกว่าคุณจะรีสตาร์ทแอป';
 	@override String get inactiveUntilRestart => 'ไม่ทำงานจนกว่าคุณจะรีสตาร์ทแอป';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$th extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'โปรดอนุญาตให้ nts เข้าถึงบัญชี Nextcloud ของคุณ';
-	@override String get followPrompts => 'โปรดทำตามคำแนะนำในหน้าจอ Nextcloud';
-	@override String get browserDidntOpen => 'หน้าเข้าสู่ระบบไม่เปิดใช่ไหม? คลิกที่นี่';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$th extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'รหัสผ่านสำหรับเข้ารหัสคืออะไร? ทำไมต้องใช้รหัสผ่านสองชุด?';
-	@override String get a => 'รหัสผ่าน Nextcloud ใช้สำหรับเข้าถึงระบบคลาวด์ รหัสผ่านจะ "เข้ารหัส" ข้อมูลของคุณก่อนที่จะส่งไปยังระบบคลาวด์ แม้ว่าจะมีผู้อื่นเข้าถึงบัญชี Nextcloud ของคุณได้\nบันทึกของคุณจะยังปลอดภัยและได้รับการเข้ารหัสด้วยรหัสผ่านแยกต่างหาก ซึ่งเป็นการเพิ่มความปลอดภัยอีกชั้นเพื่อปกป้องข้อมูลของคุณ\nไม่มีใครสามารถเข้าถึงบันทึกของคุณบนเซิร์ฟเวอร์ได้หากไม่มีรหัสผ่านเข้ารหัส หมายความว่าหากคุณลืมรหัสผ่านการเข้ารหัส คุณจะเสียสิทธิ์ในการเข้าถึงข้อมูลของคุณเช่นกัน';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$th extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ฉันยังไม่ได้ตั้งรหัสผ่านสำหรับการเข้ารหัส ฉันจะหารหัสผ่านได้จากที่ไหน?';
-	@override String get a => 'เลือกรหัสผ่านเข้ารหัสใหม่และป้อนลงในช่องด้านบน nts\nจะสร้างคีย์เข้ารหัสของคุณจากรหัสผ่านนี้โดยอัตโนมัติ';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$th extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$th._(TranslationsTh root) : this._root = root, super.internal(root);
-
-	final TranslationsTh _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ฉันสามารถใช้รหัสผ่านเดียวกับบัญชี Nextcloud ของฉันได้หรือไม่?';
-	@override String get a => 'ใช่ แต่โปรดจำไว้ว่า หากผู้ดูแลระบบเซิร์ฟเวอร์หรือบุคคลอื่นสามารถเข้าถึงบันทึกของคุณได้ง่ายขึ้น พวกเขาก็อาจเข้าถึงบัญชี Nextcloud ของคุณได้';
 }
 
 // Path: editor.menu.boxFits

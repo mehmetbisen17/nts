@@ -6,11 +6,12 @@ import 'package:nts/components/canvas/_canvas_painter.dart';
 import 'package:nts/components/canvas/_stroke.dart';
 import 'package:nts/components/canvas/canvas_image.dart';
 import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/extensions/color_extensions.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/data/tools/select.dart';
-import 'package:nts/i18n/strings.g.dart';
 import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:sbn/canvas_background_pattern.dart';
 import 'package:sbn/quill_styles.dart';
@@ -32,6 +33,8 @@ class InnerCanvas extends StatefulWidget {
     this.onRenderObjectChange,
     required this.currentToolIsSelect,
     required this.currentScale,
+    this.textBoxCallbacks,
+    this.cardLabel,
   });
 
   final int pageIndex;
@@ -50,6 +53,12 @@ class InnerCanvas extends StatefulWidget {
   final bool currentToolIsSelect;
 
   final double currentScale;
+
+  /// Lets the text boxes be typed in and moved while [textEditing].
+  final TextBoxCallbacks? textBoxCallbacks;
+
+  /// See [CanvasPainter.cardLabel].
+  final String? cardLabel;
 
   static const defaultBackgroundColor = Color(0xFFFCFCFC);
 
@@ -94,10 +103,6 @@ class _InnerCanvasState extends State<InnerCanvas> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final invert = InnerCanvas.invertOf(context);
-    final Color backgroundColor =
-        widget.coreInfo.backgroundColor ??
-        InnerCanvas.defaultBackgroundColorOf(context);
     final lineColors = InnerCanvas.backgroundLineColorsOf(context);
 
     if (widget.coreInfo.pages.isEmpty) {
@@ -105,13 +110,26 @@ class _InnerCanvasState extends State<InnerCanvas> {
     }
 
     final page = widget.coreInfo.pages[widget.pageIndex];
+    // A whiteboard is the app's own background: dark ink shows light on
+    // it in Night (like black pages), and as it is in Paper
+    final higan = theme.extension<HiganColors>();
+    final invert = page.isBoard
+        ? (higan?.isNight ?? theme.brightness == .dark)
+        : InnerCanvas.invertOf(context);
+    final Color backgroundColor = page.isBoard
+        // (Inverted again when it's drawn)
+        ? (higan?.bg ?? InnerCanvas.defaultBackgroundColor).withInversion(
+            invert,
+          )
+        : widget.coreInfo.backgroundColor ??
+              InnerCanvas.defaultBackgroundColorOf(context);
 
     final quillEditor = widget.coreInfo.pages.isNotEmpty
         ? QuillEditor(
             controller:
                 widget.coreInfo.pages[widget.pageIndex].quill.controller,
             config: QuillEditorConfig(
-              customStyles: SaberQuillStyles.get(
+              customStyles: NtsQuillStyles.get(
                 invert: invert,
                 secondary: colorScheme.secondary,
                 lineHeight: widget.coreInfo.lineHeight,
@@ -119,9 +137,10 @@ class _InnerCanvasState extends State<InnerCanvas> {
               scrollable: false,
               autoFocus: false,
               expands: true,
-              placeholder: widget.textEditing
-                  ? t.editor.quill.typeSomething
-                  : null,
+              // Typed text is in text boxes now (see [TextBoxLayer]):
+              // this only shows text typed the old way while it's
+              // converted.
+              placeholder: null,
               showCursor: true,
               keyboardAppearance: invert ? .dark : .light,
               padding: .only(
@@ -148,7 +167,7 @@ class _InnerCanvasState extends State<InnerCanvas> {
             }
           }(),
           backgroundPattern: () {
-            if (page.backgroundImage != null) {
+            if (page.backgroundImage != null || page.isBoard) {
               return CanvasBackgroundPattern.none;
             } else {
               return widget.coreInfo.backgroundPattern;
@@ -168,12 +187,13 @@ class _InnerCanvasState extends State<InnerCanvas> {
           currentSelection: widget.currentSelection,
           primaryColor: colorScheme.primary,
           page: page,
-          showPageIndicator: widget.showPageIndicator,
+          showPageIndicator: widget.showPageIndicator && !page.isBoard,
           pageIndex: widget.pageIndex,
           totalPages: widget.coreInfo.pages.length,
           currentScale: widget.currentScale,
           defaultTextStyle: theme.textTheme.bodyMedium!,
           linkColor: theme.extension<HiganColors>()?.higan,
+          cardLabel: widget.cardLabel,
         ),
         isComplex: true,
         willChange: true,
@@ -182,7 +202,32 @@ class _InnerCanvasState extends State<InnerCanvas> {
           height: widget.height,
           child: DeferredPointerHandler(
             child: Stack(
+              // Images and ink can sit beside the page
+              clipBehavior: .none,
               children: [
+                // Cards behind what's beside the page
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: RepaintBoundary(
+                      child: CustomPaint(
+                        painter: SideCardsPainter(
+                          repaint: widget.redrawPageListenable,
+                          page: page,
+                          invert: invert,
+                          pageColor: page.backgroundImage != null
+                              ? Colors.white
+                              : backgroundColor,
+                          accent:
+                              theme.extension<HiganColors>()?.higan ??
+                              colorScheme.primary,
+                          backdrop:
+                              theme.extension<HiganColors>()?.bg ??
+                              Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 if (page.backgroundImage != null)
                   CanvasImage(
                     filePath: widget.coreInfo.filePath,
@@ -211,10 +256,7 @@ class _InnerCanvasState extends State<InnerCanvas> {
                   left: 0,
                   width: widget.width,
                   height: widget.height,
-                  child: IgnorePointer(
-                    ignoring: widget.coreInfo.readOnly || !widget.textEditing,
-                    child: quillEditor,
-                  ),
+                  child: IgnorePointer(ignoring: true, child: quillEditor),
                 ),
                 for (int i = 0; i < page.images.length; i++)
                   CanvasImage(
@@ -230,6 +272,16 @@ class _InnerCanvasState extends State<InnerCanvas> {
                         ) ??
                         false,
                   ),
+                // Typed text goes over images, under ink
+                Positioned.fill(
+                  child: TextBoxLayer(
+                    page: page,
+                    pageIndex: widget.pageIndex,
+                    editing: widget.textEditing && !widget.coreInfo.readOnly,
+                    invert: invert,
+                    callbacks: widget.textBoxCallbacks,
+                  ),
+                ),
               ],
             ),
           ),

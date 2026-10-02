@@ -207,6 +207,7 @@ class _MoveNoteDialogState extends State<_MoveNoteDialog> {
                 slivers: [
                   GridFolders(
                     isAtRoot: currentFolder == '/',
+                    path: currentFolder.substring(0, currentFolder.length - 1),
                     viewMode: .list,
                     showNavigation: true,
                     onTap: (String folder) {

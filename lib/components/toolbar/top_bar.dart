@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:nts/components/canvas/_calligraphy_stroke.dart';
 import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
 import 'package:nts/components/toolbar/color_bar.dart';
@@ -74,6 +75,7 @@ class EditorTopBar extends StatelessWidget {
       final Pen pen => pen.color,
       final Fill fill => fill.color,
       final Select select => select.getDominantStrokeColor(),
+      Tool.textEditing => TextBoxes.color ?? Colors.black,
       _ => null,
     };
     final Widget? options = switch (currentTool) {
@@ -121,6 +123,13 @@ class EditorTopBar extends StatelessWidget {
         invert: invert,
       ),
       Eraser() => const _EraserOptions(),
+      // The colour of the text box being typed in, and of new ones
+      Tool.textEditing => ColorBar(
+        axis: .horizontal,
+        setColor: setColor,
+        currentColor: TextBoxes.color ?? Colors.black,
+        invert: invert,
+      ),
       _ => null,
     };
 
@@ -239,13 +248,14 @@ class _EraserOptions extends StatelessWidget {
                   width: 120,
                   child: Semantics(
                     label: t.editor.eraserOptions.size,
+                    // Continuous (no divisions) so the thumb follows the
+                    // finger at once: a discrete slider animates each step
                     child: Slider(
                       value: size,
                       min: minSize,
                       max: maxSize,
-                      divisions: (maxSize - minSize).round(),
-                      label: size.round().toString(),
-                      onChanged: (value) => stows.eraserSize.value = value,
+                      onChanged: (value) =>
+                          stows.eraserSize.value = value.roundToDouble(),
                     ),
                   ),
                 ),

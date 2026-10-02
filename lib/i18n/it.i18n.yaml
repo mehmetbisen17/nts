@@ -10,7 +10,6 @@ home:
     settings: Impostazioni
   tooltips:
     newNote: Nuova nota
-    showUpdateDialog: Mostra finestra di aggiornamento
     exportNote: Esporta nota
   create:
     newNote: Nuova nota
@@ -95,9 +94,6 @@ settings:
     layoutSize: Dimensione del layout
     customAccentColor: Colore personalizzato
     hyperlegibleFont: Font Atkinson Hyperlegible
-    shouldCheckForUpdates: Controlla automaticamente gli aggiornamenti di nts
-    shouldAlwaysAlertForUpdates: Aggiornamenti precoci
-    allowInsecureConnections: Consenti connessioni non sicure
     editorToolbarAlignment: Posizione barra degli strumenti
     editorToolbarShowInFullscreen: Mostra la barra degli strumenti in modalità a schermo intero
     editorAutoInvert: Inverti le note in modalità scura
@@ -118,7 +114,6 @@ settings:
     sentry: Segnalazione di errori
   prefDescriptions:
     hyperlegibleFont: Migliora la leggibilità per i lettori ipovedenti
-    allowInsecureConnections: (Non consigliato) Consenti a nts di connettersi ai server con certificati autofirmati/non attendibili
     preferGreyscale: Per display e-ink
     autoClearWhiteboardOnExit: Pulisce la lavagna alla chiusura dell'app
     disableEraserAfterUse: Torna automaticamente alla penna dopo aver utilizzato la gomma
@@ -133,7 +128,6 @@ settings:
     autosave: Salvataggio automatico dopo un breve ritardo, oppure mai
     shapeRecognitionDelay: Quanto spesso aggiornare l'anteprima della forma
     autoStraightenLines: Raddrizza le linee lunghe senza dover utilizzare la penna per le forme
-    shouldAlwaysAlertForUpdates: Segnalami gli aggiornamenti non appena sono disponibili
     sentry:
       active: Attivo
       inactive: Non attivo
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Ripristinare questa impostazione?
     button: Ripristina
-  resyncEverything: Risincronizza tutto
   openDataDir: Apri cartella nts
   customDataDir:
     cancel: Annulla
     select: Seleziona
     mustBeEmpty: La cartella selezionata deve essere vuota
-    mustBeDoneSyncing: Assicurati che la sincronizzazione sia completa prima di cambiare cartella
     unsupported: Questa funzionalità è attualmente disponibile solo per gli sviluppatori. Il suo utilizzo comporterà probabilmente la perdita di dati.
   autosaveDisabled: Mai
   shapeRecognitionDisabled: Mai
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: I log contengono informazioni utili per il debug e lo sviluppo
   noLogs: Niente log qui!
   useTheApp: I log appariranno qui mentre usi l'app
-login:
-  title: Accesso
-  form:
-    agreeToPrivacyPolicy(rich): Effettuando l'accesso, accetti l'${linkToPrivacyPolicy(Informativa sulla privacy)}.
-  signup(rich): Non hai ancora un account? ${linkToSignup(Registrati ora)}!
-  notYou(rich): Non sei tu? ${undoLogin(Scegli un altro account)}.
-  status:
-    loggedOut: Disconnesso
-    tapToLogin: Tocca per accedere con Nextcloud
-    hi: Ciao, $u!
-    almostDone: Quasi pronto per la sincronizzazione, tocca per completare l'accesso
-    loggedIn: Effettuato l'accesso con Nextcloud
-  ncLoginStep:
-    whereToStoreData: "Scegli dove vuoi archiviare i tuoi dati:"
-    saberNcServer: Il server Nextcloud di nts
-    otherNcServer: Altro server Nextcloud
-    serverUrl: URL Server
-    loginWithSaber: Accedi con nts
-    loginWithNextcloud: Accedi con Nextcloud
-    loginFlow:
-      pleaseAuthorize: Autorizza nts ad accedere al tuo account Nextcloud
-      followPrompts: Seguire le istruzioni nell'interfaccia Nextcloud
-      browserDidntOpen: La pagina di accesso non si è aperta? Clicca qui
-  encLoginStep:
-    enterEncPassword: "Per proteggere i tuoi dati, inserisci la tua password di cifratura:"
-    newToSaber: Nuovo su nts? Basta inserire una nuova password di cifratura.
-    encPassword: Password di cifratura
-    encFaqTitle: Domande frequenti
-    wrongEncPassword: La decrittazione non è riuscita con la password fornita. Per favore prova a inserirla nuovamente.
-    connectionFailed: Qualcosa è andato storto durante la connessione al server. Per favore riprova più tardi.
-    encFaq:
-    - q: Cos'è una password di cifratura? Perché usare due password?
-      a: |-
-        La password Nextcloud viene utilizzata per accedere al cloud. La password di cifratura "rimescola" i tuoi dati prima che raggiungano il cloud.
-         Anche se qualcuno riesce ad accedere al tuo account Nextcloud, le tue note rimarranno al sicuro e criptate con una password separata. Ciò fornisce un secondo livello di sicurezza per proteggere i tuoi dati.
-         Nessuno può accedere alle tue note sul server senza la tua password di cifratura, ma ciò significa anche che se dimentichi la tua password di cifratura, perderai l'accesso ai tuoi dati.
-    - q: Non ho ancora impostato una password di cifratura. Come posso ottenerla?
-      a: |-
-        Scegli una nuova password di cifratura e inseriscila sopra.
-        nts genererà automaticamente le chiavi di cifratura da questa password.
-    - q: Posso utilizzare la stessa password del mio account Nextcloud?
-      a: Sì, ma tieni presente che sarebbe più semplice per l'amministratore del server o per qualcun altro accedere alle tue note se avessero accesso al tuo account Nextcloud.
-profile:
-  title: Il mio profilo
-  logout: Disconnessione
-  quotaUsage: Stai usando $used su $total ($percent%)
-  connectedTo: Collegato a
-  quickLinks:
-    serverHomepage: Homepage del server
-    deleteAccount: Elimina account
-  faqTitle: Domande frequenti
-  faq:
-  - q: Perderò le mie note se mi disconnetto?
-    a: No. Le tue note rimarranno sia sul tuo dispositivo che sul server. Non verranno sincronizzate con il server finché non effettuerai nuovamente l'accesso. Assicurati che la sincronizzazione sia completata prima di disconnetterti in modo da non perdere alcun dato (vedi l'avanzamento della sincronizzazione nella schermata home).
-  - q: Come cambio la mia password Nextcloud?
-    a: Vai al sito web del tuo server e accedi. Quindi vai in Impostazioni > Sicurezza > Cambia password. Dovrai disconnetterti e riconnetterti a nts dopo aver cambiato la tua password.
-  - q: Come cambio la mia password di cifratura?
-    a: |-
-      0. Assicurati che la sincronizzazione sia completata (vedi l'avanzamento della sincronizzazione nella schermata home).
-      1. Disconnettiti da nts. 
-      2. Vai al sito Web del tuo server ed elimina la cartella "Saber". Questo eliminerà tutte le tue note dal server.
-      3. Accedi nuovamente a nts. Puoi scegliere una nuova password di cifratura quando accedi.
-      4. Non dimenticare di disconnetterti e accedere nuovamente a nts anche sugli altri tuoi dispositivi.
-  - q: Come posso eliminare il mio account?
-    a: |-
-      Tocca il pulsante "@:profile.quickLinks.deleteAccount" in alto e, se necessario, accedi.
-      Se stai utilizzando il server nts ufficiale, il tuo account verrà eliminato dopo un periodo di tolleranza di 1 settimana. Puoi contattarmi all'indirizzo adilhanney@disroot.org durante questo periodo per annullare l'eliminazione.
-      Se stai utilizzando un server di terze parti, potrebbe non esserci un'opzione per eliminare il tuo account: dovrai consultare la politica sulla privacy del server per ulteriori informazioni.
-  quotaUsageUncapped(OUTDATED): Stai usando $used
 appInfo:
   licenseNotice: |-
     nts (modified from Saber) Copyright © 2022-$buildYear Adil Hanney
     Questo programma non ha alcuna garanzia. Questo è un software libero e sei libero di ridistribuirlo a determinate condizioni.
   debug: DEBUG
-  sponsorButton: Tocca qui per sponsorizzarmi o acquistare altro spazio di archiviazione
   licenseButton: Tocca qui per visualizzare ulteriori informazioni sulla licenza
   privacyPolicyButton: Tocca qui per visualizzare l'informativa sulla privacy
-update:
-  updateAvailable: Aggiornamento disponibile
-  updateAvailableDescription: "È disponibile una nuova versione dell'app:"
-  update: Aggiornamento
-  downloadNotAvailableYet: Il download non è ancora disponibile per la tua piattaforma. Ti invitiamo a controllare nuovamente a breve.
 editor:
   toolbar:
     toggleColors: Attiva/disattiva i colori (Ctrl C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: Adattamento immagine di sfondo
     backgroundPattern: Modello dello sfondo
     import: Importa
-    watchServer: Controlla gli aggiornamenti sul server
-    watchServerReadOnly: La modifica è disabilitata mentre si controlla il server
     boxFits:
       fill: Riempi
       cover: Copri

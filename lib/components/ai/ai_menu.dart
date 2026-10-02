@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' show RenderEditor;
 import 'package:logging/logging.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:nts/components/ai/ai_result_sheet.dart';
 import 'package:nts/components/ai/web_results_sheet.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/settings/ai_accounts.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
@@ -15,7 +15,6 @@ import 'package:nts/data/ai/ai_provider.dart';
 import 'package:nts/data/ai/ai_router.dart';
 import 'package:nts/data/editor/editor_core_info.dart';
 import 'package:nts/data/services/ai_actions.dart';
-import 'package:nts/data/services/camera.dart';
 import 'package:nts/data/services/selection_image.dart';
 import 'package:nts/data/tools/select.dart';
 import 'package:nts/i18n/strings.g.dart';
@@ -135,16 +134,25 @@ Future<void> showAiMenu(BuildContext context, EditorState editor) async {
         input: circled,
         onAddText: readOnly
             ? null
-            : (text) =>
-                  SelectionActions.addText(editor, selection.pageIndex, text),
+            : (text, side) => SelectionActions.addText(
+                editor,
+                selection.pageIndex,
+                text,
+                side: side,
+              ),
         onAddImage: readOnly
             ? null
-            : (bytes, extension) => Camera.addPhoto(
-                editor,
+            : (bytes, extension, side) => editor.addImageNear(
+                selection.pageIndex,
+                side,
+                SelectionActions.anchorOf(
+                  editor.coreInfo.pages[selection.pageIndex],
+                ),
                 bytes,
-                extension: extension,
-                pageIndex: selection.pageIndex,
+                extension,
               ),
+        // A whiteboard has no sides
+        besidePage: !editor.coreInfo.pages[selection.pageIndex].isBoard,
       );
   }
 }
@@ -164,67 +172,16 @@ Future<AiInput?> _input(
   return png == null ? null : AiInput(png: png, typedText: typedText);
 }
 
-/// The page's typed text inside the lasso: each word whose middle is in
-/// it, so lines beside the lasso aren't sent as "circled".
-/// ponytail: a caret lookup per word, fine for a page of text.
+/// The typed text inside the lasso: the text boxes at least half in it.
 String _typedTextIn(EditorState editor, SelectResult selection) {
   final page = editor.coreInfo.pages[selection.pageIndex];
-  final document = page.quill.controller.document;
-  final box = page.renderBox;
-  if (document.isEmpty() || box == null || !box.attached) return '';
-  RenderEditor? quill;
-  void find(RenderObject child) {
-    if (quill != null) return;
-    if (child is RenderEditor) {
-      quill = child;
-    } else {
-      child.visitChildren(find);
-    }
-  }
-
-  box.visitChildren(find);
-  final editorBox = quill;
-  if (editorBox == null) return '';
-  try {
-    final toPage = editorBox.getTransformTo(box);
-    // The middle of the line at a caret position, on the page
-    Offset caret(int offset, TextAffinity affinity) {
-      final position = TextPosition(offset: offset, affinity: affinity);
-      final bottom = editorBox
-          .getEndpointsForSelection(TextSelection.fromPosition(position))
-          .first
-          .point;
-      return MatrixUtils.transformPoint(
-        toPage,
-        bottom.translate(0, -editorBox.preferredLineHeight(position) / 2),
-      );
-    }
-
-    final text = document.toPlainText();
-    final circled = StringBuffer();
-    var last = -1;
-    for (final word in RegExp(r'\S+').allMatches(text)) {
-      final start = caret(word.start, .downstream);
-      final end = caret(word.end, .upstream);
-      // A word split over two lines counts by its start
-      final middle = (end.dy - start.dy).abs() < 1
-          ? Offset((start.dx + end.dx) / 2, start.dy)
-          : start;
-      if (!selection.path.contains(middle)) continue;
-      if (last >= 0) {
-        circled.write(
-          text.substring(last, word.start).contains('\n') ? '\n' : ' ',
-        );
-      }
-      circled.write(word[0]);
-      last = word.end;
-    }
-    return circled.toString();
-  } on Object catch (e) {
-    // Only extra; the picture can have the text too
-    AiActions.log.info('No typed text for the AI: $e');
-    return '';
-  }
+  return [
+    for (final box in page.textBoxes)
+      if (box.text.trim().isNotEmpty &&
+          Select.rectPercentInside(selection.path, TextBoxes.boundsOf(box)) >=
+              0.5)
+        box.text.trim(),
+  ].join('\n');
 }
 
 /// The selection's bounds on screen, or the lasso's if nothing's selected.

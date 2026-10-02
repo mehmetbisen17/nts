@@ -234,7 +234,7 @@ abstract final class HiganText {
     double tracking = 0.14,
   }) => TextStyle(
     fontFamily: mono,
-    fontFamilyFallback: saberMonoFontFallbacks,
+    fontFamilyFallback: ntsMonoFontFallbacks,
     fontSize: size,
     fontWeight: .w400,
     letterSpacing: tracking * size,

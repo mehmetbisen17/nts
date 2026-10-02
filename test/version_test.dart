@@ -4,9 +4,7 @@ library;
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nts/components/settings/update_manager.dart';
-import 'package:nts/data/locales.dart';
-import 'package:nts/data/saber_version.dart';
+import 'package:nts/data/nts_version.dart';
 import 'package:nts/data/version.dart';
 
 const dummyChangelog = 'Release_notes_will_be_added_here';
@@ -37,16 +35,7 @@ void main() {
   });
 
   test('Check for dummy text in changelogs', () async {
-    final androidMetadata = File('metadata/en-US/changelogs/$buildNumber.txt');
-    expect(androidMetadata.existsSync(), true);
-    final androidMetadataContents = await androidMetadata.readAsString();
-    expect(
-      androidMetadataContents,
-      isNot(contains(dummyChangelog)),
-      reason: 'Dummy text found in Android changelog',
-    );
-
-    final flatpakMetadata = File('flatpak/com.adilhanney.saber.metainfo.xml');
+    final flatpakMetadata = File('flatpak/com.mehmetbisen.nts.metainfo.xml');
     expect(flatpakMetadata.existsSync(), true);
     final flatpakMetadataContents = await flatpakMetadata.readAsString();
     expect(
@@ -57,7 +46,7 @@ void main() {
   });
 
   test('Check that metainfo <release> tags are in the right place', () async {
-    final flatpakMetadata = File('flatpak/com.adilhanney.saber.metainfo.xml');
+    final flatpakMetadata = File('flatpak/com.mehmetbisen.nts.metainfo.xml');
     expect(flatpakMetadata.existsSync(), true);
     final flatpakMetadataContents = await flatpakMetadata.readAsString();
 
@@ -82,8 +71,8 @@ void main() {
   });
 
   test('Test that buildNumber parses to buildName', () {
-    final fromNumber = SaberVersion.fromNumber(buildNumber);
-    final fromName = SaberVersion.fromName(buildName);
+    final fromNumber = NtsVersion.fromNumber(buildNumber);
+    final fromName = NtsVersion.fromName(buildName);
 
     expect(
       fromNumber.buildNumberWithoutRevision,
@@ -93,39 +82,9 @@ void main() {
     expect(fromNumber.buildName, fromName.buildName);
   });
 
-  test('Test that changelog can be downloaded from GitHub', () async {
-    final changelog = await UpdateManager.getChangelog(
-      newestVersion: buildNumber,
-    );
-    expect(
-      changelog,
-      isNotNull,
-      reason: 'Changelog can\'t be found on GitHub. Please ignore this test if you haven\'t pushed the latest version yet.',
-    );
-    expect(changelog, isNotEmpty);
-    expect(
-      changelog,
-      isNot(contains(dummyChangelog)),
-      reason: 'Dummy text found in changelog downloaded from GitHub',
-    );
-  });
-
-  test('Test that changelog has been translated', () {
-    for (final localeCode in localeNames.keys) {
-      if (localeCode == 'en') continue;
-
-      final file = File('metadata/$localeCode/changelogs/$buildNumber.txt');
-      expect(
-        file.existsSync(),
-        true,
-        reason: 'Changelog for $localeCode does not exist',
-      );
-    }
-  });
-
-  group('SaberVersion class', () {
+  group('NtsVersion class', () {
     test('getters', () {
-      final version = SaberVersion.fromNumber(127018);
+      final version = NtsVersion.fromNumber(127018);
       expect(version.buildName, '1.27.1');
       expect(version.buildNameWithCommas, '1,27,1');
       expect(version.buildNumber, 127018);
@@ -133,35 +92,35 @@ void main() {
       expect(version.copyWith(revision: 5).buildNumber, 127015);
     });
     test('Equality', () {
-      final version = SaberVersion.fromNumber(127018);
+      final version = NtsVersion.fromNumber(127018);
 
-      final sameVersion = SaberVersion.fromNumber(127018);
+      final sameVersion = NtsVersion.fromNumber(127018);
       expect(version == sameVersion, true);
-      final sameVersionRevised = SaberVersion.fromNumber(127019);
+      final sameVersionRevised = NtsVersion.fromNumber(127019);
       expect(version == sameVersionRevised, true);
 
-      final previousVersion = SaberVersion.fromNumber(127000);
+      final previousVersion = NtsVersion.fromNumber(127000);
       expect(version == previousVersion, false);
-      final nextVersion = SaberVersion.fromNumber(127020);
+      final nextVersion = NtsVersion.fromNumber(127020);
       expect(version == nextVersion, false);
     });
     test('Object overrides', () {
-      final version = SaberVersion.fromNumber(127018);
+      final version = NtsVersion.fromNumber(127018);
       expect(version.toString(), '1.27.1');
       expect(version.hashCode, Object.hash(1, 27, 1));
     });
     test('bumpMajor', () {
-      final version = SaberVersion.fromNumber(127018);
+      final version = NtsVersion.fromNumber(127018);
       final bumped = version.bumpMajor();
       expect(bumped.buildName, '2.0.0');
     });
     test('bumpMinor', () {
-      final version = SaberVersion.fromNumber(127018);
+      final version = NtsVersion.fromNumber(127018);
       final bumped = version.bumpMinor();
       expect(bumped.buildName, '1.28.0');
     });
     test('bumpPatch', () {
-      final version = SaberVersion.fromNumber(127018);
+      final version = NtsVersion.fromNumber(127018);
       final bumped = version.bumpPatch();
       expect(bumped.buildName, '1.27.2');
     });

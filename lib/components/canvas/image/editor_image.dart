@@ -252,7 +252,6 @@ sealed class EditorImage extends ChangeNotifier {
   EditorImage copy();
 
   /// Resizes [before] to fit inside [max] while maintaining aspect ratio
-  @visibleForTesting
   static Size resize(Size before, Size max) {
     double width = before.width,
         height = before.height,

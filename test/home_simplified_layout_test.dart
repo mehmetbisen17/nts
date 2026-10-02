@@ -8,7 +8,7 @@ import 'package:nts/data/sentry/_sentry_init_foss.dart';
 import 'package:nts/i18n/strings.g.dart';
 import 'package:nts/pages/home/home.dart';
 
-import 'screenshot_goldens_test.dart';
+import 'utils/demo_files.dart';
 import 'utils/test_mock_channel_handlers.dart';
 
 void main() {
@@ -32,7 +32,7 @@ void main() {
 
       final widget = ScreenshotApp.withConditionalTitlebar(
         device: device,
-        title: 'Saber',
+        title: 'nts',
         home: TranslationProvider(
           child: const HomePage(subpage: HomePage.recentSubpage, path: ''),
         ),

@@ -10,7 +10,6 @@ home:
     settings: 設定
   tooltips:
     newNote: 新しいメモ
-    showUpdateDialog: 更新ダイアログの表示
     exportNote: メモを書き出す
   create:
     newNote: 新しいノート
@@ -95,9 +94,6 @@ settings:
     layoutSize: レイアウトの種類
     customAccentColor: オリジナルの色
     hyperlegibleFont: Hyperlegible フォント
-    shouldCheckForUpdates: ntsの更新を自動的に確認する
-    shouldAlwaysAlertForUpdates: より速いアップデート
-    allowInsecureConnections: 安全でない接続を許可する
     editorToolbarAlignment: 編集ツールバーの位置調整
     editorToolbarShowInFullscreen: フルスクリーンモードで編集ツールバーを表示する
     editorAutoInvert: ダークモードでメモを反転
@@ -118,7 +114,6 @@ settings:
     hideFingerDrawingToggle(OUTDATED): 指の描画トグルを非表示にする
   prefDescriptions:
     hyperlegibleFont: Atkinson Hyperlegibleは、弱視読者の読みやすさを向上させます。
-    allowInsecureConnections: (非推奨) nts が自己署名/信頼できない証明書を持つサーバーに接続できるようにする
     preferGreyscale: e-inkディスプレイ用
     autoClearWhiteboardOnExit: 他のデバイスと同期されます
     disableEraserAfterUse: 消しゴムの使用後、自動的にペンに戻す
@@ -132,7 +127,6 @@ settings:
     autosave: 短い遅延のあとに自動保存するか
     shapeRecognitionDelay: 形のプレビューを更新する頻度
     autoStraightenLines: シェイプペンを使わずに長い線真っすぐにする
-    shouldAlwaysAlertForUpdates: 更新が利用可能になったらすぐに教えてください
     sentry:
       active: 有効
       inactive: 無効
@@ -158,13 +152,11 @@ settings:
   reset:
     title: この設定をリセットしますか？
     button: リセット
-  resyncEverything: すべてを同期する
   openDataDir: nts フォルダーを開く
   customDataDir:
     cancel: 取消
     select: 選択
     mustBeEmpty: 選択するフォルダは空でなければなりません
-    mustBeDoneSyncing: フォルダを変更する前に、同期が完了していることを確認してください
     unsupported: この機能は現在、開発者向けです。 これにより、データが失われる可能性があります.
   autosaveDisabled(OUTDATED): 一度もない
   shapeRecognitionDisabled(OUTDATED): 一度もない
@@ -174,79 +166,13 @@ logs:
   debuggingInfo: ログにはデバッグや開発に役立つ情報が含まれています
   noLogs: ログはありません！
   useTheApp: ログはアプリを使うと表示されます
-login:
-  title: ログイン
-  form:
-    agreeToPrivacyPolicy(rich): ログインすることにより、${linkToPrivacyPolicy(プライベートポリシー)}に同意したものとみなされます。
-  signup(rich): まだアカウントをお持ちでないですか？ ${linkToSignup(今すぐ登録)}!
-  notYou(rich): お問い合わせ ${undoLogin(別のアカウントを選択)}.
-  status:
-    loggedOut: ログアウト
-    tapToLogin: タップしてNextcloudにログイン
-    hi: こんにちは、$u!
-    almostDone: 同期の準備がほぼ完了しました。タップしてログインを完了してください。
-    loggedIn: Nextcloudでログイン
-  ncLoginStep:
-    whereToStoreData: "データを保存する場所を選択してください:"
-    saberNcServer: nts の Nextcloud サーバー
-    otherNcServer: その他のNextcloudサーバー
-    serverUrl: サーバーのURL
-    loginWithSaber: nts にログイン
-    loginWithNextcloud: Nextcloudでログイン
-    loginFlow:
-      pleaseAuthorize: nts に登録して、あなたのNextcloudアカウントにアクセスしてください
-      followPrompts: Nextcloud のプロンプトに従ってください
-      browserDidntOpen: ログインページが開かなかった場合はここをクリック
-  encLoginStep:
-    enterEncPassword: "データを保護するために、暗号化パスワードを入力してください:"
-    newToSaber: nts は初めてですか？新しい暗号化パスワードを入力するだけです。
-    encPassword: 暗号化パスワード
-    encFaqTitle: よくある質問
-    wrongEncPassword: 入力されたパスワードでは、復号に失敗しました。 もう一度入力してください。
-    connectionFailed: サーバ接続時に問題が発生しました。後でもう一度お試しください.
-    encFaq:
-    - q: 暗号化パスワードとは何ですか？なぜ2つのパスワードを使用するのですか？
-    - q: 暗号化パスワードは未設定です。 どこで設定できますか？
-      a: |-
-        両方に新しい暗号化パスワードを入力してください。
-        nts は自動で新しい暗号化キーを生成します。
-    - q: Nextcloud アカウントと同じパスワードを使うことはできますか?
-profile:
-  title: プロフィール
-  logout: ログアウト
-  quotaUsage: $total のうち、 $used ($percent%) を使用しています。
-  connectedTo: 接続する
-  quickLinks:
-    serverHomepage: サーバーホームページ
-    deleteAccount: アカウントの削除
-  faqTitle: よくある質問
-  faq:
-  - q: ログアウトするとメモが消えてしまいますか？
-    a: いいえ。メモはデバイスとサーバーの両方に残ります。ログインし直すまで、サーバーとは同期されません。データを失わないように、ログアウトする前に同期が完了したことを確認してください（ホーム画面の同期進行状況をご覧ください）。
-  - q: Nextcloudのパスワードを変更する方法を教えてください
-    a: サーバーのウェブサイトにアクセスし、ログインします。「設定」>「セキュリティ」>「パスワードの変更」を選択します。パスワード変更後は、ntsからログアウトし、再度ログインする必要があります。
-  - q: 暗号化パスワードの変更方法を教えてください。
-    a: |-
-      1. ntsからログアウトする。データが失われないように、ログアウトする前に同期が完了していることを確認してください（ホーム画面で同期の進行状況を確認できます）。
-      2. サーバーのウェブサイトにアクセスし、「Saber」フォルダを削除してください。これにより、サーバーからすべてのメモが削除されます。
-      3. ntsに再ログインする。ログイン時に新しい暗号化パスワードを選択できます。
-      4. 他のデバイスでもログアウトしてログインし直すことをお忘れなく。
-  - q: アカウントを削除するにはどうすればよいですか？
-    a: "上部の\"@:profile.quickLinks.deleteAccount\"ボタンをタップし、必要であればログインしてください。nts公式サーバーを利用している場合、1週間の猶予期間の後にアカウントが削除されます。この期間中であれば、adilhanney@disroot.orgまでご連絡いただければ、削除を取り消すことが可能です。サードパーティのサーバーをご利用の場合、アカウントを削除するオプションがない場合があります。詳細については、ご利用のサーバープライバシーポリシーをご確認ください。"
-  quotaUsageUncapped(OUTDATED): $used を使用しています
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     このプログラムには一切の保証がありません。これはフリーソフトウェアであり、一定の条件下で再配布することを歓迎します。
   debug: デバッグ
-  sponsorButton: 私のスポンサーになる、またはストレージを購入する際は、ここをタップしてください。
   licenseButton: ライセンス情報を見るには、ここをタップして
   privacyPolicyButton: プライバシーポリシーを見るには、ここをタップして
-update:
-  updateAvailable: 更新が可能です
-  updateAvailableDescription: 新バージョンのアプリがリリースされ、以下の変更があった：
-  update: 更新
-  downloadNotAvailableYet(OUTDATED): お使いのプラットフォームではまだダウンロードできません。しばらくしてからもう一度ご確認ください。
 editor:
   toolbar:
     toggleColors: 色の切り替え (Ctrl C)
@@ -318,8 +244,6 @@ editor:
     lineThicknessDescription: 背景の線の太さ
     backgroundPattern: 背景パターン
     import: インポート
-    watchServer: サーバのアップデートを見る
-    watchServerReadOnly: サーバーに接続できないときは、編集できません
     boxFits:
       fill: 貼る
       cover: カバー

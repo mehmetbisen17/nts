@@ -1,3 +1,4 @@
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/pages/home/home.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
 
@@ -12,6 +13,13 @@ abstract class RoutePaths {
   static String editFilePath(String filePath) {
     return '$edit?path=${Uri.encodeQueryComponent(filePath)}';
   }
+
+  /// A new note of [type] at [filePath] (or, if null, a new file at
+  /// the root).
+  static String editNew(String? filePath, NoteType type) => Uri(
+    path: edit,
+    queryParameters: {'path': ?filePath, 'type': type.id},
+  ).toString();
 
   static String editImportPdf(String filePath, String pdfPath) {
     return '$edit'

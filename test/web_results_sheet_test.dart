@@ -87,14 +87,8 @@ void main() {
     ));
     expect(find.text('Photosynthesis: light reactions'), findsOneWidget);
     expect(find.text('KHAN ACADEMY · YOUTUBE.COM'), findsOneWidget);
-    expect(
-      find.text(
-        t.ai
-            .foundBy(provider: 'Google', model: 'Gemini 2.5 Flash')
-            .toUpperCase(),
-      ),
-      findsOneWidget,
-    );
+    // Google's video list is YouTube's own search, not the model's
+    expect(find.text(t.ai.web.foundWithYouTube.toUpperCase()), findsOneWidget);
     await tester.tap(find.text('The Calvin cycle'));
     await tester.pump();
     expect(launched, [videos[1].url]);

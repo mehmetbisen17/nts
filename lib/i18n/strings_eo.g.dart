@@ -39,10 +39,7 @@ class TranslationsEo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$eo sentry = _Translations$sentry$eo._(_root);
 	@override late final _Translations$settings$eo settings = _Translations$settings$eo._(_root);
 	@override late final _Translations$logs$eo logs = _Translations$logs$eo._(_root);
-	@override late final _Translations$login$eo login = _Translations$login$eo._(_root);
-	@override late final _Translations$profile$eo profile = _Translations$profile$eo._(_root);
 	@override late final _Translations$appInfo$eo appInfo = _Translations$appInfo$eo._(_root);
-	@override late final _Translations$update$eo update = _Translations$update$eo._(_root);
 	@override late final _Translations$editor$eo editor = _Translations$editor$eo._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$eo extends Translations$settings$en {
 		'Maldekstre',
 	];
 	@override late final _Translations$settings$reset$eo reset = _Translations$settings$reset$eo._(_root);
-	@override String get resyncEverything => 'Resinkronigu ĉion';
 	@override String get openDataDir => 'Malfermu nts-dosierujon';
 	@override late final _Translations$settings$customDataDir$eo customDataDir = _Translations$settings$customDataDir$eo._(_root);
 	@override String get autosaveDisabled => 'Neniam';
@@ -134,52 +130,6 @@ class _Translations$logs$eo extends Translations$logs$en {
 	@override String get useTheApp => 'Logs will appear here as you use the app';
 }
 
-// Path: login
-class _Translations$login$eo extends Translations$login$en {
-	_Translations$login$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Ensaluto';
-	@override late final _Translations$login$form$eo form = _Translations$login$form$eo._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Ĉu vi ankoraŭ ne havas konton? '),
-		linkToSignup('Sign up now'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Ne vi? '),
-		undoLogin('Choose another account'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$eo status = _Translations$login$status$eo._(_root);
-	@override late final _Translations$login$ncLoginStep$eo ncLoginStep = _Translations$login$ncLoginStep$eo._(_root);
-	@override late final _Translations$login$encLoginStep$eo encLoginStep = _Translations$login$encLoginStep$eo._(_root);
-}
-
-// Path: profile
-class _Translations$profile$eo extends Translations$profile$en {
-	_Translations$profile$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Mia profilo';
-	@override String get logout => 'Elsalutu';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Vi uzas ${used} el ${total} (${percent}%)';
-	@override String get connectedTo => 'Konektita al';
-	@override late final _Translations$profile$quickLinks$eo quickLinks = _Translations$profile$quickLinks$eo._(_root);
-	@override String get faqTitle => 'Oftaj demandoj';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$eo._(_root),
-		_Translations$profile$faq$1$eo._(_root),
-		_Translations$profile$faq$2$eo._(_root),
-		_Translations$profile$faq$3$eo._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'Vi uzas ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$eo extends Translations$appInfo$en {
 	_Translations$appInfo$eo._(TranslationsEo root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$eo extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'Kopirajto de nts (modified from Saber) © 2022-${buildYear} Adil Hanney\nĈi tiu programo havas neniun garantion. Ĉi tio estas senpaga programaro, kaj vi bonvenas redistribui ĝin kun certaj kondiĉoj.';
 	@override String get debug => 'SENERARIGADO';
-	@override String get sponsorButton => 'Frapu ĉi tie por sponsori min aŭ aĉeti pli da memorospaco';
 	@override String get licenseButton => 'Frapu ĉi tie por vidi pli da informoj pri la licenco';
 	@override String get privacyPolicyButton => 'Frapu ĉi tie por vidi la privatecopolitikon';
-}
-
-// Path: update
-class _Translations$update$eo extends Translations$update$en {
-	_Translations$update$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Ĝisdatigo disponebla';
-	@override String get updateAvailableDescription => 'Nova versio de la aplikaĵo disponeblas:';
-	@override String get update => 'Ĝisdatigo';
-	@override String get downloadNotAvailableYet => 'La elŝuto ankoraŭ ne disponeblas por via platformo. Bonvolu rekontroli baldaŭ.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$eo extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Nova noto';
-	@override String get showUpdateDialog => 'Montru ĝisdatiga dialogo';
 	@override String get exportNote => 'Eksportu noton';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$eo extends Translations$settings$prefLab
 	@override String get layoutSize => 'Aranĝo';
 	@override String get customAccentColor => 'Kutima akcentokoloro';
 	@override String get hyperlegibleFont => 'Superlegebla tiparo';
-	@override String get shouldCheckForUpdates => 'Kontrolu por ĝisdatigoj';
-	@override String get shouldAlwaysAlertForUpdates => 'Pli rapidaj ĝisdatigoj';
-	@override String get allowInsecureConnections => 'Permesu nesekurajn konektojn';
 	@override String get editorToolbarAlignment => 'Pozicio de ilobreto';
 	@override String get editorToolbarShowInFullscreen => 'Montru ilobreton en plenekranreĝimo';
 	@override String get editorAutoInvert => 'Inversigu notojn en malhelreĝimo';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$eo extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Pliigas legeblecon por uzantoj kun malalta vidkapablo';
-	@override String get allowInsecureConnections => '(Nerekomendita) Permesu al nts konektiĝi al serviloj kun mem-subskribitaj/nefidindaj atestiloj';
 	@override String get preferGreyscale => 'Por ekranoj de bitlegiloj';
 	@override String get autoClearWhiteboardOnExit => 'Malplenigas la tabulon post kiam vi foriras la aplikaĵon';
 	@override String get disableEraserAfterUse => 'Aŭtomate ŝanĝas reen al la plumo post uzi la forviŝilon';
@@ -452,7 +383,6 @@ class _Translations$settings$prefDescriptions$eo extends Translations$settings$p
 	@override String get autosave => 'Aŭtomate konservas post iom da tempo aŭ neniam';
 	@override String get shapeRecognitionDelay => 'Ofteco de ĝisdatigo de la formantaŭrigardo';
 	@override String get autoStraightenLines => 'Rektigas longajn liniojn sen uzado de la formskribilon';
-	@override String get shouldAlwaysAlertForUpdates => 'Informu min pri ĝisdatigoj tuj kiam ili disponebliĝos';
 	@override late final _Translations$settings$prefDescriptions$sentry$eo sentry = _Translations$settings$prefDescriptions$sentry$eo._(_root);
 	@override String get autoDisableFingerDrawingWhenStylusDetected => 'Malŝaltu fingrodesegnadon kiam grifelo estas detektita';
 }
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$eo extends Translations$settings$cust
 	@override String get cancel => 'Nuligu';
 	@override String get select => 'Elektu';
 	@override String get mustBeEmpty => 'La elektita dosierujo estu malplena';
-	@override String get mustBeDoneSyncing => 'Certigu, ĉu la sinkronigado kompletas antaŭ ŝanĝi dosierujon';
 	@override String get unsupported => 'Ĉi tiu funkcio nuntempe estas nur por programistoj. Uzado verŝajne rezultigos datumperdon';
-}
-
-// Path: login.form
-class _Translations$login$form$eo extends Translations$login$form$en {
-	_Translations$login$form$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Ensalutante, vi konsentas pri la '),
-		linkToPrivacyPolicy('Privacy Policy'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$eo extends Translations$login$status$en {
-	_Translations$login$status$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Elsalutita';
-	@override String get tapToLogin => 'Frapetu por ensaluti per Nextcloud-konto';
-	@override String hi({required Object u}) => 'Saluton, ${u}!';
-	@override String get almostDone => 'Preskaŭpreta por sinkronigado, frapetu por fini ensaluton';
-	@override String get loggedIn => 'Ensalutita per NextCloud-konto';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$eo extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Elektu kie vi volas konservi viajn datumojn:';
-	@override String get saberNcServer => 'Nextcloud-servilo de nts';
-	@override String get otherNcServer => 'Aliaj Nextcloud-serviloj';
-	@override String get serverUrl => 'Retadreso de servilo';
-	@override String get loginWithSaber => 'Ensalutu per nts-konto';
-	@override String get loginWithNextcloud => 'Ensalutu per Nextcloud-konto';
-	@override late final _Translations$login$ncLoginStep$loginFlow$eo loginFlow = _Translations$login$ncLoginStep$loginFlow$eo._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$eo extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'To protect your data, please enter your encryption password:';
-	@override String get newToSaber => 'Ĉu vi estas nova uzanto? Nur eniru novan ĉifradopasvorton';
-	@override String get encPassword => 'Ĉifradopasvorto';
-	@override String get encFaqTitle => 'Oftaj demandoj';
-	@override String get wrongEncPassword => 'Malĉifrado per enigita pasvorto malsukcesis. Bonvolu enigi ĝin denove';
-	@override String get connectionFailed => 'Konektado al la servilo fiaskis. Bonvolu provi denove poste.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$eo._(_root),
-		_Translations$login$encLoginStep$encFaq$1$eo._(_root),
-		_Translations$login$encLoginStep$encFaq$2$eo._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$eo extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Hejmpaĝo de la servilo';
-	@override String get deleteAccount => 'Forigu konton';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$eo extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ĉu mi perdos miajn notojn se mi elsalutas?';
-	@override String get a => 'Ne. Viaj notoj restos kaj sur via aparato kaj sur la servilo. Ili ne estos sinkronigataj kun la servilo ĝis vi reensalutos. Certigu, ke la sinkronigado estas kompleta antaŭ ol elsaluti, por ke vi ne perdu iujn ajn datumojn (vidu la sinkronigan progreson sur la ĉefekrano).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$eo extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kiel mi ŝanĝas mian Nextcloud-pasvorton?';
-	@override String get a => 'Iru al la retejo de via servilo kaj ensalutu. Poste iru al Agordoj > Sekureco > Ŝanĝu pasvorton. Elsalutu kaj reensalutu al nts post via pasvortoŝanĝo.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$eo extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kiel mi ŝanĝas mian ĉifradopasvorton?';
-	@override String get a => '0. Certigu, ke la sinkronigado estas kompleta (vidu la sinkronigan progreson sur la ĉefekrano).\n1. Elsalutu el nts.\n2. Iru al la retejo de via servilo kaj forigu vian Saber-dosierujon. Ĉi tio forigos ĉiujn viajn notojn de la servilo.\n3. Reensalutu al nts. Vi povas elekti novan ĉifradopasvorton dum ensalutado.\n4. Ne forgesu elsaluti kaj reensaluti al nts ankaŭ per viaj aliaj aparatoj.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$eo extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kiel mi povas forigi mian konton?';
-	@override String get a => 'Frapetu la butonon "${_root.profile.quickLinks.deleteAccount}" supre, kaj ensalutu se necese.\nSe vi uzas la oficialan nts-servilon, via konto estos forigita post 1-semajna indulgoperiodo. Vi povas kontakti min ĉe adilhanney@disroot.org dum ĉi tiu periodo por nuligi la forigon.\nSe vi uzas eksteran servilon, eble ne estos eblo forigi vian konton: vi devos konsulti la privatecopolitikon de la servilo por pliaj informoj.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$eo extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Fonbildĝustigo';
 	@override String get backgroundPattern => 'Fonŝablono';
 	@override String get import => 'Enportu';
-	@override String get watchServer => 'Kontrolu ĝisdatigojn ĉe la servilo';
-	@override String get watchServerReadOnly => 'Redaktado estas malŝaltita dum spektado de la servilo';
 	@override late final _Translations$editor$menu$boxFits$eo boxFits = _Translations$editor$menu$boxFits$eo._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$eo bgPatterns = _Translations$editor$menu$bgPatterns$eo._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$eo extends Translations$set
 	@override String get inactive => 'Malaktiva';
 	@override String get activeUntilRestart => 'Aktiva ĝis vi rekomencas la aplikaĵon';
 	@override String get inactiveUntilRestart => 'Neaktiva ĝis vi rekomencas la aplikaĵon';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$eo extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Bonvolu rajtigi nts por aliri vian NextCloud-konton';
-	@override String get followPrompts => 'Bonvolu sekvi la instrukciojn en la Nextcloud-interfaco';
-	@override String get browserDidntOpen => 'Ensalutpaĝo ne malfermiĝis? Alklaku ĉi tie';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$eo extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Kio estas ĉifradopasvorto? Kial uzi du pasvortojn?';
-	@override String get a => 'La pasvorto de Nextcloud estas uzata por aliri la nubon. La ĉifradopasvorto "miksas" vian datumon antaŭ ol ili iam ajn atingas la nubon. \nEĉ se iu akiras aliron al via Nextcloud-konto, viaj notoj restos sekuraj kaj ĉifritaj per aparta pasvorto. Ĉi tio provizas al vi duan tavolon de sekureco por protekti vian datumon. \nNeniu povas vidi viajn notojn sur la servilo sen via ĉifradopasvorto, sed ĉi tio ankaŭ signifas, ke se vi forgesas vian ĉifrandopasvorton, vi perdos aliron al viaj datumoj.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$eo extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Mi ankoraŭ ne agordis ĉifradopasvorton. Kie mi agordis ĝin?';
-	@override String get a => 'Elektu novan ĉifradopasvorton kaj enigu ĝin supre.\nnts aŭtomate generos viajn ĉifradoŝlosilojn el ĉi tiu pasvorto.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$eo extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$eo._(TranslationsEo root) : this._root = root, super.internal(root);
-
-	final TranslationsEo _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ĉu mi povas uzi la saman pasvorton por mia Nextcloud-konto?';
-	@override String get a => 'Jes, sed memoru, ke estus pli facile por la servilestro aŭ iu alia aliri viajn notojn se ili akiras aliron al via Nextcloud-konto.';
 }
 
 // Path: editor.menu.boxFits

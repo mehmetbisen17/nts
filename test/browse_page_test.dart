@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
-import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/components/theming/nts_theme.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/flavor_config.dart';
 import 'package:nts/pages/home/browse.dart';
@@ -66,8 +66,8 @@ class _BrowseApp extends StatelessWidget {
     BrowsePage.overrideChildren = children;
     return ScreenshotApp.withConditionalTitlebar(
       device: GoldenSmallDevices.androidPhone.device,
-      title: 'Saber',
-      theme: SaberTheme.createThemeFromSeed(Colors.yellow, .light, .android),
+      title: 'nts',
+      theme: NtsTheme.createThemeFromSeed(Colors.yellow, .light, .android),
       home: BrowsePage(path: path),
     );
   }

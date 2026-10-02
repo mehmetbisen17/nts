@@ -8,7 +8,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nts/components/canvas/canvas_image_dialog.dart';
 import 'package:nts/components/canvas/image/editor_image.dart';
 import 'package:nts/components/canvas/inner_canvas.dart';
+import 'package:nts/components/canvas/side_hit_region.dart';
 import 'package:nts/components/theming/adaptive_alert_dialog.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/extensions/change_notifier_extensions.dart';
 import 'package:nts/i18n/strings.g.dart';
 
@@ -101,6 +103,51 @@ class _CanvasImageState extends State<CanvasImage> {
   Rect panStartRect = .zero;
   Offset panStartPosition = .zero;
 
+  /// Moving it by pressing and holding, and where the finger was last.
+  var _pressDragging = false;
+  var _pressLast = Offset.zero;
+
+  /// Moves it by [delta], on the page or into the space beside it.
+  void _moveBy(Offset delta) => setState(() {
+    final fivePercent = min(
+      widget.pageSize.width * 0.05,
+      widget.pageSize.height * 0.05,
+    );
+    final side = EditorPage.sideWidthOf(widget.pageSize);
+    final rect = widget.image.dstRect;
+    widget.image.dstRect = .fromLTWH(
+      (rect.left + delta.dx)
+          .clamp(
+            fivePercent - side - rect.width,
+            widget.pageSize.width + side - fivePercent,
+          )
+          .toDouble(),
+      (rect.top + delta.dy)
+          .clamp(
+            fivePercent - rect.height,
+            widget.pageSize.height - fivePercent,
+          )
+          .toDouble(),
+      rect.width,
+      rect.height,
+    );
+  });
+
+  /// Records a move (for undo) once it's done.
+  void _endMove() {
+    if (panStartRect == widget.image.dstRect) return;
+    widget.image.onMoveImage?.call(
+      widget.image,
+      .fromLTRB(
+        widget.image.dstRect.left - panStartRect.left,
+        widget.image.dstRect.top - panStartRect.top,
+        widget.image.dstRect.right - panStartRect.right,
+        widget.image.dstRect.bottom - panStartRect.bottom,
+      ),
+    );
+    panStartRect = .zero;
+  }
+
   @override
   void initState() {
     widget.image.loadIn();
@@ -131,111 +178,104 @@ class _CanvasImageState extends State<CanvasImage> {
         ? .dark
         : .light;
 
-    final Widget unpositioned = IgnorePointer(
-      ignoring: widget.readOnly,
-      child: Focus(
-        focusNode: _focusNode,
-        onKeyEvent: _onKey,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            MouseRegion(
-              cursor: active ? SystemMouseCursors.grab : MouseCursor.defer,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  // Control-click is a right-click on a Mac
-                  if (defaultTargetPlatform == .macOS &&
-                      HardwareKeyboard.instance.isControlPressed) {
+    final Widget unpositioned = SideHittable(
+      child: IgnorePointer(
+        ignoring: widget.readOnly,
+        child: Focus(
+          focusNode: _focusNode,
+          onKeyEvent: _onKey,
+          child: Stack(
+            fit: StackFit.expand,
+            // The handles stick out past its corners
+            clipBehavior: .none,
+            children: [
+              MouseRegion(
+                cursor: active ? SystemMouseCursors.grab : MouseCursor.defer,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    // Control-click is a right-click on a Mac
+                    if (defaultTargetPlatform == .macOS &&
+                        HardwareKeyboard.instance.isControlPressed) {
+                      active = true;
+                      return showModal();
+                    }
+                    active = !active;
+                  },
+                  // Its menu, once it's selected
+                  onLongPress: active && !_pressDragging ? showModal : null,
+                  // Like a right-click in Finder: select it, then its menu
+                  onSecondaryTap: () {
                     active = true;
-                    return showModal();
-                  }
-                  active = !active;
-                },
-                onLongPress: active ? showModal : null,
-                // Like a right-click in Finder: select it, then its menu
-                onSecondaryTap: () {
-                  active = true;
-                  showModal();
-                },
-                onPanStart: active
-                    ? (details) {
-                        panStartRect = widget.image.dstRect;
-                      }
-                    : null,
-                onPanUpdate: active
-                    ? (details) {
-                        setState(() {
-                          final fivePercent = min(
-                            widget.pageSize.width * 0.05,
-                            widget.pageSize.height * 0.05,
-                          );
-                          widget.image.dstRect = .fromLTWH(
-                            (widget.image.dstRect.left + details.delta.dx)
-                                .clamp(
-                                  fivePercent - widget.image.dstRect.width,
-                                  widget.pageSize.width - fivePercent,
-                                )
-                                .toDouble(),
-                            (widget.image.dstRect.top + details.delta.dy)
-                                .clamp(
-                                  fivePercent - widget.image.dstRect.height,
-                                  widget.pageSize.height - fivePercent,
-                                )
-                                .toDouble(),
-                            widget.image.dstRect.width,
-                            widget.image.dstRect.height,
-                          );
-                        });
-                      }
-                    : null,
-                onPanEnd: active
-                    ? (details) {
-                        if (panStartRect == widget.image.dstRect) return;
-                        widget.image.onMoveImage?.call(
-                          widget.image,
-                          .fromLTRB(
-                            widget.image.dstRect.left - panStartRect.left,
-                            widget.image.dstRect.top - panStartRect.top,
-                            widget.image.dstRect.right - panStartRect.right,
-                            widget.image.dstRect.bottom - panStartRect.bottom,
-                          ),
-                        );
-                        panStartRect = .zero;
-                      }
-                    : null,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: active
-                          ? colorScheme.onSurface
-                          : Colors.transparent,
-                      width: 2,
+                    showModal();
+                  },
+                  // Once selected (tapped, or just added), a drag moves it,
+                  // following the finger from where it went down. Until
+                  // then drags go to the canvas (scrolling, pinching, the
+                  // lasso, moving a selection it's part of)
+                  dragStartBehavior: .down,
+                  onPanStart: active
+                      ? (details) => panStartRect = widget.image.dstRect
+                      : null,
+                  onPanUpdate: active
+                      ? (details) => _moveBy(details.delta)
+                      : null,
+                  onPanEnd: active ? (details) => _endMove() : null,
+                  // Not selected: press and hold it, then drag. (Kept until
+                  // the press ends, though holding selects it.)
+                  onLongPressStart: !active || _pressDragging
+                      ? (details) {
+                          _pressDragging = true;
+                          _pressLast = details.localPosition;
+                          panStartRect = widget.image.dstRect;
+                          active = true;
+                        }
+                      : null,
+                  onLongPressMoveUpdate: !active || _pressDragging
+                      ? (details) {
+                          _moveBy(details.localPosition - _pressLast);
+                          _pressLast = details.localPosition;
+                        }
+                      : null,
+                  onLongPressEnd: !active || _pressDragging
+                      ? (details) {
+                          _pressDragging = false;
+                          _endMove();
+                        }
+                      : null,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: active
+                            ? colorScheme.onSurface
+                            : Colors.transparent,
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: SizedBox(
-                      width: widget.isBackground
-                          ? widget.pageSize.width
-                          : max(
-                              widget.image.dstRect.width,
-                              CanvasImage.minImageSize,
+                    child: Center(
+                      child: SizedBox(
+                        width: widget.isBackground
+                            ? widget.pageSize.width
+                            : max(
+                                widget.image.dstRect.width,
+                                CanvasImage.minImageSize,
+                              ),
+                        height: widget.isBackground
+                            ? widget.pageSize.height
+                            : max(
+                                widget.image.dstRect.height,
+                                CanvasImage.minImageSize,
+                              ),
+                        child: SizedOverflowBox(
+                          size: widget.image.srcRect.size,
+                          child: Transform.translate(
+                            offset: -widget.image.srcRect.topLeft,
+                            child: widget.image.buildImageWidget(
+                              context: context,
+                              overrideBoxFit: widget.overrideBoxFit,
+                              isBackground: widget.isBackground,
+                              invert: imageBrightness == .dark,
                             ),
-                      height: widget.isBackground
-                          ? widget.pageSize.height
-                          : max(
-                              widget.image.dstRect.height,
-                              CanvasImage.minImageSize,
-                            ),
-                      child: SizedOverflowBox(
-                        size: widget.image.srcRect.size,
-                        child: Transform.translate(
-                          offset: -widget.image.srcRect.topLeft,
-                          child: widget.image.buildImageWidget(
-                            context: context,
-                            overrideBoxFit: widget.overrideBoxFit,
-                            isBackground: widget.isBackground,
-                            invert: imageBrightness == .dark,
                           ),
                         ),
                       ),
@@ -243,21 +283,21 @@ class _CanvasImageState extends State<CanvasImage> {
                   ),
                 ),
               ),
-            ),
-            if (widget.selected) // tint image if selected
-              ColoredBox(color: colorScheme.primary.withValues(alpha: 0.5)),
-            if (!widget.readOnly)
-              for (double x = -20; x <= 20; x += 20)
-                for (double y = -20; y <= 20; y += 20)
-                  if (x != 0 || y != 0) // ignore (0,0)
-                    _CanvasImageResizeHandle(
-                      active: active,
-                      position: Offset(x, y),
-                      image: widget.image,
-                      parent: this,
-                      afterDrag: () => setState(() {}),
-                    ),
-          ],
+              if (widget.selected) // tint image if selected
+                ColoredBox(color: colorScheme.primary.withValues(alpha: 0.5)),
+              if (!widget.readOnly)
+                for (double x = -20; x <= 20; x += 20)
+                  for (double y = -20; y <= 20; y += 20)
+                    if (x != 0 || y != 0) // ignore (0,0)
+                      _CanvasImageResizeHandle(
+                        active: active,
+                        position: Offset(x, y),
+                        image: widget.image,
+                        parent: this,
+                        afterDrag: () => setState(() {}),
+                      ),
+            ],
+          ),
         ),
       ),
     );
@@ -340,8 +380,11 @@ class _CanvasImageResizeHandle extends StatelessWidget {
     return Positioned(
       left: (position.dx.sign + 1) / 2 * image.dstRect.width - 20,
       top: (position.dy.sign + 1) / 2 * image.dstRect.height - 20,
+      // Beside the page, the side region handles touches (see
+      // [SideHittable]), and they're painted in place
       child: DeferPointer(
-        paintOnTop: true,
+        link: SideHitRegion.linkOf(context),
+        paintOnTop: SideHitRegion.linkOf(context) == null,
         child: MouseRegion(
           cursor: () {
             if (!active) return MouseCursor.defer;

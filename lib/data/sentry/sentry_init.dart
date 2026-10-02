@@ -15,9 +15,9 @@ export 'package:sentry_flutter/sentry_flutter.dart' show SentryWidget;
 /// This flag will be:
 /// - false if the foss patches were applied before this build
 /// - true in tests
-/// - false otherwise: nts has no Sentry project of its own, and the DSN in
-///   [populateSentryOptions] is upstream Saber's. To turn it back on, put
-///   your own DSN (and privacy policy URL in AppInfo) there first.
+/// - false otherwise: nts has no Sentry project of its own. To turn it on,
+///   put your own DSN in [populateSentryOptions] (and describe it in the
+///   privacy policy) first.
 @pragma('vm:platform-const-if', !kDebugMode)
 bool get isSentryAvailable => isThisATest;
 
@@ -48,7 +48,7 @@ FutureOr<void> initSentry(FutureOr<void> Function() appRunner) async {
 
 @visibleForTesting
 void populateSentryOptions(SentryFlutterOptions options) {
-  options.dsn = 'https://66937061678418b37c7b29cbfa1a0105@o4509780708229120.ingest.de.sentry.io/4509780710654032';
+  options.dsn = ''; // nts has no Sentry project: an empty DSN sends nothing
   options.addIntegration(LoggingIntegration());
   options.environment = kDebugMode ? 'debug' : 'release';
   // Filter data before sending

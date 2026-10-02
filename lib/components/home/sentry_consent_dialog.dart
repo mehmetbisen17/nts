@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nts/components/settings/app_info.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
+import 'package:nts/data/nts_links.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/data/sentry/sentry_init.dart';
 import 'package:nts/i18n/strings.g.dart';
@@ -59,7 +59,7 @@ class const SentryConsentDialog({super.key}) extends StatelessWidget {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(AppInfo.privacyPolicyUrl);
+                    launchUrl(Uri.parse(privacyPolicyUrl));
                   },
               ),
             ),

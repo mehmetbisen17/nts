@@ -17,6 +17,7 @@ import 'package:nts/components/navbar/responsive_navbar.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/folder_style.dart';
 import 'package:nts/data/icloud/icloud_storage.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/data/routes.dart';
@@ -59,6 +60,7 @@ class _BrowsePageState extends State<BrowsePage> {
     fileWriteSubscription = FileManager.fileWriteStream.stream.listen(
       fileWriteListener,
     );
+    FolderStyle.changed.addListener(findChildrenOfPath);
     selectedFiles.addListener(_setState);
 
     super.initState();
@@ -79,6 +81,7 @@ class _BrowsePageState extends State<BrowsePage> {
   @override
   void dispose() {
     selectedFiles.removeListener(_setState);
+    FolderStyle.changed.removeListener(findChildrenOfPath);
     fileWriteSubscription?.cancel();
     super.dispose();
   }
@@ -243,6 +246,7 @@ class _BrowsePageState extends State<BrowsePage> {
                         GridFolders(
                           isAtRoot: path == null,
                           viewMode: viewMode,
+                          path: path ?? '',
                           infos: folderInfos,
                           onTap: onDirectoryTap,
                           createFolder: createFolder,

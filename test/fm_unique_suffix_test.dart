@@ -19,9 +19,9 @@ void main() {
 
     // Make sure files don't exist
     await Future.wait([
-      FileManager.deleteFile(filePath, alsoUpload: false),
-      FileManager.deleteFile(filePath2, alsoUpload: false),
-      FileManager.deleteFile(filePath3, alsoUpload: false),
+      FileManager.deleteFile(filePath),
+      FileManager.deleteFile(filePath2),
+      FileManager.deleteFile(filePath3),
     ]);
 
     suffixedPath = await FileManager.suffixFilePathToMakeItUnique(filePath);
@@ -31,12 +31,7 @@ void main() {
       reason: "filePath doesn't exist, so it should be returned as is",
     );
 
-    await FileManager.writeFile(
-      suffixedPath,
-      [1, 2, 3],
-      awaitWrite: true,
-      alsoUpload: false,
-    );
+    await FileManager.writeFile(suffixedPath, [1, 2, 3], awaitWrite: true);
 
     suffixedPath = await FileManager.suffixFilePathToMakeItUnique(filePath);
     expect(
@@ -45,12 +40,7 @@ void main() {
       reason: "filePath exists, but filePath2 doesn't, so filePath2 should be returned",
     );
 
-    await FileManager.writeFile(
-      suffixedPath,
-      [1, 2, 3],
-      awaitWrite: true,
-      alsoUpload: false,
-    );
+    await FileManager.writeFile(suffixedPath, [1, 2, 3], awaitWrite: true);
 
     suffixedPath = await FileManager.suffixFilePathToMakeItUnique(filePath);
     expect(
@@ -61,9 +51,9 @@ void main() {
 
     // cleanup
     await Future.wait([
-      FileManager.deleteFile(filePath, alsoUpload: false),
-      FileManager.deleteFile(filePath2, alsoUpload: false),
-      FileManager.deleteFile(filePath3, alsoUpload: false),
+      FileManager.deleteFile(filePath),
+      FileManager.deleteFile(filePath2),
+      FileManager.deleteFile(filePath3),
     ]);
   });
 }

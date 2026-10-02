@@ -30,6 +30,7 @@ class EditorCoreInfo {
   /// Increment this if earlier versions of the app can't satisfiably read the file.
   ///
   /// Version history:
+  /// - 21: Note types (`nt`), text boxes (`tb`), and things beside pages
   /// - 20: Tape, brush and calligraphy pens, filled shapes (`fc`),
   ///   and page links (`lk`)
   /// - 19: Assets are now stored in separate files, and added the `sba` file format.
@@ -51,7 +52,7 @@ class EditorCoreInfo {
   /// - 3: Store page sizes for each page
   /// - 2: Store width and height in sbn
   /// - 1: Store version in sbn
-  static const sbnVersion = 20;
+  static const sbnVersion = 21;
 
   /// The reason why the note is read-only,
   /// or `null` if the note is editable.
@@ -73,6 +74,13 @@ class EditorCoreInfo {
   int lineHeight;
   int lineThickness;
   List<EditorPage> pages;
+
+  /// Pages, a whiteboard, an endless page, slides or flashcards.
+  NoteType noteType;
+
+  /// A blank page of this note's shape.
+  EditorPage newPage() =>
+      EditorPage(size: noteType.pageSize)..isBoard = noteType == .whiteboard;
 
   /// Stores the current page index so that it can be restored when the file is reloaded.
   int? initialPageIndex;
@@ -101,7 +109,7 @@ class EditorCoreInfo {
   bool get isNotEmpty => !isEmpty;
 
   @visibleForTesting
-  new({required this.filePath, this.readOnlyReason})
+  new({required this.filePath, this.readOnlyReason, this.noteType = .pages})
     : nextImageId = 0,
       backgroundPattern = stows.lastBackgroundPattern.value,
       lineHeight = stows.lastLineHeight.value,
@@ -120,7 +128,11 @@ class EditorCoreInfo {
     required this.pages,
     required this.initialPageIndex,
     required AssetCache? assetCache,
+    this.noteType = .pages,
   }) : assetCache = assetCache ?? AssetCache() {
+    for (final page in pages) {
+      page.isBoard = noteType == .whiteboard;
+    }
     _handleEmptyImageIds();
   }
 
@@ -195,7 +207,9 @@ class EditorCoreInfo {
         ),
         initialPageIndex: json['c'] as int?,
         assetCache: assetCache,
+        noteType: NoteType.fromId(json['nt'] as String?),
       )
+      .._convertTypedText()
       .._migrateOldStrokesAndImages(
         fileVersion: fileVersion,
         strokesJson: json['s'] as List?,
@@ -214,7 +228,8 @@ class EditorCoreInfo {
     List<dynamic> json, {
     required this.filePath,
     required bool onlyFirstPage,
-  }) : nextImageId = 0,
+  }) : noteType = .pages,
+       nextImageId = 0,
        backgroundPattern = .none,
        lineHeight = stows.lastLineHeight.value,
        lineThickness = stows.lastLineThickness.value,
@@ -265,6 +280,13 @@ class EditorCoreInfo {
             ),
           )
           .toList();
+    }
+  }
+
+  /// See [EditorPage.convertTypedText].
+  void _convertTypedText() {
+    for (final page in pages) {
+      page.convertTypedText(lineHeight: lineHeight);
     }
   }
 
@@ -330,7 +352,9 @@ class EditorCoreInfo {
 
     // add a page if there are no pages,
     // or if the last page is not empty
-    if (pages.isEmpty || pages.last.isNotEmpty && !onlyFirstPage) {
+    if (noteType != .pages) {
+      if (!onlyFirstPage) addBlankEnd();
+    } else if (pages.isEmpty || pages.last.isNotEmpty && !onlyFirstPage) {
       pages.add(EditorPage(size: fallbackPageSize));
     }
 
@@ -342,6 +366,27 @@ class EditorCoreInfo {
         }
       }
     }
+  }
+
+  /// Makes sure there's somewhere blank to carry on: a blank page at the
+  /// end, or a blank card (two pages) for flashcards. Whiteboards and
+  /// endless pages are just one page.
+  void addBlankEnd() {
+    if (noteType.singlePage) {
+      if (pages.isEmpty) pages.add(newPage());
+      return;
+    }
+    if (noteType == .flashcards) {
+      if (pages.length.isOdd) pages.add(newPage()); // the back of a card
+      final lastCard = pages.length >= 2
+          ? pages.sublist(pages.length - 2)
+          : const <EditorPage>[];
+      if (lastCard.isEmpty || lastCard.any((page) => page.isNotEmpty)) {
+        pages.addAll([newPage(), newPage()]);
+      }
+      return;
+    }
+    if (pages.isEmpty || pages.last.isNotEmpty) pages.add(newPage());
   }
 
   void _sortStrokes() {
@@ -402,7 +447,7 @@ class EditorCoreInfo {
         coreInfo = await workerManager.execute(
           () async {
             // We need to rerun some "init" methods in the isolate,
-            // see https://github.com/saber-notes/saber/issues/1031.
+            // which doesn't share the main isolate's static state.
             FlavorConfig.setupFromEnvironment();
             await FileManager.init(
               documentsDirectory: documentsDirectory,
@@ -484,12 +529,13 @@ class EditorCoreInfo {
       'lt': lineThickness,
       'z': pages.map((EditorPage page) => page.toJson(assets)).toList(),
       'c': initialPageIndex,
+      if (noteType != .pages) 'nt': noteType.id,
     };
 
     return (json, assets);
   }
 
-  /// Converts the current note as an SBA (Saber Archive) file,
+  /// Converts the current note as an SBA (sbn archive) file,
   /// which contains the main bson file and all the assets
   /// compressed into a zip file.
   ///
@@ -557,6 +603,7 @@ class EditorCoreInfo {
       pages: pages ?? this.pages,
       initialPageIndex: initialPageIndex,
       assetCache: assetCache,
+      noteType: noteType,
     );
   }
 }

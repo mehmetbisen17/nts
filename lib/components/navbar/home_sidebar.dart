@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:nts/components/home/grid_folders.dart';
 import 'package:nts/components/home/move_note_button.dart';
 import 'package:nts/components/icloud/icloud_widgets.dart';
 import 'package:nts/components/navbar/responsive_navbar.dart';
@@ -9,6 +10,7 @@ import 'package:nts/components/theming/higan/higan_lily.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/folder_style.dart';
 import 'package:nts/data/icloud/icloud_storage.dart';
 import 'package:nts/i18n/strings.g.dart';
 import 'package:nts/pages/home/home.dart';
@@ -37,7 +39,7 @@ class HomeSidebar extends HookWidget {
   Widget build(BuildContext context) {
     final c = context.higan;
     final isMac = Theme.of(context).platform == .macOS;
-    final folders = useState<List<(String, int)>?>(null);
+    final folders = useState<List<(String, int, FolderStyle)>?>(null);
     final recentCount = useState<int?>(null);
 
     useEffect(() {
@@ -45,15 +47,19 @@ class HomeSidebar extends HookWidget {
       Future<void> load() async {
         final root = await FileManager.getChildrenOfDirectory('/');
         final names = root?.directories ?? const <String>[];
-        final counts = await Future.wait([
-          for (final name in names)
-            FileManager.getChildrenOfDirectory('/$name')
-                .then((children) => children?.files.length ?? 0),
-        ]);
+        final (counts, styles) = await (
+          Future.wait([
+            for (final name in names)
+              FileManager.getChildrenOfDirectory('/$name')
+                  .then((children) => children?.files.length ?? 0),
+          ]),
+          Future.wait([for (final name in names) FolderStyle.read('/$name')]),
+        ).wait;
         final recent = await FileManager.getRecentlyAccessed();
         if (disposed) return;
         folders.value = [
-          for (var i = 0; i < names.length; i++) (names[i], counts[i]),
+          for (var i = 0; i < names.length; i++)
+            (names[i], counts[i], styles[i]),
         ];
         recentCount.value = recent.length;
       }
@@ -67,11 +73,13 @@ class HomeSidebar extends HookWidget {
       load();
       final subscription = FileManager.fileWriteStream.stream.listen(reload);
       ICloudStorage.state.addListener(reload);
+      FolderStyle.changed.addListener(reload);
       return () {
         disposed = true;
         debounce?.cancel();
         subscription.cancel();
         ICloudStorage.state.removeListener(reload);
+        FolderStyle.changed.removeListener(reload);
       };
     }, const []);
 
@@ -128,7 +136,7 @@ class HomeSidebar extends HookWidget {
               child: ListView(
                 padding: .zero,
                 children: [
-                  for (final (name, n) in folders.value!)
+                  for (final (name, n, style) in folders.value!)
                     // Drop notes here to move them into the folder.
                     DragTarget<List<String>>(
                       onWillAcceptWithDetails: (details) => details.data.any(
@@ -138,6 +146,7 @@ class HomeSidebar extends HookWidget {
                           moveNotes(context, details.data, '/$name/'),
                       builder: (context, candidates, _) => _SidebarRow(
                         label: name,
+                        leading: _styleMark(style),
                         count: count(n),
                         selected:
                             name == openRootFolder || candidates.isNotEmpty,
@@ -163,16 +172,35 @@ class HomeSidebar extends HookWidget {
   }
 }
 
+/// A folder's colour and icon in the sidebar: its icon, or a dot of its
+/// colour, or nothing.
+Widget? _styleMark(FolderStyle style) {
+  if (style.emblem != null) return FolderEmblem(style, size: 15);
+  final tint = style.tint;
+  if (tint == null) return null;
+  return SizedBox.square(
+    dimension: 15,
+    child: Center(
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: tint, shape: BoxShape.circle),
+        child: const SizedBox.square(dimension: 8),
+      ),
+    ),
+  );
+}
+
 class _SidebarRow extends StatelessWidget {
   const new({
     required this.label,
     required this.selected,
     required this.onTap,
     this.count,
+    this.leading,
   });
 
   final String label;
   final String? count;
+  final Widget? leading;
   final bool selected;
   final VoidCallback onTap;
 
@@ -201,6 +229,7 @@ class _SidebarRow extends StatelessWidget {
                 child: Row(
                   spacing: 8,
                   children: [
+                    ?leading,
                     Expanded(
                       child: Text(
                         label,

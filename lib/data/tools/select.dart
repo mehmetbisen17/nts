@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nts/components/canvas/_stroke.dart';
 import 'package:nts/components/canvas/image/editor_image.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/data/editor/editor_history.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/data/tools/_tool.dart';
 import 'package:sbn/change.dart';
@@ -92,8 +94,12 @@ class Select extends Tool {
   }
 
   /// Adds the indices of any [strokes] that are inside the selection area
-  /// to [selectResult.indices].
-  void onDragEnd(List<Stroke> strokes, List<EditorImage> images) {
+  /// to [selectResult.indices], and the images and [textBoxes] inside it.
+  void onDragEnd(
+    List<Stroke> strokes,
+    List<EditorImage> images, [
+    List<PageTextBox> textBoxes = const [],
+  ]) {
     selectResult.path.close();
     doneSelecting = true;
 
@@ -115,17 +121,27 @@ class Select extends Tool {
         selectResult.images.add(image);
       }
     }
+
+    // Text boxes are often wider than what's circled: half is enough
+    selectResult.textBoxes = [
+      for (final box in textBoxes)
+        if (rectPercentInside(selectResult.path, TextBoxes.boundsOf(box)) >=
+            0.5)
+          box,
+    ];
   }
 
   /// The handles' size in page units, set by the editor so they're
   /// the same size on screen at any zoom.
   var handleRadius = 12.0;
 
-  /// The bounds of the selected strokes (with their thickness) and images.
+  /// The bounds of the selected strokes (with their thickness), images
+  /// and text boxes.
   Rect? get selectionBounds => [
     for (final stroke in selectResult.strokes)
       stroke.bounds.inflate(stroke.options.size / 2),
     for (final image in selectResult.images) image.dstRect,
+    for (final box in selectResult.textBoxes) TextBoxes.boundsOf(box),
   ].fold<Rect?>(null, (bounds, rect) => bounds?.expandToInclude(rect) ?? rect);
 
   /// Where the handles are. There's no [SelectionHandle.rotate] if images
@@ -338,15 +354,20 @@ class SelectResult {
   final List<EditorImage> images;
   Path path;
 
+  /// The selected text boxes as they are now (boxes are replaced when they
+  /// change, so the editor replaces these as it moves them).
+  List<PageTextBox> textBoxes;
+
   new({
     required this.pageIndex,
     required this.strokes,
     required this.images,
     required this.path,
+    this.textBoxes = const [],
   });
 
   bool get isEmpty {
-    return strokes.isEmpty && images.isEmpty;
+    return strokes.isEmpty && images.isEmpty && textBoxes.isEmpty;
   }
 
   SelectResult copyWith({
@@ -354,12 +375,14 @@ class SelectResult {
     List<Stroke>? strokes,
     List<EditorImage>? images,
     Path? path,
+    List<PageTextBox>? textBoxes,
   }) {
     return SelectResult(
       pageIndex: pageIndex ?? this.pageIndex,
       strokes: strokes ?? this.strokes,
       images: images ?? this.images,
       path: path ?? this.path,
+      textBoxes: textBoxes ?? this.textBoxes,
     );
   }
 }

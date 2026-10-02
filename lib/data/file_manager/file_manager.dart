@@ -11,8 +11,8 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:logging/logging.dart';
 import 'package:nts/components/home/sort_button.dart';
 import 'package:nts/data/file_manager/sandbox_migration.dart';
+import 'package:nts/data/folder_style.dart';
 import 'package:nts/data/icloud/icloud_storage.dart';
-import 'package:nts/data/nextcloud/saber_syncer.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/i18n/strings.g.dart';
 import 'package:nts/pages/editor/editor.dart';
@@ -28,8 +28,6 @@ class FileManager {
   new _();
 
   static final log = Logger('FileManager');
-
-  static const appRootDirectoryPrefix = 'Saber';
 
   /// This isn't final because isolates sometimes init multiple times.
   /// Realistically, this value never changes.
@@ -81,8 +79,7 @@ class FileManager {
   static Future<String> getDocumentsDirectory() async =>
       stows.customDataDir.value ?? await getDefaultDocumentsDirectory();
 
-  /// Local folder is named after the app ("nts"); the remote sync folder
-  /// keeps [appRootDirectoryPrefix] ('Saber') for server compatibility.
+  /// The local notes folder, named after the app ("nts").
   ///
   /// The unsandboxed Mac app keeps it in Application Support, like it was in
   /// its sandbox container: ~/Documents would ask for permission (again
@@ -190,13 +187,17 @@ class FileManager {
       );
     }
 
-    final dirs = <String>[], otherFiles = <String>[];
+    final dirs = <String>[], otherFiles = <String>[], styles = <String>[];
     // Note name (e.g. `dir/a`) -> its files' suffixes (`.sbn2`, `.sbn2.0`...)
     final notes = <String, List<String>>{};
     await for (final entity in Directory(
       oldPath,
     ).list(recursive: true, followLinks: false)) {
       final relative = p.relative(entity.path, from: oldPath);
+      if (p.basename(relative) == FolderStyle.fileName) {
+        styles.add(relative);
+        continue;
+      }
       if (p.split(relative).any((part) => part.startsWith('.'))) continue;
       if (entity is Directory) {
         dirs.add(relative);
@@ -239,6 +240,19 @@ class FileManager {
     for (final file in otherFiles) {
       final name = p.withoutExtension(file);
       await merge(name, [file.substring(name.length)], isNote: false);
+    }
+    // Folder colours and icons; a folder already styled keeps its own.
+    for (final style in styles) {
+      final from = File(p.join(oldPath, style)), to = p.join(newPath, style);
+      try {
+        if (_existsOrInICloud(to)) {
+          if (!copy) await from.delete();
+        } else {
+          await _moveOrCopyFile(from, to, copy: copy);
+        }
+      } on FileSystemException catch (e) {
+        log.warning('Couldn\'t merge $style: $e');
+      }
     }
     if (copy) return failed;
 
@@ -473,17 +487,10 @@ class FileManager {
   static Directory getRootDirectory() => Directory(documentsDirectory);
 
   /// Writes [toWrite] to [filePath].
-  ///
-  /// The file at [toPath] will have its last modified timestamp set to
-  /// [lastModified], if specified.
-  /// This is useful when downloading remote files, to make sure that the
-  /// timestamp is the same locally and remotely.
   static Future<void> writeFile(
     String filePath,
     List<int> toWrite, {
     bool awaitWrite = false,
-    bool alsoUpload = true,
-    DateTime? lastModified,
   }) async {
     filePath = _sanitisePath(filePath);
     log.fine('Writing to $filePath');
@@ -493,9 +500,7 @@ class FileManager {
     final file = getFile(filePath);
     await _createFileDirectory(filePath);
     Future writeFuture = Future.wait([
-      file.writeAsBytes(toWrite).then((file) async {
-        if (lastModified != null) await file.setLastModified(lastModified);
-      }),
+      file.writeAsBytes(toWrite),
       // if we're using a new format, also delete the old file
       if (filePath.endsWith(Editor.extension))
         getFile(
@@ -508,7 +513,6 @@ class FileManager {
 
     void afterWrite() {
       broadcastFileWrite(FileOperationType.write, filePath);
-      if (alsoUpload) syncer.uploader.enqueueRel(filePath);
       if (filePath.endsWith(Editor.extension)) {
         _removeReferences(
           '${filePath.substring(0, filePath.length - Editor.extension.length)}'
@@ -662,9 +666,6 @@ class FileManager {
       log.warning('Tried to move non-existent file from $fromPath to $toPath');
     }
 
-    syncer.uploader.enqueueRel(fromPath);
-    syncer.uploader.enqueueRel(toPath);
-
     _renameReferences(fromPath, toPath);
     broadcastFileWrite(FileOperationType.delete, fromPath);
     broadcastFileWrite(FileOperationType.write, toPath);
@@ -683,7 +684,6 @@ class FileManager {
 
   static Future deleteFile(
     String filePath, {
-    bool alsoUpload = true,
     bool alsoDeleteAssets = true,
   }) async {
     filePath = _sanitisePath(filePath);
@@ -691,8 +691,6 @@ class FileManager {
     final file = getFile(filePath);
     if (!file.existsSync()) return;
     await file.delete();
-
-    if (alsoUpload) syncer.uploader.enqueueRel(filePath);
 
     _removeReferences(filePath);
     broadcastFileWrite(FileOperationType.delete, filePath);
@@ -704,7 +702,6 @@ class FileManager {
           // or its placeholder if iCloud hasn't downloaded it yet
           deleteFile(
             iCloudPlaceholderPath('$filePath.$asset'),
-            alsoUpload: false,
             alsoDeleteAssets: false,
           ),
         ],

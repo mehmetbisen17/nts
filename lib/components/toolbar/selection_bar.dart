@@ -1,12 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:nts/components/ai/ai_menu.dart';
 import 'package:nts/components/canvas/_stroke.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/toolbar/floating_bar.dart';
 import 'package:nts/components/toolbar/toolbar_button.dart';
 import 'package:nts/data/editor/editor_history.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/services/editor_commit.dart';
 import 'package:nts/data/services/handwriting.dart';
@@ -106,6 +110,7 @@ class SelectionBar extends StatelessWidget {
               ),
             ),
           ],
+          if (editor != null) ..._sideButtons(editor, padding),
           if (editor != null)
             ToolbarIconButton(
               tooltip: t.editor.canvasTools.addLink,
@@ -124,6 +129,37 @@ class SelectionBar extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Move the selection beside the page, or back onto it.
+List<Widget> _sideButtons(EditorState editor, EdgeInsets padding) {
+  final select = Select.currentSelect;
+  final bounds = select.selectionBounds;
+  final editable = !editor.coreInfo.readOnly && bounds != null;
+  final page = editor.coreInfo.pages.elementAtOrNull(
+    select.selectResult.pageIndex,
+  );
+  final side = bounds == null || page == null
+      ? 0
+      : EditorState.sideOf(bounds, page.size);
+  // A whiteboard has no sides
+  if (page == null || page.isBoard) return const [];
+  return [
+    ToolbarIconButton(
+      tooltip: side > 0 ? t.nts.side.backOnPage : t.nts.side.moveLeft,
+      enabled: editable && side >= 0,
+      onPressed: () => editor.moveSelectionToSide(-1),
+      padding: padding,
+      child: const Icon(Symbols.dock_to_left),
+    ),
+    ToolbarIconButton(
+      tooltip: side < 0 ? t.nts.side.backOnPage : t.nts.side.moveRight,
+      enabled: editable && side <= 0,
+      onPressed: () => editor.moveSelectionToSide(1),
+      padding: padding,
+      child: const Icon(Symbols.dock_to_right),
+    ),
+  ];
 }
 
 /// What the selection bar and the toolbar's lasso buttons (see
@@ -249,7 +285,7 @@ abstract final class SelectionActions {
     );
   }
 
-  /// Adds [text] to the end of the page's typed text, and erases [ink].
+  /// Replaces [ink] with [text] in a text box where it was, about as big.
   /// These are two steps in the undo history.
   static void convertToText(
     EditorState editor,
@@ -257,7 +293,19 @@ abstract final class SelectionActions {
     List<Stroke> ink,
     String text,
   ) {
-    addText(editor, pageIndex, text);
+    final bounds = ink
+        .map((stroke) => stroke.bounds)
+        .reduce((a, b) => a.expandToInclude(b));
+    // Its first line where the ink's top was
+    editor.addTextBox(
+      pageIndex,
+      Offset(
+        bounds.left,
+        bounds.top + PageTextBox.defaultFontSize * PageTextBox.lineSpacing / 2,
+      ),
+      text: text,
+      width: max(bounds.width, 200),
+    );
     editor.commit(
       EditorHistoryItem(
         type: .erase,
@@ -268,17 +316,52 @@ abstract final class SelectionActions {
     );
   }
 
-  /// Adds [text] to the end of the page's typed text (undoable).
-  static void addText(EditorState editor, int pageIndex, String text) {
-    final controller = editor.coreInfo.pages[pageIndex].quill.controller;
-    final document = controller.document;
-    controller.replaceText(
-      document.length - 1, // before the last newline
-      0,
-      document.isEmpty() ? text : '\n$text',
-      null,
-      ignoreFocus: true,
-    );
+  /// Adds [text] in a text box (undoably) next to what was circled: below
+  /// it on the page ([side] 0), or beside the page on the left (-1) or
+  /// right (1) at its height, out of the way of what's there. Then scrolls
+  /// to it.
+  static void addText(
+    EditorState editor,
+    int pageIndex,
+    String text, {
+    int side = 0,
+  }) {
+    final page = editor.coreInfo.pages[pageIndex];
+    final anchor = anchorOf(page);
+    const gap = EditorPage.sideGap;
+    final PageTextBox box;
+    if (side == 0 || page.isBoard) {
+      box = editor.addTextBox(
+        pageIndex,
+        Offset(max(gap, anchor.left), anchor.bottom + gap),
+        text: text,
+        atTopLeft: true,
+      );
+    } else {
+      final width = min(TextBoxes.newWidth, page.sideWidth - 2 * gap);
+      final height = TextBoxes.boundsOf(
+        PageTextBox(id: 0, position: .zero, width: width, text: text),
+      ).height;
+      box = editor.addTextBox(
+        pageIndex,
+        editor.spotBeside(page, side, Size(width, height), anchor.top),
+        text: text,
+        width: width,
+        atTopLeft: true,
+      );
+    }
+    editor.revealPageRect(pageIndex, TextBoxes.boundsOf(box));
+  }
+
+  /// What was circled on [page]: the selection, or the lasso's outline if
+  /// it selected nothing (e.g. "Ask AI" around a printed PDF), or else the
+  /// top of the page.
+  static Rect anchorOf(EditorPage page) {
+    final select = Select.currentSelect;
+    if (select.selectionBounds case final bounds?) return bounds;
+    final lasso = select.selectResult.path.getBounds();
+    if (select.doneSelecting && !lasso.isEmpty) return lasso;
+    return Rect.fromLTWH(0, page.size.height / 4, page.size.width, 0);
   }
 
   static Future<String?> _recognize(

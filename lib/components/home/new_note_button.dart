@@ -6,6 +6,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:nts/components/navbar/responsive_navbar.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
+import 'package:nts/components/toolbar/floating_bar.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/routes.dart';
 import 'package:nts/i18n/strings.g.dart';
@@ -15,16 +17,35 @@ import 'package:nts/pages/editor/editor.dart';
 String? _folder(String? path) =>
     (path == null || path.isEmpty || path == '/') ? null : path;
 
-/// Opens a new note in the folder [path] (null for the root).
-Future<void> createNote(BuildContext context, String? path) async {
+/// Opens a new note of [type] in the folder [path] (null for the root).
+Future<void> createNote(
+  BuildContext context,
+  String? path, {
+  NoteType type = .pages,
+}) async {
   path = _folder(path);
-  if (path == null) {
+  if (path == null && type == .pages) {
     context.push(RoutePaths.edit);
     return;
   }
-  final newFilePath = await FileManager.newFilePath('$path/');
+  final newFilePath = await FileManager.newFilePath('${path ?? ''}/');
   if (!context.mounted) return;
-  context.push(RoutePaths.editFilePath(newFilePath));
+  context.push(
+    type == .pages
+        ? RoutePaths.editFilePath(newFilePath)
+        : RoutePaths.editNew(newFilePath, type),
+  );
+}
+
+/// The kinds of notes besides plain pages, with their icons and names.
+List<(NoteType, IconData, String)> get otherNoteTypes {
+  final names = t.nts.noteTypes;
+  return [
+    (.whiteboard, Symbols.draw_abstract, names.whiteboard.name),
+    (.endless, Symbols.swap_vert, names.endless.name),
+    (.slides, Symbols.slideshow, names.slides.name),
+    (.flashcards, Symbols.cards, names.flashcards.name),
+  ];
 }
 
 /// Lets the user pick an sbn, sbn2, sba or pdf file and opens it
@@ -140,6 +161,12 @@ class _NewNoteButtonState extends State<NewNoteButton> {
             t.home.create.newNote,
             () => createNote(context, widget.path),
           ),
+          for (final (type, icon, name) in otherNoteTypes)
+            _child(
+              icon,
+              name,
+              () => createNote(context, widget.path, type: type),
+            ),
           _child(
             Symbols.file_open,
             t.home.create.importNote,
@@ -170,6 +197,25 @@ class NewNotePill extends StatelessWidget {
           icon: Symbols.file_open,
           tooltip: t.home.create.importNote,
           onPressed: () => importNote(context, path),
+        ),
+        // Whiteboard, endless page, slides and flashcards
+        Builder(
+          builder: (context) => HiganCircleButton(
+            icon: Symbols.note_stack_add,
+            tooltip: t.nts.noteTypes.more,
+            onPressed: () {
+              final box = context.findRenderObject()! as RenderBox;
+              showBarMenu(
+                context,
+                box.localToGlobal(box.size.bottomLeft(Offset.zero)),
+                title: t.nts.noteTypes.title,
+                actions: [
+                  for (final (type, _, name) in otherNoteTypes)
+                    (name, () => createNote(context, path, type: type)),
+                ],
+              );
+            },
+          ),
         ),
         DecoratedBox(
           decoration: BoxDecoration(

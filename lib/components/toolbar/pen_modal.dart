@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:nts/components/toolbar/toolbar_button.dart';
-import 'package:nts/data/extensions/axis_extensions.dart';
-import 'package:nts/data/prefs.dart';
 import 'package:nts/data/tools/_tool.dart';
 import 'package:nts/data/tools/calligraphy_pen.dart';
 import 'package:nts/data/tools/pen.dart';
@@ -11,8 +9,15 @@ import 'package:nts/data/tools/shape_pen.dart';
 import 'package:nts/i18n/strings.g.dart';
 
 class PenModal extends StatefulWidget {
-  const new({super.key, required this.getTool, required this.setTool});
+  const new({
+    super.key,
+    required this.axis,
+    required this.getTool,
+    required this.setTool,
+  });
 
+  /// The toolbar's direction.
+  final Axis axis;
   final Tool Function() getTool;
   final void Function(Pen) setTool;
 
@@ -23,7 +28,7 @@ class PenModal extends StatefulWidget {
 class _PenModalState extends State<PenModal> {
   @override
   Widget build(BuildContext context) {
-    final axis = stows.editorToolbarAlignment.value.axis.opposite;
+    final axis = widget.axis;
     if (widget.getTool() is! Pen) return const SizedBox();
 
     const padding = EdgeInsets.all(2);

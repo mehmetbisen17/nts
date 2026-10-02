@@ -17,7 +17,7 @@ void main() {
       await tester.pumpWidget(
         ScreenshotApp.withConditionalTitlebar(
           device: GoldenSmallDevices.androidPhone.device,
-          title: 'Saber',
+          title: 'nts',
           home: const HomePage(subpage: HomePage.settingsSubpage, path: ''),
         ),
       );

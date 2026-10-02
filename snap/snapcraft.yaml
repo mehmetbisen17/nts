@@ -12,7 +12,7 @@ platforms:
 
 parts:
   nts:
-    source: REPLACE_WITH_REPO_URL.git
+    source: https://github.com/mehmetbisen17/nts.git
     source-tag: 'v1.36.1'
     source-depth: 1
     plugin: flutter

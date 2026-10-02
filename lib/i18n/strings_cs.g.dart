@@ -39,10 +39,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$cs sentry = _Translations$sentry$cs._(_root);
 	@override late final _Translations$settings$cs settings = _Translations$settings$cs._(_root);
 	@override late final _Translations$logs$cs logs = _Translations$logs$cs._(_root);
-	@override late final _Translations$login$cs login = _Translations$login$cs._(_root);
-	@override late final _Translations$profile$cs profile = _Translations$profile$cs._(_root);
 	@override late final _Translations$appInfo$cs appInfo = _Translations$appInfo$cs._(_root);
-	@override late final _Translations$update$cs update = _Translations$update$cs._(_root);
 	@override late final _Translations$editor$cs editor = _Translations$editor$cs._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$cs extends Translations$settings$en {
 		'Vlevo',
 	];
 	@override late final _Translations$settings$reset$cs reset = _Translations$settings$reset$cs._(_root);
-	@override String get resyncEverything => 'Znovu synchronizovat všechny poznámky';
 	@override String get openDataDir => 'Otevřít složku aplikace nts';
 	@override late final _Translations$settings$customDataDir$cs customDataDir = _Translations$settings$customDataDir$cs._(_root);
 	@override String get autosaveDisabled => 'Nikdy';
@@ -134,52 +130,6 @@ class _Translations$logs$cs extends Translations$logs$en {
 	@override String get useTheApp => 'Jakmile aplikaci začnete používat, logy se zobrazí na tomto místě';
 }
 
-// Path: login
-class _Translations$login$cs extends Translations$login$en {
-	_Translations$login$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Přihlášení';
-	@override late final _Translations$login$form$cs form = _Translations$login$form$cs._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Ještě nemáte účet? '),
-		linkToSignup('Zaregistrujte se'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Nejste to vy? '),
-		undoLogin('Zvolit jiný účet'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$cs status = _Translations$login$status$cs._(_root);
-	@override late final _Translations$login$ncLoginStep$cs ncLoginStep = _Translations$login$ncLoginStep$cs._(_root);
-	@override late final _Translations$login$encLoginStep$cs encLoginStep = _Translations$login$encLoginStep$cs._(_root);
-}
-
-// Path: profile
-class _Translations$profile$cs extends Translations$profile$en {
-	_Translations$profile$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Můj profil';
-	@override String get logout => 'Odhlásit se';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Využíváte ${used} z ${total} (${percent} %)';
-	@override String quotaUsageUncapped({required Object used}) => 'Využíváte ${used}';
-	@override String get connectedTo => 'Připojeno k';
-	@override late final _Translations$profile$quickLinks$cs quickLinks = _Translations$profile$quickLinks$cs._(_root);
-	@override String get faqTitle => 'Často kladené otázky';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$cs._(_root),
-		_Translations$profile$faq$1$cs._(_root),
-		_Translations$profile$faq$2$cs._(_root),
-		_Translations$profile$faq$3$cs._(_root),
-	];
-}
-
 // Path: appInfo
 class _Translations$appInfo$cs extends Translations$appInfo$en {
 	_Translations$appInfo$cs._(TranslationsCs root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$cs extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nTento program je poskytován bez jakékoliv záruky. Jedná se o software poskytovaný zdarma, který je možné šířit při splnění určitých podmínek.';
 	@override String get debug => 'LADÍCÍ VERZE';
-	@override String get sponsorButton => 'Klepněte sem, pokud mě chcete sponzorovat nebo si přikoupit úložiště';
 	@override String get licenseButton => 'Klepněte sem pro zobrazení podrobnějších licenčních informací';
 	@override String get privacyPolicyButton => 'Klepněte sem pro zobrazení zásad ochrany osobních údajů';
-}
-
-// Path: update
-class _Translations$update$cs extends Translations$update$en {
-	_Translations$update$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Aktualizace k dispozici';
-	@override String get updateAvailableDescription => 'Je k dispozici nová verze aplikace:';
-	@override String get update => 'Aktualizovat';
-	@override String get downloadNotAvailableYet => 'Pro vaši platformu zatím není stažení aplikace dostupné. Zkuste to prosím o něco později.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$cs extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Nová poznámka';
-	@override String get showUpdateDialog => 'Zobrazit dialogové okno aktualizace';
 	@override String get exportNote => 'Exportovat poznámku';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$cs extends Translations$settings$prefLab
 	@override String get layoutSize => 'Rozvržení uživatelského rozhraní';
 	@override String get customAccentColor => 'Vlastní barevný odstín';
 	@override String get hyperlegibleFont => 'Lépe čitelný font';
-	@override String get shouldCheckForUpdates => 'Automaticky kontrolovat dostupnost aktualizací aplikace nts';
-	@override String get shouldAlwaysAlertForUpdates => 'Rychlejší aktualizace';
-	@override String get allowInsecureConnections => 'Povolit nezabezpečená připojení';
 	@override String get editorToolbarAlignment => 'Umístění nabídky editoru';
 	@override String get editorToolbarShowInFullscreen => 'Zobrazovat nabídku editoru v režimu celé obrazovky';
 	@override String get editorAutoInvert => 'V tmavém režimu invertovat poznámky';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$cs extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Font Atkinson Hyperlegible zvyšuje čitelnost pro čtenáře se slabým zrakem';
-	@override String get allowInsecureConnections => '(Nedoporučuje se) Povolit aplikaci nts připojovat se k serverům se samopodepsaným/nedůvěryhodným certifikátem';
 	@override String get preferGreyscale => 'Pro elektronické čtečky knih s e-ink displejem';
 	@override String get autoClearWhiteboardOnExit => 'Bude synchronizováno do dalších zařízení';
 	@override String get disableEraserAfterUse => 'Po použití gumy automaticky přepnout zpět na pero';
@@ -453,7 +384,6 @@ class _Translations$settings$prefDescriptions$cs extends Translations$settings$p
 	@override String get autosave => 'Poznámky se budou automaticky ukládat po krátké prodlevě, nebo nikdy';
 	@override String get shapeRecognitionDelay => 'Jak často aktualizovat náhled tvaru';
 	@override String get autoStraightenLines => 'Automaticky narovná dlouhé čáry, aniž by bylo nutné využít tvarové pero';
-	@override String get shouldAlwaysAlertForUpdates => 'Oznámit dostupnost aktualizací co nejdříve od jejich vydání';
 	@override late final _Translations$settings$prefDescriptions$sentry$cs sentry = _Translations$settings$prefDescriptions$sentry$cs._(_root);
 }
 
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$cs extends Translations$settings$cust
 	@override String get cancel => 'Zrušit';
 	@override String get select => 'Zvolit';
 	@override String get mustBeEmpty => 'Zvolená složka musí být prázdná';
-	@override String get mustBeDoneSyncing => 'Než změníte složku, ujistěte se, že byla dokončena synchronizace';
 	@override String get unsupported => 'Tato funkce je v současné době pouze pro vývojáře. Její využití pravděpodobně povede ke ztrátě dat.';
-}
-
-// Path: login.form
-class _Translations$login$form$cs extends Translations$login$form$en {
-	_Translations$login$form$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Přihlášením souhlasíte se '),
-		linkToPrivacyPolicy('Zásadami ochrany osobních údajů'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$cs extends Translations$login$status$en {
-	_Translations$login$status$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Jste odhlášení';
-	@override String get tapToLogin => 'Klepněte pro přihlášení pomocí Nextcloud účtu';
-	@override String hi({required Object u}) => 'Zdravím, ${u}!';
-	@override String get almostDone => 'Synchronizace je téměř připravena, pro dokončení přihlášení klepněte sem';
-	@override String get loggedIn => 'Jste přihlášeni pomocí Nextcloud účtu';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$cs extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Zvolte si, kam chcete ukládat svá data:';
-	@override String get saberNcServer => 'Oficiální Nextcloud server aplikace nts';
-	@override String get otherNcServer => 'Jiný Nextcloud server';
-	@override String get serverUrl => 'URL adresa serveru';
-	@override String get loginWithSaber => 'Přihlásit přes aplikaci nts';
-	@override String get loginWithNextcloud => 'Přihlásit přes Nextcloud server';
-	@override late final _Translations$login$ncLoginStep$loginFlow$cs loginFlow = _Translations$login$ncLoginStep$loginFlow$cs._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$cs extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Pro ochranu svých dat prosím zadejte heslo pro šifrování:';
-	@override String get newToSaber => 'Poprvé v aplikaci nts? Stačí zadat nové heslo pro šifrování.';
-	@override String get encPassword => 'Heslo pro šifrování';
-	@override String get encFaqTitle => 'Často kladené otázky';
-	@override String get wrongEncPassword => 'Dešifrování pomocí zadaného hesla pro šifrování selhalo. Zkuste ho prosím zadat znovu.';
-	@override String get connectionFailed => 'Při připojování k serveru se něco pokazilo. Zkuste to prosím později.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$cs._(_root),
-		_Translations$login$encLoginStep$encFaq$1$cs._(_root),
-		_Translations$login$encLoginStep$encFaq$2$cs._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$cs extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Webové stránky serveru';
-	@override String get deleteAccount => 'Odstranit účet';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$cs extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ztratím po odhlášení svoje poznámky?';
-	@override String get a => 'Nikoliv. Vaše poznámky zůstanou jak na vašem zařízení, tak na serveru. Dokud se opět nepřihlásíte, nebudou synchronizovány se serverem. Před ohlášením se ujistěte, že byla dokončena synchronizace, abyste předešli ztrátě dat (průběh synchronizace uvidíte na domovské obrazovce).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$cs extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Jak změním své heslo k Nextcloud účtu?';
-	@override String get a => 'Přejděte na webovou stránku vašeho serveru a přihlašte se. Poté přejděte do Nastavení > Zabezpečení > Změnit heslo. Po změně hesla se budete muset odhlásit z aplikace nts a poté se do ní opětovně přihlásit.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$cs extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Jak změním své heslo pro šifrování?';
-	@override String get a => '0. Ujistěte se, že byla dokončena synchronizace (průběh synchronizace uvidíte na domovské obrazovce).\n1. Odhlašte se z aplikace nts.\n2. Přejděte na webovou stránku vašeho serveru a smažte složku „Saber“. Tím ze serveru odstraníte všechny poznámky.\n3. Opětovně se přihlašte do aplikace nts. Při přihlašování můžete zvolit nové heslo pro šifrování.\n4. Nezapomeňte se z aplikace nts odhlásit a opětovně se do ní přihlásit na ostatních zařízeních.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$cs extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Jak odstraním svůj účet?';
-	@override String get a => 'Klepněte na tlačítko „${_root.profile.quickLinks.deleteAccount}“ umístěné výše a přihlašte se, pokud to bude vyžadováno.\nPokud používáte oficiální server od aplikace nts, bude váš účet odstraněn po uplynutí týdenní ochranné lhůty. Během této lhůty mě můžete kontaktovat pro odvolání zrušení účtu na adilhanney@disroot.org.\nPokud používáte server třetí strany, nemusí nabízet možnost odstranění účtu: pro více informací se bude třeba obrátit na zásady ochrany osobních údajů daného serveru.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$cs extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Přizpůsobení obrázku na pozadí';
 	@override String get backgroundPattern => 'Vzor na pozadí';
 	@override String get import => 'Importovat';
-	@override String get watchServer => 'Sledovat aktualizace ze serveru';
-	@override String get watchServerReadOnly => 'Během sledování serveru je vypnuto editování';
 	@override late final _Translations$editor$menu$boxFits$cs boxFits = _Translations$editor$menu$boxFits$cs._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$cs bgPatterns = _Translations$editor$menu$bgPatterns$cs._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$cs extends Translations$set
 	@override String get inactive => 'Neaktivní';
 	@override String get activeUntilRestart => 'Aktivní, dokud nerestartujete aplikaci';
 	@override String get inactiveUntilRestart => 'Neaktivní, dokud nerestartujete aplikaci';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$cs extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Autorizujte prosím aplikaci nts k přístupu na váš Nextcloud účet';
-	@override String get followPrompts => 'Následujte prosím kroky v rozhraní Nextcloud serveru';
-	@override String get browserDidntOpen => 'Neotevřela se přihlašovací stránka? Klepněte zde';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$cs extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Co je to heslo pro šifrování? Proč používat dvě hesla?';
-	@override String get a => 'Heslo k Nextcloud účtu se používá pro přístup do cloudu. Heslo pro šifrování „zamaskuje“ vaše data dokonce ještě, než dorazí na cloud.\nI kdyby někdo získal přístup k vašemu Nextcloud účtu, vaše poznámky zůstanou v bezpečí, zašifrované oddělným heslem. To vám přináší druhou úroveň bezpečnosti ochrany vašich dat.\nNikdo k vašim poznámkám nemůže přistoupit bez hesla pro šifrování, což ale také znamená, že pokud své heslo pro šifrování zapomenete, ztratíte přístup ke svým datům.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$cs extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Ještě jsem heslo pro šifrování nenastavoval. Kde ho získám?';
-	@override String get a => 'Zvolte si nové heslo pro šifrování a zadejte ho výše.\nAplikace nts z hesla automaticky vygeneruje šifrovací klíče.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$cs extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$cs._(TranslationsCs root) : this._root = root, super.internal(root);
-
-	final TranslationsCs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Mohu jako heslo pro šifrování použít své heslo od Nextcloud účtu?';
-	@override String get a => 'Ano, ale mějte na paměti, že bude pro administrátora Nextcloud serveru či kohokoliv jiného, kdo získá přístup k vašemu Nextcloud účtu, jednodušší získat přístup k vašim poznámkám.';
 }
 
 // Path: editor.menu.boxFits

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/flavor_config.dart';
-import 'package:nts/data/nextcloud/saber_syncer.dart';
 import 'package:nts/data/prefs.dart';
 
 import 'utils/test_mock_channel_handlers.dart';
@@ -292,7 +291,6 @@ void main() {
       expect(recentlyAccessed, isEmpty);
 
       // delete file properly
-      syncer.uploader.enqueueRel(filePath);
       FileManager.broadcastFileWrite(FileOperationType.delete, filePath);
     });
 

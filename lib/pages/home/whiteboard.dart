@@ -25,6 +25,11 @@ class const Whiteboard({super.key}) extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Editor(key: _whiteboardKey, path: filePath, embedded: true);
+    return Editor(
+      key: _whiteboardKey,
+      path: filePath,
+      embedded: true,
+      noteType: .whiteboard,
+    );
   }
 }

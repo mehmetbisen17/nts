@@ -10,9 +10,7 @@ import 'package:nts/data/flavor_config.dart';
 import 'package:nts/i18n/strings.g.dart';
 
 /// Where [higanSnapshot] writes PNGs (outside the repo).
-const higanSnapshotDir =
-    '/private/tmp/claude-501/-Users-mehmetbisen-Desktop-saber/'
-    'e21e6fbf-1b17-49c8-84d9-1e9fe570551b/scratchpad/snapshots';
+final higanSnapshotDir = '${Directory.systemTemp.path}/nts-snapshots';
 
 /// True when run with `HIGAN_SNAPSHOT=1`. Use as `skip: !higanSnapshotsEnabled`
 /// so the normal test suite doesn't write files.

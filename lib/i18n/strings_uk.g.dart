@@ -39,10 +39,7 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$uk sentry = _Translations$sentry$uk._(_root);
 	@override late final _Translations$settings$uk settings = _Translations$settings$uk._(_root);
 	@override late final _Translations$logs$uk logs = _Translations$logs$uk._(_root);
-	@override late final _Translations$login$uk login = _Translations$login$uk._(_root);
-	@override late final _Translations$profile$uk profile = _Translations$profile$uk._(_root);
 	@override late final _Translations$appInfo$uk appInfo = _Translations$appInfo$uk._(_root);
-	@override late final _Translations$update$uk update = _Translations$update$uk._(_root);
 	@override late final _Translations$editor$uk editor = _Translations$editor$uk._(_root);
 }
 
@@ -108,7 +105,6 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override late final _Translations$settings$reset$uk reset = _Translations$settings$reset$uk._(_root);
 	@override late final _Translations$settings$customDataDir$uk customDataDir = _Translations$settings$customDataDir$uk._(_root);
 	@override String get systemLanguage => 'Авто';
-	@override String get resyncEverything => 'Пересинхронізувати все';
 	@override String get openDataDir => 'Відкрити папку nts';
 	@override String get autosaveDisabled => 'Ніколи';
 	@override String get shapeRecognitionDisabled => 'Ніколи';
@@ -134,52 +130,6 @@ class _Translations$logs$uk extends Translations$logs$en {
 	@override String get useTheApp => 'Журнали з\'являться тут, коли ви користуєтеся додатком';
 }
 
-// Path: login
-class _Translations$login$uk extends Translations$login$en {
-	_Translations$login$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$login$form$uk form = _Translations$login$form$uk._(_root);
-	@override late final _Translations$login$status$uk status = _Translations$login$status$uk._(_root);
-	@override late final _Translations$login$ncLoginStep$uk ncLoginStep = _Translations$login$ncLoginStep$uk._(_root);
-	@override late final _Translations$login$encLoginStep$uk encLoginStep = _Translations$login$encLoginStep$uk._(_root);
-	@override String get title => 'Увійти';
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Тисні немає ще? '),
-		linkToSignup('Зареєструватися зараз'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Не ти? '),
-		undoLogin('Вибрати інший обліковий запис'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: profile
-class _Translations$profile$uk extends Translations$profile$en {
-	_Translations$profile$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$profile$quickLinks$uk quickLinks = _Translations$profile$quickLinks$uk._(_root);
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$uk._(_root),
-		_Translations$profile$faq$1$uk._(_root),
-		_Translations$profile$faq$2$uk._(_root),
-		_Translations$profile$faq$3$uk._(_root),
-	];
-	@override String get title => 'Мій профіль';
-	@override String get logout => 'Вийти';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Ви використовуєте ${used} з ${total} (${percent}%)';
-	@override String get connectedTo => 'Підключено до';
-	@override String get faqTitle => 'Часті запитання';
-	@override String quotaUsageUncapped({required Object used}) => 'Ви використовуєте ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$uk extends Translations$appInfo$en {
 	_Translations$appInfo$uk._(TranslationsUk root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$uk extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber) Авторські права © 2022-${buildYear} Adil Hanney\nЦя програма не має жодної гарантії. Це безкоштовне програмне забезпечення, і ви маєте право поширювати його за певних умов.';
 	@override String get debug => 'ВІДЛАДКА';
-	@override String get sponsorButton => 'Натисніть сюди, щоб мене спонсорувати або купити більше сховища';
 	@override String get licenseButton => 'Натисніть сюди, щоб переглянути більше інформації про ліцензію';
 	@override String get privacyPolicyButton => 'Натисніть сюди, щоб переглянути політику конфіденційності';
-}
-
-// Path: update
-class _Translations$update$uk extends Translations$update$en {
-	_Translations$update$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Оновлено доступно';
-	@override String get updateAvailableDescription => 'Доступна нова версія програми:';
-	@override String get update => 'Оновлення';
-	@override String get downloadNotAvailableYet => 'Завантаження ще недоступне для вашої платформи. Будь ласка, перевірте пізніше.';
 }
 
 // Path: editor
@@ -252,7 +188,6 @@ class _Translations$home$tooltips$uk extends Translations$home$tooltips$en {
 	// Translations
 	@override String get exportNote => 'Експортувати нотатку';
 	@override String get newNote => 'Нотатка';
-	@override String get showUpdateDialog => 'Показати діалогове вікно оновлення';
 }
 
 // Path: home.create
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$uk extends Translations$settings$prefLab
 	@override String get layoutSize => 'Тип макета';
 	@override String get customAccentColor => 'Кольоровий акцент';
 	@override String get hyperlegibleFont => 'шрифт Atkinson Hyperlegible';
-	@override String get shouldCheckForUpdates => 'Перевірити оновлення nts';
-	@override String get shouldAlwaysAlertForUpdates => 'Швидші оновлення';
-	@override String get allowInsecureConnections => 'Дозволити незахоплені з\'єднання';
 	@override String get editorToolbarAlignment => 'Позиція панелі інструментів';
 	@override String get editorToolbarShowInFullscreen => 'Покажіть панель інструментів у повноекранному режимі';
 	@override String get editorAutoInvert => 'Інвертувати нотації у темному режимі';
@@ -443,7 +375,6 @@ class _Translations$settings$prefDescriptions$uk extends Translations$settings$p
 	@override late final _Translations$settings$prefDescriptions$hideFingerDrawing$uk hideFingerDrawing = _Translations$settings$prefDescriptions$hideFingerDrawing$uk._(_root);
 	@override late final _Translations$settings$prefDescriptions$sentry$uk sentry = _Translations$settings$prefDescriptions$sentry$uk._(_root);
 	@override String get hyperlegibleFont => 'Покращує читабельність для користувачів з низьким зором';
-	@override String get allowInsecureConnections => '(Не рекомендовано) Дозволити nts підключатися до серверів з самопідписаними/недовіреними сертифікатами';
 	@override String get preferGreyscale => 'Для е-чманітерів';
 	@override String get autoClearWhiteboardOnExit => 'Очищує дошку після виходу з програми';
 	@override String get disableEraserAfterUse => 'Автоматично повертається до ручки після використання гумки.';
@@ -454,7 +385,6 @@ class _Translations$settings$prefDescriptions$uk extends Translations$settings$p
 	@override String get autosave => 'Автозбереження після короткої затримки, або ніколи';
 	@override String get shapeRecognitionDelay => 'Як часто оновлювати попередній перегляд форми?';
 	@override String get autoStraightenLines => 'Вирівнює довгі лінії без необхідності використовувати штамп';
-	@override String get shouldAlwaysAlertForUpdates => 'Повідомляйте мені про оновлення, як тільки вони будуть доступні.';
 }
 
 // Path: settings.themeModes
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$uk extends Translations$settings$cust
 	@override String get cancel => 'Скасувати';
 	@override String get select => 'Виберіть';
 	@override String get mustBeEmpty => 'Обрана папка має бути порожньою';
-	@override String get mustBeDoneSyncing => 'Переконайтеся, що синхронізація завершена перед зміною папки';
 	@override String get unsupported => 'Ця функція наразі доступна лише розробникам. Використання її може призвести до втрати даних.';
-}
-
-// Path: login.form
-class _Translations$login$form$uk extends Translations$login$form$en {
-	_Translations$login$form$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Увійшовши в систему, ви погоджуєтеся з '),
-		linkToPrivacyPolicy('Політика конфіденційності'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$uk extends Translations$login$status$en {
-	_Translations$login$status$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Вийшов з системи';
-	@override String get tapToLogin => 'Натисніть для входу через Nextcloud';
-	@override String hi({required Object u}) => 'Привіт, ${u}!';
-	@override String get almostDone => 'Майже готово до синхронізації, натисніть, щоб завершити вхід';
-	@override String get loggedIn => 'Увійшов через Nextcloud';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$uk extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$login$ncLoginStep$loginFlow$uk loginFlow = _Translations$login$ncLoginStep$loginFlow$uk._(_root);
-	@override String get whereToStoreData => 'Оберіть, де ви хочете зберігати ваші дані:';
-	@override String get saberNcServer => 'Сервер Nextcloud nts';
-	@override String get otherNcServer => 'Інший сервер Nextcloud';
-	@override String get serverUrl => 'URL сервера';
-	@override String get loginWithSaber => 'Увійти через nts';
-	@override String get loginWithNextcloud => 'Увійти через Nextcloud';
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$uk extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$uk._(_root),
-		_Translations$login$encLoginStep$encFaq$1$uk._(_root),
-		_Translations$login$encLoginStep$encFaq$2$uk._(_root),
-	];
-	@override String get enterEncPassword => 'Для захисту ваших даних, будь ласка, введіть ваш пароль шифрування:';
-	@override String get newToSaber => 'Нова у nts? Просто введіть новий пароль шифрування.';
-	@override String get encPassword => 'Пароль шифрування';
-	@override String get encFaqTitle => 'Часті запитання';
-	@override String get wrongEncPassword => 'Дешифрування не вдалося з наданим паролем. Будь ласка, спробуйте ввести його ще раз.';
-	@override String get connectionFailed => 'Щось пішло не так при підключенні до сервера. Будь ласка, спробуйте пізніше.';
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$uk extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Головна сторінка сервера';
-	@override String get deleteAccount => 'Видалити обліковий запис';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$uk extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Чи втрачу я свої нотатки, якщо вийду з системи?';
-	@override String get a => 'Ваші нотатки залишаться як на вашому пристрої, так і на сервері. Вони не будуть синхронізовані з сервером доти, доки ви не увійдете знову. Переконайтеся, що синхронізація завершена перед виходом (подивіться на прогрес синхронізації на головному екрані), щоб не втратити жодних даних.';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$uk extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Як змінити пароль у Nextcloud?';
-	@override String get a => 'Перейдіть на вебсайт вашого сервера та увійдіть. Потім перейдіть до Налаштування > Безпека > Змінити пароль. Вам потрібно буде вийти та увійти назад до nts після зміни пароля.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$uk extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Як змінити пароль шифрування?';
-	@override String get a => '0. Переконайтеся, що синхронізація завершена (подивіться на прогрес синхронізації на головному екрані).\n1. Вийдіть з облікового запису nts.\n2. Перейдіть на вебсайт вашого сервера та видаліть папку \'Saber\'. Це видалить усі ваші нотатки з сервера.\n3. Увійдіть назад у nts. Ви можете вибрати новий пароль шифрування при вході.\n4. Не забудьте вийти та увійти назад у nts на інших пристроях також.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$uk extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Як я можу видалити свій обліковий запис?';
-	@override String get a => 'Натисніть на кнопку "${_root.profile.quickLinks.deleteAccount}" вище та увійдіть у систему, якщо потрібно.\nЯкщо ви використовуєте офіційний сервер nts, ваш обліковий запис буде видалено після 1 тижневого періоду графіка. Ви можете зв\'язатися зі мною за адресою adilhanney@disroot.org протягом цього періоду, щоб скасувати видалення.\nЯкщо ви використовуєте сторонній сервер, у вас може не бути опції видалення вашого облікового запису: вам потрібно буде ознайомитися з політикою конфіденційності сервера для отримання додаткової інформації.';
 }
 
 // Path: editor.toolbar
@@ -762,8 +572,6 @@ class _Translations$editor$menu$uk extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Фон зображення підходить';
 	@override String get backgroundPattern => 'Фонова візерунок';
 	@override String get import => 'Імпорт';
-	@override String get watchServer => 'Слідкуйте за оновленнями на сервері';
-	@override String get watchServerReadOnly => 'Редагування вимкнено під час перегляду сервера';
 }
 
 // Path: editor.readOnlyBanner
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$uk extends Translations$set
 	@override String get inactive => 'Неактивний';
 	@override String get activeUntilRestart => 'Активно до перезапуску програми';
 	@override String get inactiveUntilRestart => 'Неактивно до перезапуску програми';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$uk extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Будь ласка, авторизуйте nts для доступу до вашого облікового запису Nextcloud';
-	@override String get followPrompts => 'Будь ласка, дотримуйтесь інструкцій у інтерфейсі Nextcloud';
-	@override String get browserDidntOpen => 'Сторінка входу не відкрилася? Натисніть сюди';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$uk extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Що таке пароль шифрування? Чому використовувати два паролі?';
-	@override String get a => 'Пароль Nextcloud використовується для доступу до хмари. Пароль шифрування "scrambles" заплутує ваші дані ще до того, як вони потраплять у хмару.\nНавіть якщо хтось отримає доступ до вашого облікового запису Nextcloud, ваші нотатки залишаться в безпеці та зашифровані окремим паролем. Це забезпечує вам другий рівень безпеки для захисту ваших даних.\nНіхто не може отримати доступ до ваших нотаток на сервері без вашого пароля шифрування, але це також означає, що якщо ви забудете свій пароль шифрування, ви втратите доступ до ваших даних.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$uk extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Я ще не встановлював пароль шифрування. Де я його отримаю?';
-	@override String get a => 'Оберіть новий пароль шифрування та введіть його вище.\nnts автоматично згенерує ваші ключі шифрування з цього пароля.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$uk extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$uk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Чи можу я використовувати той самий пароль для свого облікового запису Nextcloud?';
-	@override String get a => 'Так, але пам\'ятайте, що буде легше для адміністратора сервера або когось іншого отримати доступ до ваших нотаток, якщо вони отримають доступ до вашого облікового запису Nextcloud.';
 }
 
 // Path: editor.menu.boxFits

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nts/components/theming/dynamic_material_app.dart';
-import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/components/theming/nts_theme.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/flavor_config.dart';
 import 'package:nts/data/prefs.dart';
@@ -66,11 +66,7 @@ class _BrowseApp extends StatelessWidget {
   final String? path;
   @override
   Widget build(BuildContext context) {
-    final theme = SaberTheme.createThemeFromSeed(
-      Colors.yellow,
-      .light,
-      .android,
-    );
+    final theme = NtsTheme.createThemeFromSeed(Colors.yellow, .light, .android);
     final router = GoRouter(
       initialLocation: HomeRoutes.browseFilePath(path ?? ''),
       routes: [
@@ -85,7 +81,7 @@ class _BrowseApp extends StatelessWidget {
     );
     return TranslationProvider(
       child: ExplicitlyThemedApp(
-        title: 'Saber',
+        title: 'nts',
         router: router,
         themeMode: ThemeMode.light,
         theme: theme,

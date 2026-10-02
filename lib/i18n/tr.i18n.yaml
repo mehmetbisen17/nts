@@ -10,7 +10,6 @@ home:
     settings: Ayarlar
   tooltips:
     newNote: Yeni not
-    showUpdateDialog: Güncelleme diyalogunu göster
     exportNote: Notu dışa aktar
   create:
     newNote: Yeni not
@@ -95,9 +94,6 @@ settings:
     layoutSize: Yerleşim tipi
     customAccentColor: Farklı ana renk
     hyperlegibleFont: Hyperlegible font
-    shouldCheckForUpdates: Otomatik olarak nts güncellemelerini kontrol et
-    shouldAlwaysAlertForUpdates: Hızlı güncellemeler
-    allowInsecureConnections: Güvensiz bağlantılara izin ver
     editorToolbarAlignment: Editör araç çubuğunun yerleşimi
     editorToolbarShowInFullscreen: Editör araç kutusunu tam ekranda göster
     editorAutoInvert: Karanlık temada notların rengini tersine çevir
@@ -118,7 +114,6 @@ settings:
     autosave(OUTDATED): Otomatik koruma
   prefDescriptions:
     hyperlegibleFont: Atkinson Hyperlegible, görme sorunu yaşayanların okumasını kolaylaştıran bir fonttur
-    allowInsecureConnections: (Önerilmez) nts'nin kendinden imzalı/güvensiz sertifika kullanan sunuculara bağlanmasına izin verir
     preferGreyscale: E-mürekkep ekranlar için
     autoClearWhiteboardOnExit: Diğer cihazlarınıza senkronize edilmeye devam edecek
     disableEraserAfterUse: Silgiyi kullandıktan sonra otomatik olarak kaleme geçer
@@ -131,7 +126,6 @@ settings:
     printPageIndicators: Çıktılarda sayfa belirteçlerini göster
     shapeRecognitionDelay: Çizilen şekilleri tanımlama sıklığını belirler
     autoStraightenLines: Şekil aracını kullanmadığınızda da çizgileri düzleştirir
-    shouldAlwaysAlertForUpdates: Güncelleme mevcut olduğu gibi bana haber ver
     sentry:
       active(OUTDATED): Aktif
       inactive(OUTDATED): Aktif olmayan
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Ayarı sıfırlamak istiyor musunuz?
     button: Sıfırla
-  resyncEverything: Her şeyi yeniden senkronize et
   openDataDir: nts klasörünü aç
   customDataDir:
     cancel: İptal
     select: Seç
     mustBeEmpty: Seçilen klasör boş olmalı
-    mustBeDoneSyncing: Klasörü değiştirmeden önce senkronizasyonun tamamlandığından emin olun
     unsupported(OUTDATED): Bu özellik şu anda yalnızca geliştiriciler içindir. Bunu kullanmak muhtemelen veri kaybına neden olacaktır.
   autosaveDisabled(OUTDATED): Asla
   shapeRecognitionDisabled(OUTDATED): Asla
@@ -174,88 +166,14 @@ logs:
   viewLogs(OUTDATED): Günlükleri görüntüle
   debuggingInfo(OUTDATED): Günlükler hata ayıklama ve geliştirme için yararlı bilgiler içerir
   noLogs(OUTDATED): Burada kayıt yok!
-login:
-  title: Giriş yap
-  form:
-    agreeToPrivacyPolicy(rich): Giriş yaparak ${linkToPrivacyPolicy(Gizlilik Politikasını)} kabul edersiniz.
-  signup(rich): Henüz hesabınız yok mu? ${linkToSignup(Hesap oluşturmak için tıklayın)}!
-  notYou(rich): Siz değil misiniz? ${undoLogin(Başka bir hesap seçin)}.
-  status:
-    loggedOut: Çıkış yapıldı
-    tapToLogin: Nextcloud oturumu açmak için tıklayın
-    hi: Merhaba, $u!
-    almostDone: Senkronizasyona hazırız, giriş yapmayı tamamlamak için tıklayın
-    loggedIn: Nextcloud'a giriş yapıldı
-  ncLoginStep:
-    whereToStoreData: "Verilerinizi nerede saklamak istediğinizi seçin:"
-    saberNcServer: nts'nin resmi Nextcloud sunucus
-    otherNcServer: Diğer Nextcloud sunucusu
-    serverUrl: Sunucu URL'i
-    loginWithSaber: nts ile giriş yap
-    loginWithNextcloud: Nextcloud ile giriş yap
-    loginFlow:
-      pleaseAuthorize: Lütfen nts'nin Nextcloud hesabınıza erişmesine izin verin
-      followPrompts: Lütfen Nextcloud arayüzündeki aşamaları takip edin
-      browserDidntOpen: Giriş sayfası açılmadıysa buraya tıklayın
-  encLoginStep:
-    enterEncPassword: "Verilerinizi korumak için lütfen şifreleme parolanızı girin:"
-    newToSaber: nts'de ilk seferiniz mi? Yeni bir şifreleme parolası girin.
-    encPassword: Şifreleme parolası
-    encFaqTitle: Sıkça sorulan sorular
-    wrongEncPassword: Verilen parola ile şifre çözülemedi. Lütfen parolayı tekrar girin.
-    connectionFailed: Sunucuya bağlanılamadı. Lütfen daha sonra tekrar deneyin.
-    encFaq:
-    - q: Şifreleme parolası nedir? Neden iki parola kullanıyorum?
-      a: |-
-        Nextcloud parolası bulutta oturum açmak için kullanılıyor. Şifreleme parolası ise verilerinizi buluta aktarmadan önce gizlemek için kullanılıyor.
-        Eğer birisi Nextcloud hesabınızı ele geçirseydi bile notlarınız güvenli ve şifreli kalmaya devam edecekti. Böylece ikinci bir güvenlik katmanı sağlamış oluyoruz.
-        Buluttaki verilerinize, şifreleme parolası olmayan kimse erişemez; dolayısıyla bu parolayı kaybetmeniz durumunda siz de erişemezsiniz.
-    - q: Henüz bir şifreleme parolası belirlemedim. Nereden alacağım?
-      a: |-
-        Yeni bir şifreleme parolası belirleyip yukarıya yazın.
-        nts şifreleme anahtarını bu parolayı kullanarak üretecek.
-    - q: Nextcloud parolamla şifreleme parolam aynı olabilir mi?
-      a: Evet fakat unutmayın ki bu durumda Nextcloud parolanıza sahip herhangi birisi notlarınıza da erişebilir.
-profile:
-  title: Profilim
-  logout: Çıkış yap
-  quotaUsage: Toplam $total alanın $used kadarını ($percent%) kullandınız
-  connectedTo: Bağlanılan sunucu
-  quickLinks:
-    serverHomepage: Sunucu anasayfası
-    deleteAccount: Hesabı sil
-  faqTitle: Sıkça sorulan sorular
-  faq:
-  - q: Çıkış yaparsam notlarımı kaybedecek miyim?
-    a: Hayır. Notlarınız hem cihazınızda hem de sunucuda tutuluyor olacak. Siz tekrardan giriş yapana dek notlarınız senkronize edilmeyecek. Veri kaybı yaşamamak için çıkış yapmadan önce senkronizasyonun tamamlandığından emin olun (ana sayfada senkronizasyon ilerlemesini görebilirsiniz).
-  - q: Nextcloud parolamı nasıl değiştirebilirim?
-    a: Sunucu websitesine gidin ve hesabınıza giriş yapın. Arayüzde Ayarlar > Güvenlik > Parola değiştir yolunu takip edin. Parolanızı değiştirdikten sonra nts'den çıkış yapıp tekrardan giriş yapmanız gerekecek.
-  - q: Şifreleme parolamı nasıl değiştirebilirim?
-    a: |-
-      "1. nts'den çıkış yap. Veri kaybı yaşamamak için çıkış yapmadan önce senkronizasyonun tamamlandığından emin olun (ana sayfada senkronizasyon ilerlemesini görebilirsiniz)."
-      2. Sunucu websitesine gidin ve 'Saber' klasörünü silin. Bu sunucudaki tüm notları silecek.
-      "3. nts'ye giriş yap. Tekrar giriş yaparken yeni şifreleme parolanızı belirleyebilirsiniz.
-      4. Diğer cihazlarınızda da nts'den çıkış yapıp tekrar giriş yapmayı unutmayın.
-  - q: Hesabımı nasıl silebilirim?
-    a: |-
-      Üstte yer alan "@:profile.quickLinks.deleteAccount" butonuna tıklayın, gerekirse giriş yapın.
-      Eğer resmi nts sunucusunu kullanıyorsanız hesabınız 1 haftalık bekleme süresinden sonra silinecek. adilhanney@disroot.org adresinden benimle iletişime geçerek silinme talebini iptal edebilirsiniz.
-      Eğer üçüncü parti bir sunucu kullanıyorsanız hesabınızı silme seçeneği sunulmuyor olabilir: daha fazla bilgi için ilgili sunucunun gizlilik politikasını inceleyin.
-  quotaUsageUncapped(OUTDATED): $used kullanıyorsunuz
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Bu program hiçbir şeyi garanti etmez ve güvence vermez.
     Bu program özgür (free) bir yazılımdır ve belli koşullar sağlandığında yeniden dağıtıma müsaittir.
   debug: DEBUG
-  sponsorButton: Beni sponsorlamak veya daha fazla alan satın almak için buraya tıkla
   licenseButton: Lisans bilgisinin detaylarını görmek için buraya tıkla
   privacyPolicyButton: Gizlilik Politikasını görmek için buraya tıkla
-update:
-  updateAvailable: Güncelleme var
-  updateAvailableDescription: "Uygulamanın şu değişiklikleri içeren yeni bir sürümü mevcut:"
-  update: Güncelle
-  downloadNotAvailableYet: Bu indirme platformunuz için henüz hazır değil. Lütfen daha sonra tekrar deneyiniz.
 editor:
   toolbar:
     toggleColors: Renklere geç (Ctrl C)
@@ -326,8 +244,6 @@ editor:
     backgroundImageFit: Arkaplan görüntüsünü sığdır
     backgroundPattern: Arkaplan deseni
     import: İçe aktar
-    watchServer: Sunucudaki değişiklikleri izle
-    watchServerReadOnly: Sunucu izlenirken düzenleme yapılamaz
     boxFits:
       fill: Yaydır
       cover: Kapla

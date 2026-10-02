@@ -136,7 +136,6 @@ class Stroke {
     final pressureEnabled = json['pe'] ?? defaultPressureEnabled;
     if (toolId == .shapePen) {
       // Set smoothing and streamline to 0 for ShapePen
-      // to mitigate https://github.com/saber-notes/saber/issues/1587
       options.smoothing = 0;
       options.streamline = 0;
     }
@@ -381,7 +380,33 @@ class Stroke {
 
   RecognizedUnistroke? detectShape() {
     if (points.length < 3) return null;
-    return recognizeUnistroke(points);
+    return recognizeUnistroke(_recognizable);
+  }
+
+  /// [points], with more in between if there are too few for the
+  /// recognizer (which ignores strokes under [Unistroke.numPoints]):
+  /// a quick line with the Pencil has only a few dozen.
+  List<Offset> get _recognizable {
+    const minPoints = Unistroke.numPoints;
+    if (points.length >= minPoints) return points;
+    final length = _polylineLength(points);
+    if (length <= 0) return points;
+    final step = length / (minPoints - 1);
+    final result = <Offset>[points.first];
+    var travelled = 0.0;
+    for (int i = 0; i + 1 < points.length; ++i) {
+      final a = points[i], b = points[i + 1];
+      final segment = (b - a).distance;
+      while (result.length < minPoints - 1 &&
+          travelled + segment >= step * result.length) {
+        final t = segment == 0
+            ? 0.0
+            : (step * result.length - travelled) / segment;
+        result.add(Offset.lerp(a, b, t)!);
+      }
+      travelled += segment;
+    }
+    return result..add(points.last);
   }
 
   /// Uses the one_dollar_unistroke_recognizer package
@@ -392,6 +417,8 @@ class Stroke {
   bool isStraightLine([int minLength = 5]) {
     if (points.length < 3) return false;
 
+    // (Not [_recognizable]: auto-straightening quick strokes, which have
+    // few points, would also straighten handwriting)
     final recognized = recognizeUnistroke(
       points,
       overrideReferenceUnistrokes: default$1Unistrokes
@@ -463,8 +490,13 @@ class Stroke {
     points.add(lastPoint);
     points.add(lastPoint);
     options.isComplete = true;
-    options.start.taperEnabled = false;
-    options.end.taperEnabled = false;
+    // New end options: the old ones may be the pen's own, shared by its
+    // strokes
+    options.start = options.start.copyWith(
+      taperEnabled: false,
+      customTaper: null,
+    );
+    options.end = options.end.copyWith(taperEnabled: false, customTaper: null);
   }
 
   /// Snaps a line to either horizontal or vertical

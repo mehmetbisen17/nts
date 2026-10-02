@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:nts/components/canvas/_stroke.dart';
@@ -58,9 +59,12 @@ class Eraser extends Tool {
   ///
   /// A null [from] starts a new drag, discarding any state left by a drag
   /// that never reached [finishDrag].
-  void erase(Offset eraserPos, List<Stroke> strokes, {Offset? from}) {
+  ///
+  /// Returns whether anything was erased.
+  bool erase(Offset eraserPos, List<Stroke> strokes, {Offset? from}) {
     if (from == null) _resetPartialDrag();
     _dragMode ??= stows.eraserMode.value;
+    var erased = false;
     switch (_dragMode!) {
       case .stroke:
         for (final stroke in checkForOverlappingStrokes(
@@ -69,6 +73,7 @@ class Eraser extends Tool {
           from: from,
         )) {
           strokes.remove(stroke);
+          erased = true;
         }
       case .partial:
         // Backwards so replacing a stroke doesn't shift unvisited indices
@@ -79,6 +84,7 @@ class Eraser extends Tool {
             size,
           );
           if (fragments == null) continue;
+          erased = true;
           _strokesBefore ??= List.of(strokes);
           _strokesAfter = strokes;
           if (!_fragments.remove(strokes[i])) _cut.add(strokes[i]);
@@ -87,6 +93,7 @@ class Eraser extends Tool {
           strokes.replaceRange(i, i + 1, fragments);
         }
     }
+    return erased;
   }
 
   /// Ends the current drag, returning the history item describing
@@ -189,6 +196,13 @@ class Eraser extends Tool {
     Stroke stroke,
     double sqrSize,
   ) {
+    // Most strokes are nowhere near: skip them without visiting points
+    final reach = sqrt(sqrSize) + stroke.options.size;
+    if (!stroke.bounds
+        .inflate(reach)
+        .overlaps(Rect.fromPoints(from, eraserPos))) {
+      return false;
+    }
     if (stroke.length <= 3) {
       if (stroke.lowQualityPath.contains(eraserPos)) return true;
     }

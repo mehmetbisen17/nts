@@ -5,7 +5,6 @@ import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
 import 'package:nts/components/toolbar/floating_bar.dart';
 import 'package:nts/components/toolbar/toolbar_button.dart';
-import 'package:nts/data/extensions/axis_extensions.dart';
 import 'package:nts/data/extensions/color_extensions.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/data/services/pen_presets.dart';
@@ -17,12 +16,15 @@ import 'package:nts/i18n/strings.g.dart';
 class PenPresetButtons extends StatelessWidget {
   const new({
     super.key,
+    required this.axis,
     required this.currentTool,
     required this.enabled,
     required this.selectTool,
     required this.padding,
   });
 
+  /// The toolbar's direction.
+  final Axis axis;
   final Tool currentTool;
   final bool enabled;
   final ValueChanged<Tool> selectTool;
@@ -47,7 +49,7 @@ class PenPresetButtons extends StatelessWidget {
           ],
         );
         return Flex(
-          direction: stows.editorToolbarAlignment.value.axis.opposite,
+          direction: axis,
           mainAxisSize: .min,
           children: [
             for (final preset in presets)

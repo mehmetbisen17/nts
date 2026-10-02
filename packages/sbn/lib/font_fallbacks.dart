@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const saberSansSerifFontFallbacks = [
+const ntsSansSerifFontFallbacks = [
   'Adwaita Sans',
   'Inter',
   'Noto Sans',
@@ -23,7 +23,7 @@ const saberSansSerifFontFallbacks = [
   '.SF UI Text',
   'Segoe UI',
 ];
-const saberMonoFontFallbacks = [
+const ntsMonoFontFallbacks = [
   'Fira Mono',
   'ui-monospace',
   'Cascadia Code',
@@ -33,7 +33,7 @@ const saberMonoFontFallbacks = [
   'DejaVu Sans Mono',
   'monospace',
 ];
-const saberHandwritingFontFallbacks = [
+const ntsHandwritingFontFallbacks = [
   'Neucha',
   'Dekko',
   // Fallback fonts from https://github.com/system-fonts/modern-font-stacks#handwritten
@@ -45,7 +45,7 @@ const saberHandwritingFontFallbacks = [
   'casual',
   'cursive',
   'handwriting',
-  ...saberSansSerifFontFallbacks,
+  ...ntsSansSerifFontFallbacks,
 ];
 
 extension TextThemeExtension on TextTheme {

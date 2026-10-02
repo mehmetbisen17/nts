@@ -9,8 +9,6 @@ import 'package:nts/components/home/home_layout_button.dart';
 import 'package:nts/components/home/sort_button.dart';
 import 'package:nts/components/navbar/responsive_navbar.dart';
 import 'package:nts/data/ai/auth/oauth_tokens.dart';
-import 'package:nts/data/codecs/base64_codec.dart';
-import 'package:nts/data/quota.dart';
 import 'package:nts/data/sentry/sentry_consent.dart';
 import 'package:nts/data/services/pen_presets.dart';
 import 'package:nts/data/tools/eraser.dart';
@@ -24,7 +22,6 @@ import 'package:sbn/tool_id.dart';
 import 'package:stow/stow.dart';
 import 'package:stow_codecs/stow_codecs.dart';
 import 'package:stow_plain/stow_plain.dart';
-import 'package:stow_secure/stow_secure.dart';
 
 /// If false, all stows are stuck at their default values.
 var _isOnMainIsolate = false;
@@ -63,32 +60,6 @@ class Stows {
     '',
     volatile: !_isOnMainIsolate,
   );
-
-  final allowInsecureConnections = SecureStow.bool(
-    'allowInsecureConnections',
-    false,
-    volatile: !_isOnMainIsolate,
-  );
-  final url = SecureStow('url', '', volatile: !_isOnMainIsolate);
-  final username = SecureStow('username', '', volatile: !_isOnMainIsolate);
-
-  /// the password used to login to Nextcloud
-  final ncPassword = SecureStow('ncPassword', '', volatile: !_isOnMainIsolate);
-
-  /// the password used to encrypt/decrypt notes
-  final encPassword = SecureStow(
-    'encPassword',
-    '',
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// Nextcloud sync is disabled: notes are synced by iCloud Drive instead
-  /// (see `ICloudStorage`), so the (dead) Nextcloud syncer never runs,
-  /// even with credentials saved from an old login.
-  bool get loggedIn => false;
-
-  final key = SecureStow('key', '', volatile: !_isOnMainIsolate);
-  final iv = SecureStow('iv', '', volatile: !_isOnMainIsolate);
 
   /// Sign-in tokens of the AI accounts as JSON (see `TokenStore`),
   /// or empty if signed out. Claude has none: Claude Code keeps its own.
@@ -137,18 +108,6 @@ class Stows {
   final macSandboxNotesCopied = PlainStow(
     'macSandboxNotesCopied',
     false,
-    volatile: !_isOnMainIsolate,
-  );
-
-  final pfp = PlainStow<Uint8List?>(
-    'pfp',
-    null,
-    codec: const Base64StowCodec(),
-    volatile: !_isOnMainIsolate,
-  );
-  final syncInBackground = PlainStow(
-    'syncInBackground',
-    true,
     volatile: !_isOnMainIsolate,
   );
 
@@ -536,50 +495,6 @@ class Stows {
   final recentFiles = PlainStow(
     'recentFiles',
     <String>[],
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// File paths that have been deleted locally
-  final fileSyncAlreadyDeleted = PlainStow(
-    'fileSyncAlreadyDeleted',
-    <String>{},
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// File paths that are known to be corrupted on Nextcloud
-  final fileSyncCorruptFiles = PlainStow(
-    'fileSyncCorruptFiles',
-    <String>{},
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// Set when we want to resync everything.
-  /// Files on the server older than this date will be
-  /// reuploaded with the local version.
-  /// By default, we resync everything uploaded before v0.18.4, since uploads before then resulted in 0B files.
-  final fileSyncResyncEverythingDate = PlainStow(
-    'fileSyncResyncEverythingDate',
-    DateTime.parse('2023-12-10T10:06:31.000Z'),
-    codec: const DateTimeCodec(),
-    volatile: !_isOnMainIsolate,
-  );
-
-  /// The last storage quota that was fetched from Nextcloud
-  final lastStorageQuota = PlainStow<Quota?>(
-    'lastStorageQuota',
-    null,
-    codec: const QuotaCodec(),
-    volatile: !_isOnMainIsolate,
-  );
-
-  final shouldCheckForUpdates = PlainStow(
-    'shouldCheckForUpdates',
-    false, // nts has no update feed; upstream Saber's releases don't apply
-    volatile: !_isOnMainIsolate,
-  );
-  final shouldAlwaysAlertForUpdates = PlainStow(
-    'shouldAlwaysAlertForUpdates',
-    kDebugMode ? true : false,
     volatile: !_isOnMainIsolate,
   );
 

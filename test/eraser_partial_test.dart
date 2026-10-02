@@ -418,9 +418,7 @@ void main() {
   });
 
   testWidgets('Editor undoes and redoes a partial erase', (tester) async {
-    FileManager.documentsDirectory =
-        '$tmpDir/eraserPartial/'
-        '${FileManager.appRootDirectoryPrefix}';
+    FileManager.documentsDirectory = '$tmpDir/eraserPartial/nts';
     stows.eraserMode.value = .partial;
     addTearDown(() => stows.eraserMode.value = .stroke);
 

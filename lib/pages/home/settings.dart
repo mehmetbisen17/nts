@@ -16,7 +16,6 @@ import 'package:nts/components/settings/settings_selection.dart';
 import 'package:nts/components/settings/settings_sentry.dart';
 import 'package:nts/components/settings/settings_subtitle.dart';
 import 'package:nts/components/settings/settings_switch.dart';
-import 'package:nts/components/settings/update_manager.dart';
 import 'package:nts/components/theming/adaptive_alert_dialog.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
@@ -68,7 +67,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     stows.locale.addListener(onChanged);
-    UpdateManager.status.addListener(onChanged);
     super.initState();
   }
 
@@ -389,7 +387,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void dispose() {
     stows.locale.removeListener(onChanged);
-    UpdateManager.status.removeListener(onChanged);
     super.dispose();
   }
 }

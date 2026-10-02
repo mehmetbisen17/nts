@@ -39,10 +39,7 @@ class TranslationsTr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$tr sentry = _Translations$sentry$tr._(_root);
 	@override late final _Translations$settings$tr settings = _Translations$settings$tr._(_root);
 	@override late final _Translations$logs$tr logs = _Translations$logs$tr._(_root);
-	@override late final _Translations$login$tr login = _Translations$login$tr._(_root);
-	@override late final _Translations$profile$tr profile = _Translations$profile$tr._(_root);
 	@override late final _Translations$appInfo$tr appInfo = _Translations$appInfo$tr._(_root);
-	@override late final _Translations$update$tr update = _Translations$update$tr._(_root);
 	@override late final _Translations$editor$tr editor = _Translations$editor$tr._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$tr extends Translations$settings$en {
 		'Sol',
 	];
 	@override late final _Translations$settings$reset$tr reset = _Translations$settings$reset$tr._(_root);
-	@override String get resyncEverything => 'Her şeyi yeniden senkronize et';
 	@override String get openDataDir => 'nts klasörünü aç';
 	@override late final _Translations$settings$customDataDir$tr customDataDir = _Translations$settings$customDataDir$tr._(_root);
 	@override String get autosaveDisabled => 'Asla';
@@ -134,52 +130,6 @@ class _Translations$logs$tr extends Translations$logs$en {
 	@override String get noLogs => 'Burada kayıt yok!';
 }
 
-// Path: login
-class _Translations$login$tr extends Translations$login$en {
-	_Translations$login$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Giriş yap';
-	@override late final _Translations$login$form$tr form = _Translations$login$form$tr._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Henüz hesabınız yok mu? '),
-		linkToSignup('Hesap oluşturmak için tıklayın'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Siz değil misiniz? '),
-		undoLogin('Başka bir hesap seçin'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$tr status = _Translations$login$status$tr._(_root);
-	@override late final _Translations$login$ncLoginStep$tr ncLoginStep = _Translations$login$ncLoginStep$tr._(_root);
-	@override late final _Translations$login$encLoginStep$tr encLoginStep = _Translations$login$encLoginStep$tr._(_root);
-}
-
-// Path: profile
-class _Translations$profile$tr extends Translations$profile$en {
-	_Translations$profile$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Profilim';
-	@override String get logout => 'Çıkış yap';
-	@override String quotaUsage({required Object total, required Object used, required Object percent}) => 'Toplam ${total} alanın ${used} kadarını (${percent}%) kullandınız';
-	@override String get connectedTo => 'Bağlanılan sunucu';
-	@override late final _Translations$profile$quickLinks$tr quickLinks = _Translations$profile$quickLinks$tr._(_root);
-	@override String get faqTitle => 'Sıkça sorulan sorular';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$tr._(_root),
-		_Translations$profile$faq$1$tr._(_root),
-		_Translations$profile$faq$2$tr._(_root),
-		_Translations$profile$faq$3$tr._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => '${used} kullanıyorsunuz';
-}
-
 // Path: appInfo
 class _Translations$appInfo$tr extends Translations$appInfo$en {
 	_Translations$appInfo$tr._(TranslationsTr root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$tr extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nBu program hiçbir şeyi garanti etmez ve güvence vermez.\nBu program özgür (free) bir yazılımdır ve belli koşullar sağlandığında yeniden dağıtıma müsaittir.';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => 'Beni sponsorlamak veya daha fazla alan satın almak için buraya tıkla';
 	@override String get licenseButton => 'Lisans bilgisinin detaylarını görmek için buraya tıkla';
 	@override String get privacyPolicyButton => 'Gizlilik Politikasını görmek için buraya tıkla';
-}
-
-// Path: update
-class _Translations$update$tr extends Translations$update$en {
-	_Translations$update$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Güncelleme var';
-	@override String get updateAvailableDescription => 'Uygulamanın şu değişiklikleri içeren yeni bir sürümü mevcut:';
-	@override String get update => 'Güncelle';
-	@override String get downloadNotAvailableYet => 'Bu indirme platformunuz için henüz hazır değil. Lütfen daha sonra tekrar deneyiniz.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$tr extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Yeni not';
-	@override String get showUpdateDialog => 'Güncelleme diyalogunu göster';
 	@override String get exportNote => 'Notu dışa aktar';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$tr extends Translations$settings$prefLab
 	@override String get layoutSize => 'Yerleşim tipi';
 	@override String get customAccentColor => 'Farklı ana renk';
 	@override String get hyperlegibleFont => 'Hyperlegible font';
-	@override String get shouldCheckForUpdates => 'Otomatik olarak nts güncellemelerini kontrol et';
-	@override String get shouldAlwaysAlertForUpdates => 'Hızlı güncellemeler';
-	@override String get allowInsecureConnections => 'Güvensiz bağlantılara izin ver';
 	@override String get editorToolbarAlignment => 'Editör araç çubuğunun yerleşimi';
 	@override String get editorToolbarShowInFullscreen => 'Editör araç kutusunu tam ekranda göster';
 	@override String get editorAutoInvert => 'Karanlık temada notların rengini tersine çevir';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$tr extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible, görme sorunu yaşayanların okumasını kolaylaştıran bir fonttur';
-	@override String get allowInsecureConnections => '(Önerilmez) nts\'nin kendinden imzalı/güvensiz sertifika kullanan sunuculara bağlanmasına izin verir';
 	@override String get preferGreyscale => 'E-mürekkep ekranlar için';
 	@override String get autoClearWhiteboardOnExit => 'Diğer cihazlarınıza senkronize edilmeye devam edecek';
 	@override String get disableEraserAfterUse => 'Silgiyi kullandıktan sonra otomatik olarak kaleme geçer';
@@ -451,7 +382,6 @@ class _Translations$settings$prefDescriptions$tr extends Translations$settings$p
 	@override String get printPageIndicators => 'Çıktılarda sayfa belirteçlerini göster';
 	@override String get shapeRecognitionDelay => 'Çizilen şekilleri tanımlama sıklığını belirler';
 	@override String get autoStraightenLines => 'Şekil aracını kullanmadığınızda da çizgileri düzleştirir';
-	@override String get shouldAlwaysAlertForUpdates => 'Güncelleme mevcut olduğu gibi bana haber ver';
 	@override late final _Translations$settings$prefDescriptions$sentry$tr sentry = _Translations$settings$prefDescriptions$sentry$tr._(_root);
 	@override String get autoDisableFingerDrawingWhenStylusDetected => 'Bir kalem algılandığında parmakla çizimi kapatın';
 	@override String get autosave => 'Kısa bir gecikmeden sonra otomatik kaydetme veya asla';
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$tr extends Translations$settings$cust
 	@override String get cancel => 'İptal';
 	@override String get select => 'Seç';
 	@override String get mustBeEmpty => 'Seçilen klasör boş olmalı';
-	@override String get mustBeDoneSyncing => 'Klasörü değiştirmeden önce senkronizasyonun tamamlandığından emin olun';
 	@override String get unsupported => 'Bu özellik şu anda yalnızca geliştiriciler içindir. Bunu kullanmak muhtemelen veri kaybına neden olacaktır.';
-}
-
-// Path: login.form
-class _Translations$login$form$tr extends Translations$login$form$en {
-	_Translations$login$form$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Giriş yaparak '),
-		linkToPrivacyPolicy('Gizlilik Politikasını'),
-		const TextSpan(text: ' kabul edersiniz.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$tr extends Translations$login$status$en {
-	_Translations$login$status$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Çıkış yapıldı';
-	@override String get tapToLogin => 'Nextcloud oturumu açmak için tıklayın';
-	@override String hi({required Object u}) => 'Merhaba, ${u}!';
-	@override String get almostDone => 'Senkronizasyona hazırız, giriş yapmayı tamamlamak için tıklayın';
-	@override String get loggedIn => 'Nextcloud\'a giriş yapıldı';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$tr extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Verilerinizi nerede saklamak istediğinizi seçin:';
-	@override String get saberNcServer => 'nts\'nin resmi Nextcloud sunucus';
-	@override String get otherNcServer => 'Diğer Nextcloud sunucusu';
-	@override String get serverUrl => 'Sunucu URL\'i';
-	@override String get loginWithSaber => 'nts ile giriş yap';
-	@override String get loginWithNextcloud => 'Nextcloud ile giriş yap';
-	@override late final _Translations$login$ncLoginStep$loginFlow$tr loginFlow = _Translations$login$ncLoginStep$loginFlow$tr._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$tr extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Verilerinizi korumak için lütfen şifreleme parolanızı girin:';
-	@override String get newToSaber => 'nts\'de ilk seferiniz mi? Yeni bir şifreleme parolası girin.';
-	@override String get encPassword => 'Şifreleme parolası';
-	@override String get encFaqTitle => 'Sıkça sorulan sorular';
-	@override String get wrongEncPassword => 'Verilen parola ile şifre çözülemedi. Lütfen parolayı tekrar girin.';
-	@override String get connectionFailed => 'Sunucuya bağlanılamadı. Lütfen daha sonra tekrar deneyin.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$tr._(_root),
-		_Translations$login$encLoginStep$encFaq$1$tr._(_root),
-		_Translations$login$encLoginStep$encFaq$2$tr._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$tr extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Sunucu anasayfası';
-	@override String get deleteAccount => 'Hesabı sil';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$tr extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Çıkış yaparsam notlarımı kaybedecek miyim?';
-	@override String get a => 'Hayır. Notlarınız hem cihazınızda hem de sunucuda tutuluyor olacak. Siz tekrardan giriş yapana dek notlarınız senkronize edilmeyecek. Veri kaybı yaşamamak için çıkış yapmadan önce senkronizasyonun tamamlandığından emin olun (ana sayfada senkronizasyon ilerlemesini görebilirsiniz).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$tr extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Nextcloud parolamı nasıl değiştirebilirim?';
-	@override String get a => 'Sunucu websitesine gidin ve hesabınıza giriş yapın. Arayüzde Ayarlar > Güvenlik > Parola değiştir yolunu takip edin. Parolanızı değiştirdikten sonra nts\'den çıkış yapıp tekrardan giriş yapmanız gerekecek.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$tr extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Şifreleme parolamı nasıl değiştirebilirim?';
-	@override String get a => '"1. nts\'den çıkış yap. Veri kaybı yaşamamak için çıkış yapmadan önce senkronizasyonun tamamlandığından emin olun (ana sayfada senkronizasyon ilerlemesini görebilirsiniz)."\n2. Sunucu websitesine gidin ve \'Saber\' klasörünü silin. Bu sunucudaki tüm notları silecek.\n"3. nts\'ye giriş yap. Tekrar giriş yaparken yeni şifreleme parolanızı belirleyebilirsiniz.\n4. Diğer cihazlarınızda da nts\'den çıkış yapıp tekrar giriş yapmayı unutmayın.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$tr extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Hesabımı nasıl silebilirim?';
-	@override String get a => 'Üstte yer alan "${_root.profile.quickLinks.deleteAccount}" butonuna tıklayın, gerekirse giriş yapın.\nEğer resmi nts sunucusunu kullanıyorsanız hesabınız 1 haftalık bekleme süresinden sonra silinecek. adilhanney@disroot.org adresinden benimle iletişime geçerek silinme talebini iptal edebilirsiniz.\nEğer üçüncü parti bir sunucu kullanıyorsanız hesabınızı silme seçeneği sunulmuyor olabilir: daha fazla bilgi için ilgili sunucunun gizlilik politikasını inceleyin.';
 }
 
 // Path: editor.toolbar
@@ -758,8 +568,6 @@ class _Translations$editor$menu$tr extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Arkaplan görüntüsünü sığdır';
 	@override String get backgroundPattern => 'Arkaplan deseni';
 	@override String get import => 'İçe aktar';
-	@override String get watchServer => 'Sunucudaki değişiklikleri izle';
-	@override String get watchServerReadOnly => 'Sunucu izlenirken düzenleme yapılamaz';
 	@override late final _Translations$editor$menu$boxFits$tr boxFits = _Translations$editor$menu$boxFits$tr._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$tr bgPatterns = _Translations$editor$menu$bgPatterns$tr._(_root);
 	@override String get lineThickness => 'Çizgi kalınlığı';
@@ -867,51 +675,6 @@ class _Translations$settings$prefDescriptions$sentry$tr extends Translations$set
 	@override String get inactive => 'Aktif olmayan';
 	@override String get activeUntilRestart => 'Uygulamayı yeniden başlatana kadar etkin';
 	@override String get inactiveUntilRestart => 'Uygulamayı yeniden başlatana kadar aktif olmayan';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$tr extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Lütfen nts\'nin Nextcloud hesabınıza erişmesine izin verin';
-	@override String get followPrompts => 'Lütfen Nextcloud arayüzündeki aşamaları takip edin';
-	@override String get browserDidntOpen => 'Giriş sayfası açılmadıysa buraya tıklayın';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$tr extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Şifreleme parolası nedir? Neden iki parola kullanıyorum?';
-	@override String get a => 'Nextcloud parolası bulutta oturum açmak için kullanılıyor. Şifreleme parolası ise verilerinizi buluta aktarmadan önce gizlemek için kullanılıyor.\nEğer birisi Nextcloud hesabınızı ele geçirseydi bile notlarınız güvenli ve şifreli kalmaya devam edecekti. Böylece ikinci bir güvenlik katmanı sağlamış oluyoruz.\nBuluttaki verilerinize, şifreleme parolası olmayan kimse erişemez; dolayısıyla bu parolayı kaybetmeniz durumunda siz de erişemezsiniz.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$tr extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Henüz bir şifreleme parolası belirlemedim. Nereden alacağım?';
-	@override String get a => 'Yeni bir şifreleme parolası belirleyip yukarıya yazın.\nnts şifreleme anahtarını bu parolayı kullanarak üretecek.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$tr extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$tr._(TranslationsTr root) : this._root = root, super.internal(root);
-
-	final TranslationsTr _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Nextcloud parolamla şifreleme parolam aynı olabilir mi?';
-	@override String get a => 'Evet fakat unutmayın ki bu durumda Nextcloud parolanıza sahip herhangi birisi notlarınıza da erişebilir.';
 }
 
 // Path: editor.menu.boxFits

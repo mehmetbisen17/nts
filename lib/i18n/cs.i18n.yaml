@@ -10,7 +10,6 @@ home:
     settings: Nastavení
   tooltips:
     newNote: Nová poznámka
-    showUpdateDialog: Zobrazit dialogové okno aktualizace
     exportNote: Exportovat poznámku
   create:
     newNote: Nová poznámka
@@ -95,9 +94,6 @@ settings:
     layoutSize: Rozvržení uživatelského rozhraní
     customAccentColor: Vlastní barevný odstín
     hyperlegibleFont: Lépe čitelný font
-    shouldCheckForUpdates: Automaticky kontrolovat dostupnost aktualizací aplikace nts
-    shouldAlwaysAlertForUpdates: Rychlejší aktualizace
-    allowInsecureConnections: Povolit nezabezpečená připojení
     editorToolbarAlignment: Umístění nabídky editoru
     editorToolbarShowInFullscreen: Zobrazovat nabídku editoru v režimu celé obrazovky
     editorAutoInvert: V tmavém režimu invertovat poznámky
@@ -118,7 +114,6 @@ settings:
     sentry: Hlášení chyb
   prefDescriptions:
     hyperlegibleFont: Font Atkinson Hyperlegible zvyšuje čitelnost pro čtenáře se slabým zrakem
-    allowInsecureConnections: (Nedoporučuje se) Povolit aplikaci nts připojovat se k serverům se samopodepsaným/nedůvěryhodným certifikátem
     preferGreyscale: Pro elektronické čtečky knih s e-ink displejem
     autoClearWhiteboardOnExit: Bude synchronizováno do dalších zařízení
     disableEraserAfterUse: Po použití gumy automaticky přepnout zpět na pero
@@ -133,7 +128,6 @@ settings:
     autosave: Poznámky se budou automaticky ukládat po krátké prodlevě, nebo nikdy
     shapeRecognitionDelay: Jak často aktualizovat náhled tvaru
     autoStraightenLines: Automaticky narovná dlouhé čáry, aniž by bylo nutné využít tvarové pero
-    shouldAlwaysAlertForUpdates: Oznámit dostupnost aktualizací co nejdříve od jejich vydání
     sentry:
       active: Aktivní
       inactive: Neaktivní
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Chcete resetovat tuto volbu?
     button: Resetovat
-  resyncEverything: Znovu synchronizovat všechny poznámky
   openDataDir: Otevřít složku aplikace nts
   customDataDir:
     cancel: Zrušit
     select: Zvolit
     mustBeEmpty: Zvolená složka musí být prázdná
-    mustBeDoneSyncing: Než změníte složku, ujistěte se, že byla dokončena synchronizace
     unsupported: Tato funkce je v současné době pouze pro vývojáře. Její využití pravděpodobně povede ke ztrátě dat.
   autosaveDisabled: Nikdy
   shapeRecognitionDisabled: Nikdy
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: Logy obsahují informace užitečné pro ladění a vývoj
   noLogs: Nejsou k dispozici žádné logy!
   useTheApp: Jakmile aplikaci začnete používat, logy se zobrazí na tomto místě
-login:
-  title: Přihlášení
-  form:
-    agreeToPrivacyPolicy(rich): Přihlášením souhlasíte se ${linkToPrivacyPolicy(Zásadami ochrany osobních údajů)}.
-  signup(rich): Ještě nemáte účet? ${linkToSignup(Zaregistrujte se)}!
-  notYou(rich): Nejste to vy? ${undoLogin(Zvolit jiný účet)}.
-  status:
-    loggedOut: Jste odhlášení
-    tapToLogin: Klepněte pro přihlášení pomocí Nextcloud účtu
-    hi: Zdravím, $u!
-    almostDone: Synchronizace je téměř připravena, pro dokončení přihlášení klepněte sem
-    loggedIn: Jste přihlášeni pomocí Nextcloud účtu
-  ncLoginStep:
-    whereToStoreData: "Zvolte si, kam chcete ukládat svá data:"
-    saberNcServer: Oficiální Nextcloud server aplikace nts
-    otherNcServer: Jiný Nextcloud server
-    serverUrl: URL adresa serveru
-    loginWithSaber: Přihlásit přes aplikaci nts
-    loginWithNextcloud: Přihlásit přes Nextcloud server
-    loginFlow:
-      pleaseAuthorize: Autorizujte prosím aplikaci nts k přístupu na váš Nextcloud účet
-      followPrompts: Následujte prosím kroky v rozhraní Nextcloud serveru
-      browserDidntOpen: Neotevřela se přihlašovací stránka? Klepněte zde
-  encLoginStep:
-    enterEncPassword: "Pro ochranu svých dat prosím zadejte heslo pro šifrování:"
-    newToSaber: Poprvé v aplikaci nts? Stačí zadat nové heslo pro šifrování.
-    encPassword: Heslo pro šifrování
-    encFaqTitle: Často kladené otázky
-    wrongEncPassword: Dešifrování pomocí zadaného hesla pro šifrování selhalo. Zkuste ho prosím zadat znovu.
-    connectionFailed: Při připojování k serveru se něco pokazilo. Zkuste to prosím později.
-    encFaq:
-    - q: Co je to heslo pro šifrování? Proč používat dvě hesla?
-      a: |-
-        Heslo k Nextcloud účtu se používá pro přístup do cloudu. Heslo pro šifrování „zamaskuje“ vaše data dokonce ještě, než dorazí na cloud.
-        I kdyby někdo získal přístup k vašemu Nextcloud účtu, vaše poznámky zůstanou v bezpečí, zašifrované oddělným heslem. To vám přináší druhou úroveň bezpečnosti ochrany vašich dat.
-        Nikdo k vašim poznámkám nemůže přistoupit bez hesla pro šifrování, což ale také znamená, že pokud své heslo pro šifrování zapomenete, ztratíte přístup ke svým datům.
-    - q: Ještě jsem heslo pro šifrování nenastavoval. Kde ho získám?
-      a: |-
-        Zvolte si nové heslo pro šifrování a zadejte ho výše.
-        Aplikace nts z hesla automaticky vygeneruje šifrovací klíče.
-    - q: Mohu jako heslo pro šifrování použít své heslo od Nextcloud účtu?
-      a: Ano, ale mějte na paměti, že bude pro administrátora Nextcloud serveru či kohokoliv jiného, kdo získá přístup k vašemu Nextcloud účtu, jednodušší získat přístup k vašim poznámkám.
-profile:
-  title: Můj profil
-  logout: Odhlásit se
-  quotaUsage: Využíváte $used z $total ($percent %)
-  quotaUsageUncapped: Využíváte $used
-  connectedTo: Připojeno k
-  quickLinks:
-    serverHomepage: Webové stránky serveru
-    deleteAccount: Odstranit účet
-  faqTitle: Často kladené otázky
-  faq:
-  - q: Ztratím po odhlášení svoje poznámky?
-    a: Nikoliv. Vaše poznámky zůstanou jak na vašem zařízení, tak na serveru. Dokud se opět nepřihlásíte, nebudou synchronizovány se serverem. Před ohlášením se ujistěte, že byla dokončena synchronizace, abyste předešli ztrátě dat (průběh synchronizace uvidíte na domovské obrazovce).
-  - q: Jak změním své heslo k Nextcloud účtu?
-    a: Přejděte na webovou stránku vašeho serveru a přihlašte se. Poté přejděte do Nastavení > Zabezpečení > Změnit heslo. Po změně hesla se budete muset odhlásit z aplikace nts a poté se do ní opětovně přihlásit.
-  - q: Jak změním své heslo pro šifrování?
-    a: |-
-      0. Ujistěte se, že byla dokončena synchronizace (průběh synchronizace uvidíte na domovské obrazovce).
-      1. Odhlašte se z aplikace nts.
-      2. Přejděte na webovou stránku vašeho serveru a smažte složku „Saber“. Tím ze serveru odstraníte všechny poznámky.
-      3. Opětovně se přihlašte do aplikace nts. Při přihlašování můžete zvolit nové heslo pro šifrování.
-      4. Nezapomeňte se z aplikace nts odhlásit a opětovně se do ní přihlásit na ostatních zařízeních.
-  - q: Jak odstraním svůj účet?
-    a: |-
-      Klepněte na tlačítko „@:profile.quickLinks.deleteAccount“ umístěné výše a přihlašte se, pokud to bude vyžadováno.
-      Pokud používáte oficiální server od aplikace nts, bude váš účet odstraněn po uplynutí týdenní ochranné lhůty. Během této lhůty mě můžete kontaktovat pro odvolání zrušení účtu na adilhanney@disroot.org.
-      Pokud používáte server třetí strany, nemusí nabízet možnost odstranění účtu: pro více informací se bude třeba obrátit na zásady ochrany osobních údajů daného serveru.
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Tento program je poskytován bez jakékoliv záruky. Jedná se o software poskytovaný zdarma, který je možné šířit při splnění určitých podmínek.
   debug: LADÍCÍ VERZE
-  sponsorButton: Klepněte sem, pokud mě chcete sponzorovat nebo si přikoupit úložiště
   licenseButton: Klepněte sem pro zobrazení podrobnějších licenčních informací
   privacyPolicyButton: Klepněte sem pro zobrazení zásad ochrany osobních údajů
-update:
-  updateAvailable: Aktualizace k dispozici
-  updateAvailableDescription: "Je k dispozici nová verze aplikace:"
-  update: Aktualizovat
-  downloadNotAvailableYet: Pro vaši platformu zatím není stažení aplikace dostupné. Zkuste to prosím o něco později.
 editor:
   toolbar:
     toggleColors: Změnit barvu (Ctrl C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: Přizpůsobení obrázku na pozadí
     backgroundPattern: Vzor na pozadí
     import: Importovat
-    watchServer: Sledovat aktualizace ze serveru
-    watchServerReadOnly: Během sledování serveru je vypnuto editování
     boxFits:
       fill: Roztáhnout
       cover: Vyplnit

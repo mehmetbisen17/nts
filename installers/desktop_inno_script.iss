@@ -4,7 +4,7 @@
 #define MyAppName "nts"
 #define MyAppVersion "1.36.1"
 #define MyAppPublisher "Mehmet Bisen"
-#define MyAppURL "REPLACE_WITH_REPO_URL"
+#define MyAppURL "https://github.com/mehmetbisen17/nts"
 #define MyAppExeName "nts.exe"
 #define MyAppAssocName MyAppName + " Note"
 #define MyAppAssocKeyPrefix StringChange(MyAppAssocName, " ", "")

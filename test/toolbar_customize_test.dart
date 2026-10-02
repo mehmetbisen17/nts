@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,6 +12,7 @@ import 'package:nts/components/toolbar/toolbar_button.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/flavor_config.dart';
 import 'package:nts/data/prefs.dart';
+import 'package:nts/data/services/pen_presets.dart';
 import 'package:nts/data/tools/pen.dart';
 import 'package:nts/data/tools/select.dart';
 import 'package:nts/data/tools/tool_catalog.dart';
@@ -92,6 +95,7 @@ void main() {
     expect(at(5, 495), FractionalOffset.bottomLeft); // edges
     expect(at(495, 255), FractionalOffset.center); // middle
     expect(at(250, 100), const FractionalOffset(0.25, 0.2));
+    expect(at(40, 100).dx, closeTo(0.04, 1e-9));
     expect(
       FloatingBar.fractionOf(const Offset(10, 10), Size.zero),
       FractionalOffset.center,
@@ -100,8 +104,7 @@ void main() {
 
   group('editor', () {
     Future<EditorState> pumpEditor(WidgetTester tester) async {
-      FileManager.documentsDirectory =
-          '$tmpDir/toolbarCustomize/${FileManager.appRootDirectoryPrefix}';
+      FileManager.documentsDirectory = '$tmpDir/toolbarCustomize/nts';
       Pen.currentPen = Pen.fountainPen();
       await tester.pumpWidget(
         TranslationProvider(child: MaterialApp(home: Editor())),
@@ -218,6 +221,119 @@ void main() {
       await tester.tap(grip);
       await tester.pumpAndSettle();
       expect(stows.editorBarPositions.value, isEmpty);
+    });
+
+    testWidgets('dragged to a side it stands upright, elsewhere flat', (
+      tester,
+    ) async {
+      await pumpEditor(tester);
+      // Undo comes after the grip: beside it in a row, below it upright
+      bool upright() {
+        final from = tester.getCenter(grip.first);
+        final to = tester.getCenter(
+          inToolbar(find.byTooltip(t.editor.toolbar.undo)),
+        );
+        return (to.dy - from.dy).abs() > (to.dx - from.dx).abs();
+      }
+
+      expect(upright(), isFalse);
+      await tester.drag(grip, const Offset(-2000, -200));
+      await tester.pumpAndSettle();
+      expect(upright(), isTrue);
+      expect(tester.getRect(grip.first).left, lessThan(60));
+
+      await tester.drag(grip, const Offset(300, 0));
+      await tester.pumpAndSettle();
+      expect(upright(), isFalse);
+    });
+
+    testWidgets('to the right edge in small steps, it turns once and stays', (
+      tester,
+    ) async {
+      await pumpEditor(tester);
+      bool upright() {
+        final from = tester.getCenter(grip.first);
+        final to = tester.getCenter(
+          inToolbar(find.byTooltip(t.editor.toolbar.undo)),
+        );
+        return (to.dy - from.dy).abs() > (to.dx - from.dx).abs();
+      }
+
+      final width =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      final gesture = await tester.startGesture(tester.getCenter(grip.first));
+      final flips = <bool>[];
+      var x = tester.getCenter(grip.first).dx;
+      while (x < width - 4) {
+        final step = min(12.0, width - 4 - x);
+        x += step;
+        await gesture.moveBy(Offset(step, 0));
+        await tester.pump();
+        if (flips.isEmpty || flips.last != upright()) flips.add(upright());
+      }
+      // Flat, then upright once against the edge, never back and forth
+      expect(flips, [false, true]);
+      // The bar ends up at the right edge, under the finger
+      expect(tester.getCenter(grip.first).dx, greaterThan(width - 80));
+
+      // Pulled back from the edge in small steps: flat again, once
+      final back = <bool>[];
+      for (var i = 0; i < 30; i++) {
+        await gesture.moveBy(const Offset(-12, 0));
+        await tester.pump();
+        if (back.isEmpty || back.last != upright()) back.add(upright());
+      }
+      expect(back, [true, false]);
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('docked on the left by Settings, a drag keeps up', (
+      tester,
+    ) async {
+      stows.editorToolbarAlignment.value = AxisDirection.left;
+      addTearDown(() => stows.editorToolbarAlignment.value = .down);
+      stows.penPresets.value = [
+        const PenPreset(toolId: .fountainPen, color: Colors.black, size: 5),
+      ];
+      addTearDown(() => stows.penPresets.value = const []);
+      stows.editorToolbarItems.value = [...ToolCatalog.basics, 'penPresets'];
+      tester.view
+        ..physicalSize = const Size(1600, 1200)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await pumpEditor(tester);
+      bool upright() {
+        final from = tester.getCenter(grip.first);
+        final to = tester.getCenter(
+          inToolbar(find.byTooltip(t.editor.toolbar.undo)),
+        );
+        return (to.dy - from.dy).abs() > (to.dx - from.dx).abs();
+      }
+
+      expect(upright(), isTrue);
+      // Out to the middle by touch, its first move already past the edge
+      // (as with the iPad's touch slop): flat, under the finger
+      var finger = tester.getCenter(grip.first);
+      final gesture = await tester.startGesture(finger);
+      await gesture.moveBy(const Offset(60, 40));
+      finger += const Offset(60, 40);
+      await tester.pump();
+      for (var i = 0; i < 20; i++) {
+        await gesture.moveBy(const Offset(15, 0));
+        finger += const Offset(15, 0);
+        await tester.pump();
+      }
+      await tester.pump();
+      expect(upright(), isFalse);
+      expect((tester.getCenter(grip.first) - finger).distance, lessThan(40));
+      // The pen favorites lie flat with it
+      final swatch = tester.getRect(
+        inToolbar(find.byTooltip(t.editor.otherTools.saveFavorite)),
+      );
+      expect(swatch.height, lessThan(80));
+      await gesture.up();
+      await tester.pumpAndSettle();
     });
 
     testWidgets('on a phone, it wraps between groups into even runs', (

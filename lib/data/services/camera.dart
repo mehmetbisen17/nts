@@ -60,7 +60,7 @@ abstract final class Camera {
       pageSize: coreInfo.pages[pageIndex].size,
       onMoveImage: editor.onMoveImage,
       onDeleteImage: editor.onDeleteImage,
-      onMiscChange: editor.autosaveAfterDelay,
+      onMiscChange: editor.autosaveUnrecordedChange,
       assetCache: coreInfo.assetCache,
     );
     editor.currentTool = Select.currentSelect;

@@ -39,10 +39,7 @@ class TranslationsZhHantTw extends Translations with BaseTranslations<AppLocale,
 	@override late final Translations$sentry$zh_Hant_TW sentry = Translations$sentry$zh_Hant_TW.internal(_root);
 	@override late final Translations$settings$zh_Hant_TW settings = Translations$settings$zh_Hant_TW.internal(_root);
 	@override late final Translations$logs$zh_Hant_TW logs = Translations$logs$zh_Hant_TW.internal(_root);
-	@override late final Translations$login$zh_Hant_TW login = Translations$login$zh_Hant_TW.internal(_root);
-	@override late final Translations$profile$zh_Hant_TW profile = Translations$profile$zh_Hant_TW.internal(_root);
 	@override late final Translations$appInfo$zh_Hant_TW appInfo = Translations$appInfo$zh_Hant_TW.internal(_root);
-	@override late final Translations$update$zh_Hant_TW update = Translations$update$zh_Hant_TW.internal(_root);
 	@override late final Translations$editor$zh_Hant_TW editor = Translations$editor$zh_Hant_TW.internal(_root);
 }
 
@@ -113,7 +110,6 @@ class Translations$settings$zh_Hant_TW extends Translations$settings$en {
 		'靠左',
 	];
 	@override late final Translations$settings$reset$zh_Hant_TW reset = Translations$settings$reset$zh_Hant_TW.internal(_root);
-	@override String get resyncEverything => '全部重新同步';
 	@override String get openDataDir => '開啟 nts 資料夾';
 	@override late final Translations$settings$customDataDir$zh_Hant_TW customDataDir = Translations$settings$customDataDir$zh_Hant_TW.internal(_root);
 	@override String get autosaveDisabled => '永不';
@@ -134,52 +130,6 @@ class Translations$logs$zh_Hant_TW extends Translations$logs$en {
 	@override String get useTheApp => '當您使用此應用程式時，紀錄檔將顯示於此處';
 }
 
-// Path: login
-class Translations$login$zh_Hant_TW extends Translations$login$en {
-	Translations$login$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '登入';
-	@override late final Translations$login$form$zh_Hant_TW form = Translations$login$form$zh_Hant_TW.internal(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: '還沒有帳號？ '),
-		linkToSignup('立即註冊'),
-		const TextSpan(text: '！'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: '不是你？ '),
-		undoLogin('選擇另一個帳號'),
-		const TextSpan(text: '。'),
-	]);
-	@override late final Translations$login$status$zh_Hant_TW status = Translations$login$status$zh_Hant_TW.internal(_root);
-	@override late final Translations$login$ncLoginStep$zh_Hant_TW ncLoginStep = Translations$login$ncLoginStep$zh_Hant_TW.internal(_root);
-	@override late final Translations$login$encLoginStep$zh_Hant_TW encLoginStep = Translations$login$encLoginStep$zh_Hant_TW.internal(_root);
-}
-
-// Path: profile
-class Translations$profile$zh_Hant_TW extends Translations$profile$en {
-	Translations$profile$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '我的個人檔案';
-	@override String get logout => '登出';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => '您已使用 ${used}，共 ${total} (${percent}%)';
-	@override String get connectedTo => '連線到';
-	@override late final Translations$profile$quickLinks$zh_Hant_TW quickLinks = Translations$profile$quickLinks$zh_Hant_TW.internal(_root);
-	@override String get faqTitle => '常見問題';
-	@override List<dynamic> get faq => [
-		Translations$profile$faq$0$zh_Hant_TW.internal(_root),
-		Translations$profile$faq$1$zh_Hant_TW.internal(_root),
-		Translations$profile$faq$2$zh_Hant_TW.internal(_root),
-		Translations$profile$faq$3$zh_Hant_TW.internal(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => '您正在使用 ${used}';
-}
-
 // Path: appInfo
 class Translations$appInfo$zh_Hant_TW extends Translations$appInfo$en {
 	Translations$appInfo$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class Translations$appInfo$zh_Hant_TW extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  版權所有 © 2022-${buildYear}  Adil Hanney\n本程式不提供任何形式的保證。這是一款自由軟體，您可在特定條件下自由轉散發。';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => '點擊此處贊助我或購買更多儲存空間';
 	@override String get licenseButton => '點擊此處檢視更多授權條款資訊';
 	@override String get privacyPolicyButton => '點擊此處檢視隱私權政策';
-}
-
-// Path: update
-class Translations$update$zh_Hant_TW extends Translations$update$en {
-	Translations$update$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => '可用更新';
-	@override String get updateAvailableDescription => '新版本的應用程式已推出：';
-	@override String get update => '更新';
-	@override String get downloadNotAvailableYet => '您的平台尚無法下載。請稍後再回來檢視。';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class Translations$home$tooltips$zh_Hant_TW extends Translations$home$tooltips$e
 
 	// Translations
 	@override String get newNote => '新增筆記';
-	@override String get showUpdateDialog => '顯示更新對話框';
 	@override String get exportNote => '匯出筆記';
 }
 
@@ -410,9 +345,6 @@ class Translations$settings$prefLabels$zh_Hant_TW extends Translations$settings$
 	@override String get layoutSize => '佈局大小';
 	@override String get customAccentColor => '自訂主題色';
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible 字型';
-	@override String get shouldCheckForUpdates => '自動檢查 nts 更新';
-	@override String get shouldAlwaysAlertForUpdates => '更快的更新';
-	@override String get allowInsecureConnections => '允許不安全連線';
 	@override String get editorToolbarAlignment => '編輯器工具列的對齊方式';
 	@override String get editorToolbarShowInFullscreen => '在全螢幕模式中顯示編輯器工具列';
 	@override String get editorAutoInvert => '在深色模式下使用反轉色筆記背景';
@@ -441,7 +373,6 @@ class Translations$settings$prefDescriptions$zh_Hant_TW extends Translations$set
 
 	// Translations
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible 字型為低視力讀者提高易讀性';
-	@override String get allowInsecureConnections => '（不推薦）允許 nts 連線到有自行簽署/不受信任憑證的伺服器';
 	@override String get preferGreyscale => '用於電子紙螢幕';
 	@override String get autoClearWhiteboardOnExit => '在您結束應用程式後清除白板';
 	@override String get disableEraserAfterUse => '使用橡皮擦後自動切換回筆';
@@ -453,7 +384,6 @@ class Translations$settings$prefDescriptions$zh_Hant_TW extends Translations$set
 	@override String get autosave => '在短暫延遲後自動儲存，或永不儲存';
 	@override String get shapeRecognitionDelay => '多久更新一次形狀預覽';
 	@override String get autoStraightenLines => '不需要使用造型筆即可拉直線條';
-	@override String get shouldAlwaysAlertForUpdates => '一旦有更新請告訴我';
 	@override late final Translations$settings$prefDescriptions$sentry$zh_Hant_TW sentry = Translations$settings$prefDescriptions$sentry$zh_Hant_TW.internal(_root);
 }
 
@@ -512,127 +442,7 @@ class Translations$settings$customDataDir$zh_Hant_TW extends Translations$settin
 	@override String get cancel => '取消';
 	@override String get select => '選取';
 	@override String get mustBeEmpty => '選取的資料夾必須是空的';
-	@override String get mustBeDoneSyncing => '變更資料夾之前確保同步已完成';
 	@override String get unsupported => '此功能目前僅適用於開發者，使用它可能會導致資料遺失。';
-}
-
-// Path: login.form
-class Translations$login$form$zh_Hant_TW extends Translations$login$form$en {
-	Translations$login$form$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: '登入即表示您同意 '),
-		linkToPrivacyPolicy('隱私權政策'),
-		const TextSpan(text: '。'),
-	]);
-}
-
-// Path: login.status
-class Translations$login$status$zh_Hant_TW extends Translations$login$status$en {
-	Translations$login$status$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => '已登出';
-	@override String get tapToLogin => '點擊以使用 Nextcloud 登入';
-	@override String hi({required Object u}) => '嗨，${u}!';
-	@override String get almostDone => '即將同步，點擊即可完成登入';
-	@override String get loggedIn => '已使用 Nextcloud 登入';
-}
-
-// Path: login.ncLoginStep
-class Translations$login$ncLoginStep$zh_Hant_TW extends Translations$login$ncLoginStep$en {
-	Translations$login$ncLoginStep$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => '選擇您要儲存資料的位置：';
-	@override String get saberNcServer => 'nts 的 Nextcloud 伺服器';
-	@override String get otherNcServer => '其他 Nextcloud 伺服器';
-	@override String get serverUrl => '伺服器網址';
-	@override String get loginWithSaber => '使用 nts 登入';
-	@override String get loginWithNextcloud => '使用 Nextcloud 登入';
-	@override late final Translations$login$ncLoginStep$loginFlow$zh_Hant_TW loginFlow = Translations$login$ncLoginStep$loginFlow$zh_Hant_TW.internal(_root);
-}
-
-// Path: login.encLoginStep
-class Translations$login$encLoginStep$zh_Hant_TW extends Translations$login$encLoginStep$en {
-	Translations$login$encLoginStep$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => '為了保護您的資料，請輸入您的加密密碼：';
-	@override String get newToSaber => '第一次使用 nts？只需輸入新的加密密碼即可。';
-	@override String get encPassword => '加密密碼';
-	@override String get encFaqTitle => '常見問題';
-	@override String get wrongEncPassword => '使用提供的密碼解密失敗。請嘗試再次輸入。';
-	@override String get connectionFailed => '連線伺服器時出現問題。請稍後再試。';
-	@override List<dynamic> get encFaq => [
-		Translations$login$encLoginStep$encFaq$0$zh_Hant_TW.internal(_root),
-		Translations$login$encLoginStep$encFaq$1$zh_Hant_TW.internal(_root),
-		Translations$login$encLoginStep$encFaq$2$zh_Hant_TW.internal(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class Translations$profile$quickLinks$zh_Hant_TW extends Translations$profile$quickLinks$en {
-	Translations$profile$quickLinks$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => '伺服器首頁';
-	@override String get deleteAccount => '刪除帳號';
-}
-
-// Path: profile.faq.0
-class Translations$profile$faq$0$zh_Hant_TW extends Translations$profile$faq$0$en {
-	Translations$profile$faq$0$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如果我登出了，我的筆記會不會不見？';
-	@override String get a => '您的筆記將同時儲存在您的裝置與伺服器上。直到您重新登入，它們才會被同步到伺服器上。在登出前，請確保同步工作已經完成，這樣您就不會遺失任何資料（在主畫面上可以看到同步進度）。';
-}
-
-// Path: profile.faq.1
-class Translations$profile$faq$1$zh_Hant_TW extends Translations$profile$faq$1$en {
-	Translations$profile$faq$1$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如何變更我的 Nextcloud 密碼？';
-	@override String get a => '進入您的伺服器網站並登入，然後進入「設定」→「安全」→「變更密碼」。更改密碼後，您必須登出並重新登入 nts。';
-}
-
-// Path: profile.faq.2
-class Translations$profile$faq$2$zh_Hant_TW extends Translations$profile$faq$2$en {
-	Translations$profile$faq$2$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如何變更我的加密密碼？';
-	@override String get a => '0. 確定同步處理已完成（請參閱主畫面上的同步處理進度）。\n1. 登出 nts，在登出前確保同步已經完成，這樣您就不會丟失任何資料（在主畫面上可以看到同步進度）。\n2. 進入您的伺服器網站並登入，刪除「Saber」資料夾，這將從伺服器上刪除您所有的筆記。\n3. 重新登入 nts，您可以在登入時選擇一個新的加密密碼。\n4. 也不要忘記在您的其他裝置上登出並重新登入 nts。';
-}
-
-// Path: profile.faq.3
-class Translations$profile$faq$3$zh_Hant_TW extends Translations$profile$faq$3$en {
-	Translations$profile$faq$3$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '如何刪除我的帳號？';
-	@override String get a => '點選上面的「${_root.profile.quickLinks.deleteAccount}」按鈕，如果需要請登入。\n如果您使用的是官方 nts 伺服器，您的帳戶將在一週的寬限期後被刪除，您可以在此期間用電子郵件聯絡我：adilhanney@disroot.org，以取消刪除。\n如果您使用的是第三方伺服器，則可能沒有刪除帳號的選項，您需要檢視伺服器的隱私權政策以了解更多資訊。';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class Translations$editor$menu$zh_Hant_TW extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => '背景影像調整';
 	@override String get backgroundPattern => '背景圖案';
 	@override String get import => '匯入';
-	@override String get watchServer => '監視伺服器的更新';
-	@override String get watchServerReadOnly => '監視伺服器時無法進行編輯';
 	@override late final Translations$editor$menu$boxFits$zh_Hant_TW boxFits = Translations$editor$menu$boxFits$zh_Hant_TW.internal(_root);
 	@override late final Translations$editor$menu$bgPatterns$zh_Hant_TW bgPatterns = Translations$editor$menu$bgPatterns$zh_Hant_TW.internal(_root);
 }
@@ -868,51 +676,6 @@ class Translations$settings$prefDescriptions$sentry$zh_Hant_TW extends Translati
 	@override String get inactive => '停用';
 	@override String get activeUntilRestart => '啟用直到您重新啟動應用程式';
 	@override String get inactiveUntilRestart => '停用直到您重新啟動應用程式';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class Translations$login$ncLoginStep$loginFlow$zh_Hant_TW extends Translations$login$ncLoginStep$loginFlow$en {
-	Translations$login$ncLoginStep$loginFlow$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => '請授權 nts 存取您的 Nextcloud 帳號';
-	@override String get followPrompts => '請依照 Nextcloud 介面的提示進行操作';
-	@override String get browserDidntOpen => '登入頁面打不開？點擊這裡';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class Translations$login$encLoginStep$encFaq$0$zh_Hant_TW extends Translations$login$encLoginStep$encFaq$0$en {
-	Translations$login$encLoginStep$encFaq$0$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '什麼是加密密碼？為什麼要使用兩個密碼？';
-	@override String get a => 'Nextcloud 密碼用於存取雲端。加密密碼會在資料到達雲端之前加密您的資料。\n即使有其他人存取您的 Nextcloud 帳號，您的筆記也將保持安全並使用單獨的密碼進行加密。這為您提供了第二層安全保護來保護您的資料。\n如果沒有加密密碼，任何人都無法存取伺服器上的筆記，但這也意味著如果您忘記加密密碼，您將無法存取您的資料。';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class Translations$login$encLoginStep$encFaq$1$zh_Hant_TW extends Translations$login$encLoginStep$encFaq$1$en {
-	Translations$login$encLoginStep$encFaq$1$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '我還沒設定加密密碼。該去哪裡取得呢？';
-	@override String get a => '選擇一個新的加密密碼並在上方輸入。\nnts 將自動根據該密碼產生您的加密金鑰。';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class Translations$login$encLoginStep$encFaq$2$zh_Hant_TW extends Translations$login$encLoginStep$encFaq$2$en {
-	Translations$login$encLoginStep$encFaq$2$zh_Hant_TW.internal(TranslationsZhHantTw root) : this._root = root, super.internal(root);
-
-	final TranslationsZhHantTw _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '我可以使用與 Nextcloud 帳號相同的密碼嗎？';
-	@override String get a => '可以，但請記住如果伺服器管理員或其他人獲得了您的 Nextcloud 帳號的存取權限，他們將更容易存取您的筆記。';
 }
 
 // Path: editor.menu.boxFits

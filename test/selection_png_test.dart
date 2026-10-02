@@ -165,9 +165,9 @@ void main() {
   );
 }
 
-const _eval =
-    '/private/tmp/claude-501/-Users-mehmetbisen-Desktop-saber/'
-    'e21e6fbf-1b17-49c8-84d9-1e9fe570551b/scratchpad/eval';
+final _eval =
+    Platform.environment['NTS_EVAL_DIR'] ??
+    '${Directory.systemTemp.path}/nts-eval';
 
 const _pageSize = HasSize(Size(1000, 1400));
 

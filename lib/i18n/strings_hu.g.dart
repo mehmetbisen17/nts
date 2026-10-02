@@ -39,10 +39,7 @@ class TranslationsHu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$hu sentry = _Translations$sentry$hu._(_root);
 	@override late final _Translations$settings$hu settings = _Translations$settings$hu._(_root);
 	@override late final _Translations$logs$hu logs = _Translations$logs$hu._(_root);
-	@override late final _Translations$login$hu login = _Translations$login$hu._(_root);
-	@override late final _Translations$profile$hu profile = _Translations$profile$hu._(_root);
 	@override late final _Translations$appInfo$hu appInfo = _Translations$appInfo$hu._(_root);
-	@override late final _Translations$update$hu update = _Translations$update$hu._(_root);
 	@override late final _Translations$editor$hu editor = _Translations$editor$hu._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$hu extends Translations$settings$en {
 		'Balra',
 	];
 	@override late final _Translations$settings$reset$hu reset = _Translations$settings$reset$hu._(_root);
-	@override String get resyncEverything => 'Minden újraszinkronizálása';
 	@override String get openDataDir => 'nts mappa megnyitása';
 	@override late final _Translations$settings$customDataDir$hu customDataDir = _Translations$settings$customDataDir$hu._(_root);
 	@override String get autosaveDisabled => 'Soha';
@@ -134,52 +130,6 @@ class _Translations$logs$hu extends Translations$logs$en {
 	@override String get useTheApp => 'A naplók itt jelennek meg az alkalmazás használata során';
 }
 
-// Path: login
-class _Translations$login$hu extends Translations$login$en {
-	_Translations$login$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Bejelentkezés';
-	@override late final _Translations$login$form$hu form = _Translations$login$form$hu._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'Még nincsen fiókja? '),
-		linkToSignup('Regisztrálás'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'Nem Ön az? '),
-		undoLogin('Fiókváltás'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$hu status = _Translations$login$status$hu._(_root);
-	@override late final _Translations$login$ncLoginStep$hu ncLoginStep = _Translations$login$ncLoginStep$hu._(_root);
-	@override late final _Translations$login$encLoginStep$hu encLoginStep = _Translations$login$encLoginStep$hu._(_root);
-}
-
-// Path: profile
-class _Translations$profile$hu extends Translations$profile$en {
-	_Translations$profile$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Profilom';
-	@override String get logout => 'Kijelentkezés';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Felhasználva: ${used} / ${total} (${percent}%)';
-	@override String get connectedTo => 'Csatlakozva:';
-	@override late final _Translations$profile$quickLinks$hu quickLinks = _Translations$profile$quickLinks$hu._(_root);
-	@override String get faqTitle => 'Gyakran ismételt kérdések';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$hu._(_root),
-		_Translations$profile$faq$1$hu._(_root),
-		_Translations$profile$faq$2$hu._(_root),
-		_Translations$profile$faq$3$hu._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'Használod a ${used}-t';
-}
-
 // Path: appInfo
 class _Translations$appInfo$hu extends Translations$appInfo$en {
 	_Translations$appInfo$hu._(TranslationsHu root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$hu extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber) Copyright © 2022-${buildYear} Adil Hanney\nEz a program nem tartalmaz semmilyen garanciát. Ez egy szabad szoftver, és bizonyos feltételek mellett szabadon terjeszthető.';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => 'Ide kattintva támogathat engem vagy vásárolhat több tárhelyet';
 	@override String get licenseButton => 'További licencinformációk megtekintéséhez kattintson ide';
 	@override String get privacyPolicyButton => 'Kattintson ide az adatvédelmi nyilatkozat megtekintéséhez';
-}
-
-// Path: update
-class _Translations$update$hu extends Translations$update$en {
-	_Translations$update$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Frissítés elérhető';
-	@override String get updateAvailableDescription => 'Az alkalmazás új verziója elérhető:';
-	@override String get update => 'Frissítés';
-	@override String get downloadNotAvailableYet => 'A letöltés még nem érhető el a platformján. Kérjük, próbálja meg később.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$hu extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Új jegyzet';
-	@override String get showUpdateDialog => 'Frissítési párbeszédablak megjelenítése';
 	@override String get exportNote => 'Jegyzet exportálása';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$hu extends Translations$settings$prefLab
 	@override String get layoutSize => 'Elrendezési mód';
 	@override String get customAccentColor => 'Egyéni hangsúlyszín';
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible betűtípus';
-	@override String get shouldCheckForUpdates => 'Automatikusan ellenőrzi az nts frissítéseket';
-	@override String get shouldAlwaysAlertForUpdates => 'Gyorsabb értesítések a frissítésekről';
-	@override String get allowInsecureConnections => 'Nem biztonságos kapcsolatok engedélyezése';
 	@override String get editorToolbarAlignment => 'A szerkesztő eszköztár igazítása';
 	@override String get editorToolbarShowInFullscreen => 'A szerkesztő eszköztár megjelenítése teljes képernyős módban';
 	@override String get editorAutoInvert => 'Jegyzetek színének felcserélése sötét módban';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$hu extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Az Atkinson Hyperlegible növeli az olvashatóságot a gyengén látók számára';
-	@override String get allowInsecureConnections => '(Nem ajánlott) Engedélyezi, hogy az nts ön-aláírt vagy nem megbízható tanúsítványokat használó szerverekhez csatlakozzon';
 	@override String get preferGreyscale => 'E-tinta kijelzőkhöz';
 	@override String get autoClearWhiteboardOnExit => 'A tábla törlésre kerül, amikor kilép az alkalmazásból';
 	@override String get disableEraserAfterUse => 'Automatikusan visszavált a tollra, miután a radírt használta';
@@ -453,7 +384,6 @@ class _Translations$settings$prefDescriptions$hu extends Translations$settings$p
 	@override String get autosave => 'Automatikus mentés rövid idő után, vagy soha';
 	@override String get shapeRecognitionDelay => 'Milyen gyakran frissüljön az alakzat előnézete';
 	@override String get autoStraightenLines => 'Automatikusan kiegyenesíti a hosszú vonalakat anélkül, hogy az alakzat tollat kellene használni';
-	@override String get shouldAlwaysAlertForUpdates => 'Értesítsen a frissítésekről, amint elérhetővé válnak';
 	@override late final _Translations$settings$prefDescriptions$sentry$hu sentry = _Translations$settings$prefDescriptions$sentry$hu._(_root);
 }
 
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$hu extends Translations$settings$cust
 	@override String get cancel => 'Mégse';
 	@override String get select => 'Kiválasztás';
 	@override String get mustBeEmpty => 'A kiválasztott mappának üresnek kell lennie';
-	@override String get mustBeDoneSyncing => 'Győződjön meg arról, hogy a szinkronizálás befejeződött, mielőtt módosítja a mappát';
 	@override String get unsupported => 'Ez a funkció jelenleg csak fejlesztőknek való. Használata adatvesztést okozhat.';
-}
-
-// Path: login.form
-class _Translations$login$form$hu extends Translations$login$form$en {
-	_Translations$login$form$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'A bejelentkezéssel elfogadja a '),
-		linkToPrivacyPolicy('Adatvédelmi irányelvek'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$hu extends Translations$login$status$en {
-	_Translations$login$status$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Kijelentkezve';
-	@override String get tapToLogin => 'Kattintson a Nextclouddal való bejelentkezéshez';
-	@override String hi({required Object u}) => 'Üdv, ${u}!';
-	@override String get almostDone => 'Majdnem készen áll a szinkronizálásra, koppintson a bejelentkezés befejezéséhez';
-	@override String get loggedIn => 'Bejelentkezve a Nextclouddal';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$hu extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'Válassza ki, hol szeretné tárolni az adatait:';
-	@override String get saberNcServer => 'Az nts Nextcloud szervere';
-	@override String get otherNcServer => 'Másik Nextcloud szerver';
-	@override String get serverUrl => 'Szerver URL';
-	@override String get loginWithSaber => 'Bejelentkezés nts-sel';
-	@override String get loginWithNextcloud => 'Bejelentkezés Nextcloud-dal';
-	@override late final _Translations$login$ncLoginStep$loginFlow$hu loginFlow = _Translations$login$ncLoginStep$loginFlow$hu._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$hu extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Az adatai védelme érdekében kérjük, adja meg a titkosítási jelszavát:';
-	@override String get newToSaber => 'Először használja az nts-t? Adjon meg egy új titkosítási jelszót.';
-	@override String get encPassword => 'Titkosítási jelszó';
-	@override String get encFaqTitle => 'Gyakran ismételt kérdések';
-	@override String get wrongEncPassword => 'A megadott jelszóval a visszafejtés nem sikerült. Kérjük, próbálja meg újra megadni.';
-	@override String get connectionFailed => 'Hiba történt a szerverhez való csatlakozás során. Kérjük, próbálja újra később.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$hu._(_root),
-		_Translations$login$encLoginStep$encFaq$1$hu._(_root),
-		_Translations$login$encLoginStep$encFaq$2$hu._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$hu extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Szerver kezdőlapja';
-	@override String get deleteAccount => 'Fiók törlése';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$hu extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Elveszítem a jegyzeteimet, ha kijelentkezem?';
-	@override String get a => 'Nem. A jegyzetei mind az eszközén, mind a szerveren megmaradnak. A szerverrel csak akkor lesznek szinkronizálva, ha újra bejelentkezik. Mielőtt kijelentkezik, győződjön meg arról, hogy a szinkronizálás befejeződött, különben adatvesztés történhet (a kezdőképernyőn látható a szinkronizálás állapota).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$hu extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Hogyan változtatom meg a Nextcloud jelszavamat?';
-	@override String get a => 'Nyissa meg a szerver weboldalát, és jelentkezzen be. Ezután menjen a Beállítások > Biztonság > Jelszó módosítása menüpontra. A jelszó módosítása után ki kell jelentkeznie az nts-ből, majd újra be kell jelentkeznie.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$hu extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Hogyan változtatom meg a titkosítási jelszavamat?';
-	@override String get a => '0. Győződjön meg arról, hogy a szinkronizálás befejeződött (a szinkronizálás állapotát a kezdőképernyőn láthatja).\n1. Jelentkezzen ki az nts-ből.\n2. Nyissa meg a szerver weboldalát, és törölje a „Saber” mappát. Ez minden jegyzetét törli a szerverről.\n3. Jelentkezzen be újra az nts-be. Bejelentkezéskor új titkosítási jelszót választhat.\n4. Ne felejtkezzen el kijelentkezni, majd újra bejelentkezni az nts-be a többi eszközén is.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$hu extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Hogyan törölhetem a fiókomat?';
-	@override String get a => 'Koppintson a fenti „${_root.profile.quickLinks.deleteAccount}” gombra, és szükség esetén jelentkezzen be.\nHa a hivatalos nts szervert használja, a fiókja 1 hetes türelmi idő után törlésre kerül. Ebben az időszakban a törlés visszavonásához vegye fel a kapcsolatot a következő e-mail címen: adilhanney@disroot.org.\nHa harmadik féltől származó szervert használ, előfordulhat, hogy nincs lehetőség a fiók törlésére: további információért tekintse meg a szerver adatvédelmi szabályzatát.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$hu extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'Háttérkép illesztése';
 	@override String get backgroundPattern => 'Háttérminta';
 	@override String get import => 'Importálás';
-	@override String get watchServer => 'Frissítések figyelése a szerveren';
-	@override String get watchServerReadOnly => 'A szerver figyelése közben a szerkesztés le van tiltva';
 	@override late final _Translations$editor$menu$boxFits$hu boxFits = _Translations$editor$menu$boxFits$hu._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$hu bgPatterns = _Translations$editor$menu$bgPatterns$hu._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$hu extends Translations$set
 	@override String get inactive => 'Inaktív';
 	@override String get activeUntilRestart => 'Aktív az alkalmazás újraindításáig';
 	@override String get inactiveUntilRestart => 'Inaktív az alkalmazás újraindításáig';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$hu extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Kérjük, engedélyezze az nts számára a Nextcloud-fiókjához való hozzáférést';
-	@override String get followPrompts => 'Kérjük, kövesse a Nextcloud felületén megjelenő utasításokat';
-	@override String get browserDidntOpen => 'Nem nyílt meg a bejelentkezési oldal? Kattintson ide';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$hu extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Mi az a titkosítási jelszó? Miért van szükség két jelszóra?';
-	@override String get a => 'A Nextcloud jelszó a felhőhöz való hozzáféréshez szükséges. A titkosítási jelszó már azelőtt „összekeveri” az adatait, hogy azok a felhőbe kerülnének.\nMég ha valaki hozzá is fér a Nextcloud-fiókjához, a jegyzetei továbbra is biztonságban maradnak, mivel külön titkosítási jelszó védi őket. Ez egy második védelmi réteget biztosít az adatai számára.\nA szerveren senki sem férhet hozzá a jegyzeteihez a titkosítási jelszó nélkül, de ez azt is jelenti, hogy ha elfelejti a titkosítási jelszavát, elveszíti a hozzáférést az adataihoz.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$hu extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Még nem állítottam be titkosítási jelszót. Hol szerezhetem meg?';
-	@override String get a => 'Válasszon egy új titkosítási jelszót, és adja meg fent.\nAz nts automatikusan létrehozza a titkosítási kulcsokat ebből a jelszóból.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$hu extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$hu._(TranslationsHu root) : this._root = root, super.internal(root);
-
-	final TranslationsHu _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Használhatom ugyanazt a jelszót, mint a Nextcloud-fiókomhoz?';
-	@override String get a => 'Igen, de fontos figyelembe venni, hogy így a szerver adminisztrátora vagy más személy könnyebben hozzáférhet a jegyzeteihez, ha hozzájut a Nextcloud-fiókjához.';
 }
 
 // Path: editor.menu.boxFits

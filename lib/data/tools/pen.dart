@@ -11,6 +11,7 @@ import 'package:nts/data/tools/pencil.dart';
 import 'package:nts/data/tools/shape_pen.dart';
 import 'package:nts/data/tools/tape.dart';
 import 'package:nts/i18n/strings.g.dart';
+import 'package:one_dollar_unistroke_recognizer/one_dollar_unistroke_recognizer.dart';
 import 'package:perfect_freehand/perfect_freehand.dart';
 import 'package:sbn/tool_id.dart';
 
@@ -123,17 +124,19 @@ class Pen extends Tool {
     _holdTimer?.cancel();
     _holdTimer = _holdAnchor = null;
     final stroke = currentStroke;
-    currentStroke = null;
+    final snapped = snapPreview;
+    currentStroke = snapPreview = null;
     if (stroke == null) return null;
 
     stroke
       ..options.isComplete = true
       ..markPolygonNeedsUpdating();
-    if (!_canHoldToSnap) return stroke;
-    final shape = ShapePen.detectedShape;
-    ShapePen.detectedShape = null;
-    return shape == null ? stroke : ShapePen.applyDetectedShape(stroke, shape);
+    return snapped ?? stroke;
   }
+
+  /// The clean shape that [currentStroke] becomes if the pen lifts now,
+  /// shown instead of it while the pen is held (see [Stows.holdToSnapShape]).
+  static Stroke? snapPreview;
 
   /// How long the pen must stay still for [Stows.holdToSnapShape].
   static const holdToSnapDelay = Duration(milliseconds: 600);
@@ -145,8 +148,22 @@ class Pen extends Tool {
   static Offset? _holdAnchor;
 
   bool get _canHoldToSnap =>
-      stows.holdToSnapShape.value &&
-      (toolId == .fountainPen || toolId == .ballpointPen || toolId == .pencil);
+      stows.holdToSnapShape.value && _snapsTo != null && !followsRuler;
+
+  /// Whether the current stroke follows the ruler, so it's straight
+  /// already, and snapping would pull it off the ruler's edge.
+  static var followsRuler = false;
+
+  /// The shapes this pen snaps to: all of them, or just straight lines for
+  /// the highlighter (a highlighted circle would be filled in).
+  Set<DefaultUnistrokeNames>? get _snapsTo => switch (toolId) {
+    .fountainPen ||
+    .ballpointPen ||
+    .pencil ||
+    .brushPen => DefaultUnistrokeNames.values.toSet(),
+    .highlighter => const {DefaultUnistrokeNames.line},
+    _ => null,
+  };
 
   /// Snaps [currentStroke] into a shape if the pen stays near [position]
   /// for [holdToSnapDelay]. Moving on drops the shape again.
@@ -154,15 +171,24 @@ class Pen extends Tool {
     final anchor = _holdAnchor;
     if (anchor != null && (position - anchor).distance < _holdSlop) return;
     _holdAnchor = position;
-    ShapePen.detectedShape = null;
+    final page = currentStroke?.page;
+    if (snapPreview != null && page is EditorPage) page.redrawStrokes();
+    snapPreview = null;
     _holdTimer?.cancel();
     _holdTimer = Timer(holdToSnapDelay, () {
       final stroke = currentStroke;
       if (stroke == null) return;
       final shape = stroke.detectShape();
       // (The score can be NaN, e.g. for a loop that ends where it started)
-      if (shape?.name == null || !(shape!.score >= holdToSnapMinScore)) return;
-      ShapePen.detectedShape = shape;
+      if (shape?.name == null ||
+          !(_snapsTo?.contains(shape!.name) ?? false) ||
+          !(shape!.score >= holdToSnapMinScore)) {
+        return;
+      }
+      final copy = stroke.copy()
+        ..options.isComplete = true
+        ..markPolygonNeedsUpdating();
+      snapPreview = ShapePen.applyDetectedShape(copy, shape);
       if (stroke.page case final EditorPage page) page.redrawStrokes();
     });
   }

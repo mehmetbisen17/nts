@@ -39,10 +39,7 @@ class TranslationsHe extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$he sentry = _Translations$sentry$he._(_root);
 	@override late final _Translations$settings$he settings = _Translations$settings$he._(_root);
 	@override late final _Translations$logs$he logs = _Translations$logs$he._(_root);
-	@override late final _Translations$login$he login = _Translations$login$he._(_root);
-	@override late final _Translations$profile$he profile = _Translations$profile$he._(_root);
 	@override late final _Translations$appInfo$he appInfo = _Translations$appInfo$he._(_root);
-	@override late final _Translations$update$he update = _Translations$update$he._(_root);
 	@override late final _Translations$editor$he editor = _Translations$editor$he._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$he extends Translations$settings$en {
 		'שמאל',
 	];
 	@override late final _Translations$settings$reset$he reset = _Translations$settings$reset$he._(_root);
-	@override String get resyncEverything => 'סנכרון מחדש של הכול';
 	@override String get openDataDir => 'פתיחת תיקיית nts';
 	@override late final _Translations$settings$customDataDir$he customDataDir = _Translations$settings$customDataDir$he._(_root);
 	@override String get autosaveDisabled => 'אף פעם';
@@ -134,52 +130,6 @@ class _Translations$logs$he extends Translations$logs$en {
 	@override String get useTheApp => 'פלט היומן יופיע כאן ככל שייעשה ביישום יותר שימוש';
 }
 
-// Path: login
-class _Translations$login$he extends Translations$login$en {
-	_Translations$login$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'התחבר';
-	@override late final _Translations$login$form$he form = _Translations$login$form$he._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'אין לך עוד משתמש '),
-		linkToSignup('הירשם עכשיו'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'זה לא חשבונך? אפשר '),
-		undoLogin('לבחור חשבון אחר'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$he status = _Translations$login$status$he._(_root);
-	@override late final _Translations$login$ncLoginStep$he ncLoginStep = _Translations$login$ncLoginStep$he._(_root);
-	@override late final _Translations$login$encLoginStep$he encLoginStep = _Translations$login$encLoginStep$he._(_root);
-}
-
-// Path: profile
-class _Translations$profile$he extends Translations$profile$en {
-	_Translations$profile$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'הפרופיל שלי';
-	@override String get logout => 'התנתק';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'נעשה שימוש ב־${used} מתוך ${total} (‏${percent}‏%)';
-	@override String get connectedTo => 'התחברת אל';
-	@override late final _Translations$profile$quickLinks$he quickLinks = _Translations$profile$quickLinks$he._(_root);
-	@override String get faqTitle => 'שאלות ותשובות';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$he._(_root),
-		_Translations$profile$faq$1$he._(_root),
-		_Translations$profile$faq$2$he._(_root),
-		_Translations$profile$faq$3$he._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => 'אתה משתמש ב-${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$he extends Translations$appInfo$en {
 	_Translations$appInfo$he._(TranslationsHe root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$he extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  כל הזכויות שמורות © 2022-${buildYear}  עַאדִל האני\nתוכנית זו מגיעה ללא כל אחריות. זוהי תוכנה חופשית ואפשר להפיץ אותה מחדש בתנאים מסוימים.';
 	@override String get debug => 'דִּיבָּג';
-	@override String get sponsorButton => 'אפשר להקיש כאן כדי לתת לי חסות או לקנות שטח אחסון נוסף';
 	@override String get licenseButton => 'אפשר להקיש כאן כדי להציג פרטי רישיון נוספים';
 	@override String get privacyPolicyButton => 'אפשר להקיש כאן כדי להציג את מדיניות הפרטיות';
-}
-
-// Path: update
-class _Translations$update$he extends Translations$update$en {
-	_Translations$update$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'עדכון זמין';
-	@override String get updateAvailableDescription => 'גרסה חדשה של היישום זמינה עם שינויים אלה:';
-	@override String get update => 'עדכן';
-	@override String get downloadNotAvailableYet => 'ההורדה עדיין אינה זמינה לפלטפורמה שלך. נא לבדוק שוב בעוד זמן קצר.';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$he extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'פתק חדש';
-	@override String get showUpdateDialog => 'הצגת חלונית עדכון';
 	@override String get exportNote => 'ייצוא פתק';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$he extends Translations$settings$prefLab
 	@override String get layoutSize => 'סוג פריסה';
 	@override String get customAccentColor => 'צבע הדגשה מותאם אישית';
 	@override String get hyperlegibleFont => 'גופן Atkinson Hyperreadible';
-	@override String get shouldCheckForUpdates => 'לבדוק אם יש עדכונים ל־nts';
-	@override String get shouldAlwaysAlertForUpdates => 'עדכונים מהירים יותר';
-	@override String get allowInsecureConnections => 'לאפשר חיבורים לא מאובטחים';
 	@override String get editorToolbarAlignment => 'מיקום סרגל הכלים';
 	@override String get editorToolbarShowInFullscreen => 'הצגת סרגל הכלים במצב מסך מלא';
 	@override String get editorAutoInvert => 'היפוך צבעי הפתקים במצב כהה';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$he extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'מגביר את הקריאות למשתמשים עם ראייה לקויה';
-	@override String get allowInsecureConnections => '(לא מומלץ) לאפשר ל־nts להתחבר לשרתים עם חתימה עצמית או תעודות שאינן מהימנות';
 	@override String get preferGreyscale => 'עבור תצוגות דיו אלקטרוני';
 	@override String get autoClearWhiteboardOnExit => 'מנקה את לוח הציור לאחר היציאה מהאפליקציה';
 	@override String get disableEraserAfterUse => 'מעבר אוטומטי חזרה לעט לאחר שימוש במחק';
@@ -453,7 +384,6 @@ class _Translations$settings$prefDescriptions$he extends Translations$settings$p
 	@override String get autosave => 'שמירה אוטומטית לאחר פרק זמן קצר, או אף פעם';
 	@override String get shapeRecognitionDelay => 'כל כמה זמן לעדכן את התצוגה המקדימה של הצורות';
 	@override String get autoStraightenLines => 'מיישר קווים ארוכים ללא צורך להשתמש בעט הצורות';
-	@override String get shouldAlwaysAlertForUpdates => 'ספר לי על עדכונים ברגע שהם יהיו זמינים';
 	@override late final _Translations$settings$prefDescriptions$sentry$he sentry = _Translations$settings$prefDescriptions$sentry$he._(_root);
 }
 
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$he extends Translations$settings$cust
 	@override String get cancel => 'ביטול';
 	@override String get select => 'בחירה';
 	@override String get mustBeEmpty => 'על התיקייה שנבחרה להיות ריקה';
-	@override String get mustBeDoneSyncing => 'יש לוודא שהסנכרון הושלם לפני שמשנים את התיקייה';
 	@override String get unsupported => 'תכונה זו מיועדת כרגע רק למפתחים. השימוש בה יגרום ככל הנראה אובדן נתונים.';
-}
-
-// Path: login.form
-class _Translations$login$form$he extends Translations$login$form$en {
-	_Translations$login$form$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'ההתחברות מבטאת את הסכמתך ל'),
-		linkToPrivacyPolicy('מדיניות הפרטיות'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$he extends Translations$login$status$en {
-	_Translations$login$status$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'מנותק';
-	@override String get tapToLogin => 'יש ללחוץ כדי להיכנס עם Nextcloud';
-	@override String hi({required Object u}) => 'אהלן, ${u}!';
-	@override String get almostDone => 'הסנכרון כמעט מוכן, יש ללחוץ בשביל להשלים את ההתחברות';
-	@override String get loggedIn => 'נכנסת עם Nextcloud';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$he extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'נא לבחור היכן ברצונך לאחסן את הנתונים:';
-	@override String get saberNcServer => 'שרת ה־Nextcloud של nts';
-	@override String get otherNcServer => 'שרת Nextcloud אחר';
-	@override String get serverUrl => 'כתובת שרת';
-	@override String get loginWithSaber => 'התחברות עם nts';
-	@override String get loginWithNextcloud => 'התחברות עם Nextcloud';
-	@override late final _Translations$login$ncLoginStep$loginFlow$he loginFlow = _Translations$login$ncLoginStep$loginFlow$he._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$he extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'לצורך הגנה על הנתונים שלך, נא להקליד את סיסמת ההצפנה שלך:';
-	@override String get newToSaber => 'פעם ראשונה ב־nts? אפשר פשוט להקליד סיסמת הצפנה חדשה.';
-	@override String get encPassword => 'סיסמת הצפנה';
-	@override String get encFaqTitle => 'שאלות ותשובות';
-	@override String get wrongEncPassword => 'פענוח ההצפנה עם הסיסמה שסופקה נכשל. נא לנסות להקליד אותה שוב.';
-	@override String get connectionFailed => 'משהו השתבש בעת ההתחברות לשרת. נא לנסות שוב מאוחר יותר.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$he._(_root),
-		_Translations$login$encLoginStep$encFaq$1$he._(_root),
-		_Translations$login$encLoginStep$encFaq$2$he._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$he extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'עמוד הבית של השרת';
-	@override String get deleteAccount => 'מחק משתמש';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$he extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'אני אאבד את הפתקים שלי אם אני אתנתק?';
-	@override String get a => 'לא. ההערות שלך יישארו גם במכשיר וגם בשרת. הם לא יסונכרנו עם השרת עד שתתחבר חזרה. ודא שהסנכרון הושלם לפני היציאה כדי שלא תאבד נתונים (ראה את התקדמות הסנכרון במסך הבית).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$he extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'איך לשנות את הסיסמה שלי ל־Nextcloud?';
-	@override String get a => 'עבור לאתר השרת שלך והתחבר. לאחר מכן עבור אל הגדרות > אבטחה > שנה סיסמה. תצטרך להתנתק ולהיכנס שוב ל-nts לאחר שינוי הסיסמה שלך.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$he extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'איך אני משנה את הסיסמא המוצפנת שלי?';
-	@override String get a => '0. לוודא שהסנכרון הושלם (ניתן לראות את התקדמות הסנכרון במסך הבית).\n1. להתנתק מ־nts.\n2. לעבור לאתר האינטרנט של השרת ולמחוק את תיקיית ‚Saber’ שלך. פעולה זו תמחק את כל הפתקים שלך מהשרת.\n3. להתחבר שוב אל nts. אפשר לבחור סיסמת הצפנה חדשה בעת הכניסה.\n4. לא לשכוח להתנתק ולהתחבר שוב אל nts גם במכשירים האחרים שלך.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$he extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'איך אני יכול למחוק את החשבון שלי?';
-	@override String get a => 'יש להקיש על הכפתור „${_root.profile.quickLinks.deleteAccount}” ולהתחבר במידת הצורך.\nאם משתמשים בשרת הרשמי של nts, החשבון שיוצרים יימחק לאחר תקופת חסד של שבוע. אפשר ליצור איתי קשר בכתובת adilhanney@disroot.org במהלך תקופה זו כדי לבטל את המחיקה.\nאם משתמשים בשרת צד שלישי, ייתכן שאין אפשרות למחוק את החשבון: יש לעיין במדיניות הפרטיות של השרת למידע נוסף.';
 }
 
 // Path: editor.toolbar
@@ -760,8 +570,6 @@ class _Translations$editor$menu$he extends Translations$editor$menu$en {
 	@override String get backgroundImageFit => 'התאמת תמונת רקע';
 	@override String get backgroundPattern => 'תבנית רקע';
 	@override String get import => 'יבוא';
-	@override String get watchServer => 'מעקב אחר עדכונים בשרת';
-	@override String get watchServerReadOnly => 'העריכה מושתת בעת מעקב אחר השרת';
 	@override late final _Translations$editor$menu$boxFits$he boxFits = _Translations$editor$menu$boxFits$he._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$he bgPatterns = _Translations$editor$menu$bgPatterns$he._(_root);
 }
@@ -868,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$he extends Translations$set
 	@override String get inactive => 'לא פעיל';
 	@override String get activeUntilRestart => 'פעיל עד לפתיחת היישום מחדש';
 	@override String get inactiveUntilRestart => 'לא פעיל עד לפתיחת היישום מחדש';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$he extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'נא לתת ל־nts הרשאה לגשת לחשבון Nextcloud שלך';
-	@override String get followPrompts => 'נא לעקוב אחר ההוראות הבאות בממשק של Nextcloud';
-	@override String get browserDidntOpen => 'עמוד ההתחברות לא נפתח? נא ללחוץ כאן';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$he extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'מהי סיסמת הצפנה? מדוע להשתמש בשתי סיסמאות?';
-	@override String get a => 'הסיסמה ל־Nextcloud משמשת לגישה לענן. סיסמת ההצפנה „מבלגנת” את הנתונים שלך ביישום לפני שהם מגיעים לענן.\nאפילו אם מישהו משיג גישה לחשבון ה־Nextcloud שלך, הפתקים שלך יישארו בטוחים ומוצפנים עם סיסמה נפרדת. דבר זה מעניק לך שכבת אבטחה שנייה להגנה על הנתונים שלך.\nללא סיסמת ההצפנה שלך, לאף אחד לא תהיה גישה לפתקים שלך בשרת, אך זה גם אומר שאם סיסמת ההצפנה שלך תישכח, לא תהיה לך יותר גישה לנתונים.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$he extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'עדיין לא הגדרתי סיסמת הצפנה? היכן מקבלים אחת?';
-	@override String get a => 'נא לבחור סיסמת הצפנה חדשה ולהקליד אותה למעלה.\n‏nts ייצור את מפתחות ההצפנה שלך באופן אוטומטי מסיסמה זו.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$he extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$he._(TranslationsHe root) : this._root = root, super.internal(root);
-
-	final TranslationsHe _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'האם אפשר להשתמש באותה סיסמה כמו לחשבון Nextcloud שלי?';
-	@override String get a => 'כן, אך יש לקחת בחשבון שיהיה יותר קל למנהלי השרת או לאנשים אחרים לגשת לפתקים שלך אם הם משיגים גישה לחשבונך ב־Nextcloud.';
 }
 
 // Path: editor.menu.boxFits

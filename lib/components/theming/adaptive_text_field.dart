@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/components/theming/nts_theme.dart';
 
 class AdaptiveTextField extends StatefulWidget {
   const new({

@@ -1,26 +1,14 @@
 import Flutter
 import UIKit
 import UniformTypeIdentifiers
+import ImageIO
 import Vision
-import workmanager_apple
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   /// Registers all pubspec-referenced Flutter plugins in the given registry
   static func registerPlugins(with registry: FlutterPluginRegistry) {
     GeneratedPluginRegistrant.register(with: registry)
-  }
-
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-    WorkmanagerPlugin.setPluginRegistrantCallback { registry in
-      // The following code will be called upon WorkmanagerPlugin's registration.
-      AppDelegate.registerPlugins(with: registry)
-    }
-
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
@@ -30,6 +18,7 @@ import workmanager_apple
     }
     if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "NtsHandwriting") {
       HandwritingChannel.register(messenger: registrar.messenger())
+      ImageChannel.register(messenger: registrar.messenger())
     }
   }
 }
@@ -251,5 +240,50 @@ enum HandwritingChannel {
         .compactMap { $0.topCandidates(1).first?.string }
         .joined(separator: " ")
     }.joined(separator: "\n")
+  }
+}
+
+// MARK: - Image conversion
+
+/// Channel 'nts/image': turns a picture Flutter can't decode (e.g. a HEIC
+/// photo from Photos or Files) into a JPEG, with ImageIO. Dart side:
+/// lib/pages/editor/editor.dart (`_toJpeg`).
+enum ImageChannel {
+  static func register(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "nts/image", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "jpeg" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard let bytes = call.arguments as? FlutterStandardTypedData else {
+        result(FlutterError(code: "BAD_ARGS", message: "Missing image", details: nil))
+        return
+      }
+      DispatchQueue.global(qos: .userInitiated).async {
+        let jpeg = toJpeg(bytes.data)
+        DispatchQueue.main.async {
+          result(jpeg.map { FlutterStandardTypedData(bytes: $0) })
+        }
+      }
+    }
+  }
+
+  /// [data] as a JPEG, or nil if ImageIO can't read it.
+  static func toJpeg(_ data: Data) -> Data? {
+    guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+          let image = CGImageSourceCreateImageAtIndex(source, 0, [
+            kCGImageSourceCreateThumbnailWithTransform: true,
+          ] as CFDictionary)
+    else { return nil }
+    let output = NSMutableData()
+    guard let destination = CGImageDestinationCreateWithData(
+      output as CFMutableData, "public.jpeg" as CFString, 1, nil)
+    else { return nil }
+    // Keep the photo's orientation
+    let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
+    CGImageDestinationAddImage(destination, image, properties)
+    guard CGImageDestinationFinalize(destination) else { return nil }
+    return output as Data
   }
 }

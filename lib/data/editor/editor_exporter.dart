@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:image/image.dart' as im;
+import 'package:nts/components/canvas/_canvas_painter.dart';
 import 'package:nts/components/canvas/_circle_stroke.dart';
 import 'package:nts/components/canvas/_rectangle_stroke.dart';
 import 'package:nts/components/canvas/_stroke.dart';
 import 'package:nts/components/canvas/canvas_preview.dart';
 import 'package:nts/components/canvas/inner_canvas.dart';
 import 'package:nts/data/editor/editor_core_info.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/is_this_a_test.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -33,10 +36,14 @@ abstract class EditorExporter {
     BuildContext context,
   ) async {
     if (coreInfo.pages.isNotEmpty && coreInfo.pages.last.isEmpty) {
-      // don't export the empty last page
-      coreInfo = coreInfo.copyWith(
-        pages: coreInfo.pages.toList()..removeLast(),
-      );
+      // don't export the empty last page (or card)
+      final pages = coreInfo.pages.toList()..removeLast();
+      if (coreInfo.noteType == .flashcards &&
+          pages.length.isOdd &&
+          pages.last.isEmpty) {
+        pages.removeLast();
+      }
+      coreInfo = coreInfo.copyWith(pages: pages);
     }
 
     final pdf = pw.Document();
@@ -47,9 +54,14 @@ abstract class EditorExporter {
       List.generate(
         coreInfo.pages.length,
         (pageIndex) => pool.withResource(() async {
+          final page = coreInfo.pages[pageIndex];
+          final area = areaOf(page);
           final uiImage = await screenshotPage(
             coreInfo: coreInfo,
             pageIndex: pageIndex,
+            area: area,
+            rasterizeAllStrokes: area != null,
+            pixelRatio: pixelRatioFor(area?.size ?? page.size),
           );
           final byteData = await uiImage.toByteData(
             format: ui.ImageByteFormat.rawRgba,
@@ -72,7 +84,8 @@ abstract class EditorExporter {
 
     for (int pageIndex = 0; pageIndex < pageScreenshots.length; ++pageIndex) {
       final page = coreInfo.pages[pageIndex];
-      final pageSize = page.size;
+      final area = areaOf(page);
+      final pageSize = area?.size ?? page.size;
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat(pageSize.width, pageSize.height),
@@ -87,8 +100,9 @@ abstract class EditorExporter {
                         InnerCanvas.defaultBackgroundColor.toARGB32(),
                   ).flatten();
 
+                  // (All in the picture when it isn't just the page)
                   final strokes = page.strokes.where(
-                    (stroke) => !shouldRasterizeStroke(stroke),
+                    (stroke) => area == null && !shouldRasterizeStroke(stroke),
                   );
                   for (final stroke in strokes) {
                     final strokeColor = PdfColor.fromInt(
@@ -148,6 +162,27 @@ abstract class EditorExporter {
 
     return pdf;
   }
+
+  /// What of [page] to export, if not just the page: what's drawn on a
+  /// whiteboard (it's far too big for a page), or the page and what's
+  /// beside it.
+  static Rect? areaOf(EditorPage page) {
+    if (page.isBoard) return page.contentRect;
+    final beside = SideCardsPainter.sideGroups(page);
+    if (beside.isEmpty) return null;
+    return beside.fold<Rect>(
+      Offset.zero & page.size,
+      (area, group) => area.expandToInclude(group.$1),
+    );
+  }
+
+  /// The pixel ratio for exporting [size]: 2, or less for a very long or
+  /// wide picture (e.g. an endless page), so it stays within the GPU's
+  /// texture limit and the device's memory.
+  static double pixelRatioFor(Size size) =>
+      min(2, _maxExportPixels / size.longestSide);
+
+  static const _maxExportPixels = 8192.0;
 
   /// Returns a screenshot of the page at [pageIndex] in [coreInfo].
   ///

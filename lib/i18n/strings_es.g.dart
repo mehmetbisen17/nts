@@ -39,10 +39,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$es sentry = _Translations$sentry$es._(_root);
 	@override late final _Translations$settings$es settings = _Translations$settings$es._(_root);
 	@override late final _Translations$logs$es logs = _Translations$logs$es._(_root);
-	@override late final _Translations$login$es login = _Translations$login$es._(_root);
-	@override late final _Translations$profile$es profile = _Translations$profile$es._(_root);
 	@override late final _Translations$appInfo$es appInfo = _Translations$appInfo$es._(_root);
-	@override late final _Translations$update$es update = _Translations$update$es._(_root);
 	@override late final _Translations$editor$es editor = _Translations$editor$es._(_root);
 }
 
@@ -117,7 +114,6 @@ class _Translations$settings$es extends Translations$settings$en {
 	@override String get autosaveDisabled => 'Nunca';
 	@override String get shapeRecognitionDisabled => 'Nunca';
 	@override String get openDataDir => 'Abrir carpeta nts';
-	@override String get resyncEverything => 'Resync todo';
 }
 
 // Path: logs
@@ -134,50 +130,6 @@ class _Translations$logs$es extends Translations$logs$en {
 	@override String get noLogs => '¡Aquí no hay registros!';
 }
 
-// Path: login
-class _Translations$login$es extends Translations$login$en {
-	_Translations$login$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Iniciar sesión';
-	@override late final _Translations$login$form$es form = _Translations$login$form$es._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: '¿Aún no tienes una cuenta? ¡'),
-		linkToSignup('Regístrate ahora'),
-		const TextSpan(text: '!'),
-	]);
-	@override late final _Translations$login$status$es status = _Translations$login$status$es._(_root);
-	@override late final _Translations$login$ncLoginStep$es ncLoginStep = _Translations$login$ncLoginStep$es._(_root);
-	@override late final _Translations$login$encLoginStep$es encLoginStep = _Translations$login$encLoginStep$es._(_root);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		undoLogin('No tú'),
-	]);
-}
-
-// Path: profile
-class _Translations$profile$es extends Translations$profile$en {
-	_Translations$profile$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Mi perfil';
-	@override String get logout => 'Cerrar sesión';
-	@override late final _Translations$profile$quickLinks$es quickLinks = _Translations$profile$quickLinks$es._(_root);
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$es._(_root),
-		_Translations$profile$faq$1$es._(_root),
-		_Translations$profile$faq$2$es._(_root),
-		_Translations$profile$faq$3$es._(_root),
-	];
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Estás usando ${used} de ${total} (${percent}%)';
-	@override String get connectedTo => 'Conectado a';
-	@override String get faqTitle => 'Preguntas frecuentes';
-	@override String quotaUsageUncapped({required Object used}) => 'Estás usando ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$es extends Translations$appInfo$en {
 	_Translations$appInfo$es._(TranslationsEs root) : this._root = root, super.internal(root);
@@ -187,22 +139,8 @@ class _Translations$appInfo$es extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nEste programa no tiene ninguna garantía. Es un software libre, y se puede redistribuir bajo ciertas condiciones.';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => 'Toca aquí para patrocinarme o comprar más almacenamiento';
 	@override String get licenseButton => 'Toca aquí para ver más información sobre la licencia';
 	@override String get privacyPolicyButton => 'Toca aquí para ver nuestra política de privacidad';
-}
-
-// Path: update
-class _Translations$update$es extends Translations$update$en {
-	_Translations$update$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Actualización disponible';
-	@override String get updateAvailableDescription => 'Hay una nueva versión de la aplicación disponible. Novedades en esta versión:';
-	@override String get update => 'Actualizar';
-	@override String get downloadNotAvailableYet => 'La descarga aún no está disponible para su plataforma. Vuelve a consultar en breve.';
 }
 
 // Path: editor
@@ -249,7 +187,6 @@ class _Translations$home$tooltips$es extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => 'Crear nota';
-	@override String get showUpdateDialog => 'Mostrar cuadro de diálogo de actualizaciónes';
 	@override String get exportNote => 'Exportar nota';
 }
 
@@ -407,9 +344,6 @@ class _Translations$settings$prefLabels$es extends Translations$settings$prefLab
 	@override String get layoutSize => 'Tipo de disposición';
 	@override String get customAccentColor => 'Color de acento personalizado';
 	@override String get hyperlegibleFont => 'Fuente hiperlegible';
-	@override String get shouldCheckForUpdates => 'Buscar actualizaciones de nts automáticamente';
-	@override String get shouldAlwaysAlertForUpdates => 'Actualizaciones más rápidas';
-	@override String get allowInsecureConnections => 'Permitir conexiones inseguras';
 	@override String get editorToolbarAlignment => 'Alineación de la barra de herramientas del editor';
 	@override String get editorToolbarShowInFullscreen => 'Mostrar la barra de herramientas del editor en el modo de pantalla completa';
 	@override String get editorAutoInvert => 'Invertir notas en el modo oscuro';
@@ -438,7 +372,6 @@ class _Translations$settings$prefDescriptions$es extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegible aumenta la legibilidad para lectores con poca visión';
-	@override String get allowInsecureConnections => '(No recomendado) Autorizar a nts a conectarse a servidores con certificados autofirmados o no fiables';
 	@override String get preferGreyscale => 'Para pantallas con tinta electrónica';
 	@override String get autoClearWhiteboardOnExit => 'Aún se sincronizará con tus otros dispositivos';
 	@override String get disableEraserAfterUse => 'Volver automáticamente al bolígrafo tras usar la goma';
@@ -449,7 +382,6 @@ class _Translations$settings$prefDescriptions$es extends Translations$settings$p
 	@override String get printPageIndicators => 'Mostrar indicadores de página en las exportaciones';
 	@override String get shapeRecognitionDelay => 'Cuán a menudo se actualiza la previsualización de forma';
 	@override String get autoStraightenLines => 'Enderezar líneas largas sin utilizar el bolígrafo de formas';
-	@override String get shouldAlwaysAlertForUpdates => 'Avísame sobre actualizaciones tan pronto como estén disponibles';
 	@override late final _Translations$settings$prefDescriptions$sentry$es sentry = _Translations$settings$prefDescriptions$sentry$es._(_root);
 	@override String get autosave => 'Auto-Save después de un breve retraso, o nunca';
 }
@@ -510,126 +442,6 @@ class _Translations$settings$customDataDir$es extends Translations$settings$cust
 	@override String get cancel => 'Cancelar';
 	@override String get select => 'Seleccionar';
 	@override String get mustBeEmpty => 'El directorio seleccionado debe estar vacío.';
-	@override String get mustBeDoneSyncing => 'Asegúrese de que la sincronización esté completa antes de cambiar el directorio';
-}
-
-// Path: login.form
-class _Translations$login$form$es extends Translations$login$form$en {
-	_Translations$login$form$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Al iniciar sesión, aceptas nuestra '),
-		linkToPrivacyPolicy('Política de privacidad'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$es extends Translations$login$status$en {
-	_Translations$login$status$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Desconectado';
-	@override String get tapToLogin => 'Toca para iniciar sesión con Nextcloud';
-	@override String get loggedIn => 'Sesión iniciada con Nextcloud';
-	@override String hi({required Object u}) => 'Hola ${u}!';
-	@override String get almostDone => 'Casi listo para sincronizar, toca para finalizar el inicio de sesión';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$es extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$login$ncLoginStep$loginFlow$es loginFlow = _Translations$login$ncLoginStep$loginFlow$es._(_root);
-	@override String get whereToStoreData => 'Elige dónde quieres almacenar tus datos:';
-	@override String get saberNcServer => 'Servidor Nextcloud de nts';
-	@override String get otherNcServer => 'Otro servidor Nextcloud';
-	@override String get serverUrl => 'URL del servidor';
-	@override String get loginWithSaber => 'Iniciar sesión con nts';
-	@override String get loginWithNextcloud => 'Iniciar sesión con Nextcloud';
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$es extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'Para proteger sus datos, ingrese su contraseña de cifrado:';
-	@override String get newToSaber => 'Nuevo en nts';
-	@override String get encPassword => 'Contraseña de cifrado';
-	@override String get encFaqTitle => 'Preguntas frecuentes';
-	@override String get wrongEncPassword => 'El descifrado falló con la contraseña proporcionada. Intente ingresarlo nuevamente.';
-	@override String get connectionFailed => 'Algo salió mal al conectarse al servidor. Por favor, inténtelo de nuevo más tarde.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$es._(_root),
-		_Translations$login$encLoginStep$encFaq$1$es._(_root),
-		_Translations$login$encLoginStep$encFaq$2$es._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$es extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'Página de inicio del servidor';
-	@override String get deleteAccount => 'Eliminar cuenta';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$es extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Pierdo mis notas si cierro sesión?';
-	@override String get a => 'No. Tus notas permanecerán tanto en tu dispositivo como en el servidor. Solo no se sincronizarán con el servidor hasta que vuelvas a iniciar sesión. Asegúrate de que la sincronización se completó antes de cerrar la sesión para asegurarte de que no pierdes nada (puedes ver el progreso en la pantalla de inicio).';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$es extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Cómo puedo cambiar mi contraseña de Nextcloud?';
-	@override String get a => 'Accede a la web de tu servidor e inicia sesión. Luego, accede a Ajustes > Seguridad > Cambiar contraseña. Necesitarás cerrar la sesión e iniciarla de nuevo en nts tras cambiar la contraseña.';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$es extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Cómo cambio mi contraseña de cifrado?';
-	@override String get a => '1. Cierra la sesión en nts. Asegúrate de que la sincronización se completó antes de cerrar la sesión para asegurarte de que no pierdes nada (puedes ver el progreso en la pantalla de inicio).\n2. Accede a la web de tu servidor y elimina la carpeta \'Saber\'. Esto eliminará todas las notas del servidor.\n3. Inicia sesión de nuevo en nts. Puedes elegir una nueva contraseña de cifrado al iniciar la sesión.\n4. No te olvides de cerrar e iniciar la sesión de nts de nuevo en el resto de tus dispositivos.';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$es extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Cómo puedo eliminar mi cuenta?';
-	@override String get a => 'Pincha en el botón "${_root.profile.quickLinks.deleteAccount}", e inicia sesión si es necesario.\nSi estás usando el servidor oficial de nts, tu cuenta se eliminará después de un periodo de una semana. Puedes contactar conmigo en la dirección adilhanney@disroot.org durante este tiempo para cancelar la eliminación.\nSi estás usando un servidor de terceros, puede ser que la opción de eliminar no exista: necesitas consultar la política de privacidad del servidor para más información.';
 }
 
 // Path: editor.toolbar
@@ -758,8 +570,6 @@ class _Translations$editor$menu$es extends Translations$editor$menu$en {
 	@override late final _Translations$editor$menu$bgPatterns$es bgPatterns = _Translations$editor$menu$bgPatterns$es._(_root);
 	@override String get lineThickness => 'Espesor de línea';
 	@override String get lineThicknessDescription => 'Grosor de la línea de fondo';
-	@override String get watchServer => 'Esté atento a las actualizaciones en el servidor.';
-	@override String get watchServerReadOnly => 'La edición está deshabilitada mientras se mira el servidor.';
 	@override String get lineHeightDescription => 'También controla el tamaño del texto de las notas escritas.';
 }
 
@@ -865,51 +675,6 @@ class _Translations$settings$prefDescriptions$sentry$es extends Translations$set
 	@override String get inactive => 'Inactivo';
 	@override String get activeUntilRestart => 'Activo hasta que reinicie la aplicación';
 	@override String get inactiveUntilRestart => 'Inactivo hasta que reinicie la aplicación';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$es extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Autorice a nts a acceder a su cuenta de Nextcloud';
-	@override String get followPrompts => 'Siga las indicaciones en su navegador.';
-	@override String get browserDidntOpen => 'El navegador no se abrió';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$es extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Qué es la contraseña de cifrado?';
-	@override String get a => 'La contraseña de cifrado se utiliza para cifrar tus datos antes de enviarlos al servidor. La eliges cuando inicias sesión por primera vez en nts, y no está relacionada con tu cuenta/contraseña de Nextcloud.\nNadie puede acceder a tus notas en el servidor sin tu contraseña de cifrado. Esto significa que si olvidas tu contraseña de cifrado, perderás el acceso a tus datos.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$es extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Por qué usar dos contraseñas?';
-	@override String get a => 'La contraseña de Nextcloud se utiliza para acceder a la nube. La contraseña de encriptación "codifica" tus datos antes de que lleguen a la nube.\nIncluso si alguien obtiene acceso a tu cuenta de Nextcloud, tus notas permanecerán seguras y encriptadas con una contraseña separada. Esto te proporciona una segunda capa de seguridad para proteger tus datos.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$es extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$es._(TranslationsEs root) : this._root = root, super.internal(root);
-
-	final TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '¿Puedo usar la misma contraseña para ambos?';
-	@override String get a => 'Sí, pero hacer esto es menos seguro. Dado que tu contraseña de Nextcloud se envía al servidor, alguien con acceso al servidor podría descifrar tus notas. Solo usa la misma contraseña si confías en el propietario del servidor.';
 }
 
 // Path: editor.menu.boxFits

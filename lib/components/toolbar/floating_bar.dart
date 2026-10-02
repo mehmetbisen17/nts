@@ -14,7 +14,11 @@ import 'package:nts/i18n/strings.g.dart';
 /// in an area of its own size inset by [insets], and the bar positions
 /// itself at [position].
 class FloatingBar extends ChangeNotifier {
-  new(this.id, {required this.areaKey});
+  new(this.id, {required this.areaKey, this.turns = false});
+
+  /// Whether it stands upright against the left or right edge, like the
+  /// toolbar (see [atSideEdge]).
+  final bool turns;
 
   /// E.g. 'toolbar'. Part of the saved keys.
   final String id;
@@ -62,6 +66,16 @@ class FloatingBar extends ChangeNotifier {
   /// In its default place in the editor's layout.
   bool get docked => position == null && !minimized;
 
+  /// Moved against the left or right edge, where a bar stands upright.
+  /// (Flat bars never sit exactly at 0 or 1, see [_flat].)
+  bool get atSideEdge {
+    final position = this.position;
+    return turns &&
+        !minimized &&
+        position != null &&
+        (position.dx == 0 || position.dx == 1);
+  }
+
   void resetPosition() {
     stows.editorBarPositions.value = {...stows.editorBarPositions.value}
       ..remove(_key);
@@ -73,7 +87,20 @@ class FloatingBar extends ChangeNotifier {
   var _dragDelta = Offset.zero;
   var _free = Size.zero;
 
-  void onDragStart(DragStartDetails _) {
+  /// Where the finger (or pointer) is in the safe area, and its width.
+  /// Whether the bar stands upright depends on the finger, not on the bar,
+  /// whose size changes when it turns.
+  var _pointer = Offset.zero;
+  var _safeWidth = 0.0;
+
+  /// Roughly where the grip is in the bar, flat or upright: it's first.
+  static const _grip = Offset(20, 20);
+
+  /// How close to the left or right edge the finger turns the bar upright;
+  /// it turns flat again twice as far away, so it doesn't flicker.
+  static const sideSnap = 48.0;
+
+  void onDragStart(DragStartDetails details) {
     final area = areaKey.currentContext?.findRenderObject() as RenderBox?;
     final bar =
         (minimized ? circleKey : pillKey).currentContext?.findRenderObject()
@@ -83,19 +110,73 @@ class FloatingBar extends ChangeNotifier {
     final safe = insets.deflateRect(Offset.zero & area.size);
     _dragStart = bar.localToGlobal(.zero, ancestor: area) - safe.topLeft;
     _dragDelta = .zero;
+    _pointer = area.globalToLocal(details.globalPosition) - safe.topLeft;
+    _safeWidth = safe.width;
     _free = Size(
       (safe.width - bar.size.width).clamp(0, double.infinity),
       (safe.height - bar.size.height).clamp(0, double.infinity),
     );
-    _dragPosition = fractionOf(_dragStart, _free);
+    // As it is: upright stays upright, flat stays flat. (Upright can also
+    // be where Settings docks it, on the left or right.)
+    final start = fractionOf(_dragStart, _free);
+    final upright =
+        atSideEdge || (turns && !minimized && bar.size.height > bar.size.width);
+    _dragPosition = upright
+        ? FractionalOffset(
+            atSideEdge ? position!.dx : (_pointer.dx < safe.width / 2 ? 0 : 1),
+            start.dy,
+          )
+        : _flat(start);
     notifyListeners();
   }
 
   void onDragUpdate(DragUpdateDetails details) {
     if (_dragPosition == null) return;
+    final wasAtSideEdge = atSideEdge;
     _dragDelta += details.delta;
-    _dragPosition = fractionOf(_dragStart + _dragDelta, _free);
+    _pointer += details.delta;
+    final fraction = fractionOf(_dragStart + _dragDelta, _free);
+    final side = turns ? _sideAt(_pointer.dx, upright: wasAtSideEdge) : null;
+    _dragPosition = side != null
+        ? FractionalOffset(side, fraction.dy)
+        : _flat(fraction);
     notifyListeners();
+    // It turned upright or flat, so it has a new size: measure it, and
+    // keep its grip under the finger
+    if (atSideEdge != wasAtSideEdge) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measureFree());
+    }
+  }
+
+  /// 0 or 1 if the finger at [x] is against the left or right edge, where
+  /// the bar stands upright, or null.
+  double? _sideAt(double x, {required bool upright}) {
+    final reach = upright ? 2 * sideSnap : sideSnap;
+    if (x < reach) return 0;
+    if (_safeWidth - x < reach) return 1;
+    return null;
+  }
+
+  /// [fraction] for a flat bar: never exactly at the left or right edge,
+  /// which would make it upright.
+  FractionalOffset _flat(FractionalOffset fraction) => turns
+      ? FractionalOffset(fraction.dx.clamp(0.001, 0.999), fraction.dy)
+      : fraction;
+
+  /// The room around the bar, which changes when it turns.
+  void _measureFree() {
+    final area = areaKey.currentContext?.findRenderObject() as RenderBox?;
+    final bar =
+        (minimized ? circleKey : pillKey).currentContext?.findRenderObject()
+            as RenderBox?;
+    if (_dragPosition == null || area == null || bar == null) return;
+    if (!bar.attached || !bar.hasSize) return;
+    final safe = insets.deflateRect(Offset.zero & area.size);
+    _free = Size(
+      (safe.width - bar.size.width).clamp(0, double.infinity),
+      (safe.height - bar.size.height).clamp(0, double.infinity),
+    );
+    _dragStart = _pointer - _grip - _dragDelta;
   }
 
   void onDragEnd([DragEndDetails? _]) {

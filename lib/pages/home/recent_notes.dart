@@ -33,10 +33,8 @@ class _RecentPageState extends State<RecentPage> {
 
   /// Mitigates a bug where files got imported starting with `null/` instead of `/`.
   ///
-  /// This caused them to be written to `Documents/Sabernull/...` instead of `Documents/Saber/...`.
-  ///
-  /// See https://github.com/saber-notes/saber/issues/996
-  /// and https://github.com/saber-notes/saber/pull/977.
+  /// This caused them to be written next to the notes folder
+  /// (as `<notes folder>null/...`) instead of inside it.
   void moveIncorrectlyImportedFiles() async {
     for (final filePath in stows.recentFiles.value) {
       if (filePath.startsWith('/')) continue;

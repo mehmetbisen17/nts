@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart'
-    show FlutterQuillLocalizations, RenderEditor;
+    show FlutterQuillLocalizations;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
 import 'package:nts/components/ai/ai_chart.dart';
@@ -23,6 +23,7 @@ import 'package:nts/components/toolbar/toolbar.dart';
 import 'package:nts/components/toolbar/toolbar_button.dart';
 import 'package:nts/data/ai/ai_provider.dart';
 import 'package:nts/data/ai/ai_router.dart';
+import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/flavor_config.dart';
 import 'package:nts/data/prefs.dart';
@@ -273,6 +274,32 @@ void main() {
       await tester.pumpAndSettle();
       expect(added, [answer]);
       expect(find.byType(AiResultSheet), findsNothing);
+    });
+
+    testWidgets('adds the answer beside the page, on either side', (
+      tester,
+    ) async {
+      chatgpt.onRespond = (_, _) async => 'Beside the page.';
+      final added = <(String, int)>[];
+      await _openSheet(
+        tester,
+        action: .paragraph,
+        onAddTextAt: (text, side) => added.add((text, side)),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip(t.nts.side.addLeft));
+      await tester.pumpAndSettle();
+      expect(added, [('Beside the page.', -1)]);
+
+      await _openSheet(
+        tester,
+        action: .paragraph,
+        onAddTextAt: (text, side) => added.add((text, side)),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip(t.nts.side.addRight));
+      await tester.pumpAndSettle();
+      expect(added.last, ('Beside the page.', 1));
     });
 
     testWidgets('closing it stops the request', (tester) async {
@@ -561,10 +588,14 @@ void main() {
 
       await tester.tap(find.text(t.ai.addToPage));
       await tester.pumpAndSettle();
+      // In a text box under what was circled, on the page
+      final box = page.textBoxes.single;
+      expect(box.text, 'A metric measures distance.');
       expect(
-        page.quill.controller.document.toPlainText(),
-        'A metric measures distance.\n',
+        box.position.dy,
+        greaterThan(Select.currentSelect.selectionBounds!.bottom),
       );
+      expect(box.position.dx, greaterThanOrEqualTo(0));
       expect(page.strokes, hasLength(strokes));
 
       // Any other tool ends "Ask AI"
@@ -703,41 +734,25 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
 
-    testWidgets('typed text: only the words inside the lasso', (tester) async {
+    testWidgets('typed text: only the text boxes inside the lasso', (
+      tester,
+    ) async {
       tester.view
         ..physicalSize = const Size(1180, 820)
         ..devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final editor = await _openNote(tester, '/ai${run++}/typed');
       final page = editor.coreInfo.pages.first;
-      page.quill.controller.replaceText(
-        0,
-        0,
-        'alpha beta\ngamma delta\n',
-        null,
-      );
+      PageTextBox box(int id, Offset at, String text) =>
+          PageTextBox(id: id, position: at, width: 200, text: text);
+      page.textBoxes = [
+        box(0, const Offset(100, 100), 'alpha beta'),
+        box(1, const Offset(100, 300), 'gamma'),
+        box(2, const Offset(600, 300), 'delta'),
+      ];
       await tester.pump();
-      final quill = tester.allRenderObjects.whereType<RenderEditor>().first;
-      final text = page.quill.controller.document.toPlainText();
-      // The middle of [word]'s line where it starts, on the page
-      Offset at(String word) => MatrixUtils.transformPoint(
-        quill.getTransformTo(page.renderBox),
-        quill
-            .getEndpointsForSelection(
-              TextSelection.collapsed(offset: text.indexOf(word)),
-            )
-            .first
-            .point,
-      ).translate(0, -8);
-      final gamma = at('gamma'), delta = at('delta');
-      final beta = at('beta');
-      // Around "gamma": not the line above, nor "delta" beside it
-      final lasso = Rect.fromLTRB(
-        gamma.dx - 4,
-        (beta.dy + gamma.dy) / 2,
-        (gamma.dx + delta.dx) / 2,
-        gamma.dy + 12,
-      );
+      // Around "gamma": not the box above, nor "delta" beside it
+      const lasso = Rect.fromLTRB(80, 280, 420, 380);
       final select = Select.currentSelect
         ..onDragStart(lasso.topLeft, 0)
         ..onDragUpdate(lasso.topRight)
@@ -994,8 +1009,8 @@ void main() {
                     editor.context,
                     action: action,
                     input: AiInput(png: png!),
-                    onAddText: (_) {},
-                    onAddImage: (_, _) {},
+                    onAddText: (_, _) {},
+                    onAddImage: (_, _, _) {},
                   ),
                 );
                 await _realWait(tester);
@@ -1335,6 +1350,7 @@ Future<void> _openSheet(
   required AiAction action,
   void Function(String)? onAddText,
   void Function(Uint8List, String)? onAddImage,
+  void Function(String text, int side)? onAddTextAt,
 }) async {
   await tester.pumpWidget(
     _app(
@@ -1344,8 +1360,12 @@ Future<void> _openSheet(
             context,
             action: action,
             input: testInput(),
-            onAddText: onAddText,
-            onAddImage: onAddImage,
+            onAddText:
+                onAddTextAt ??
+                (onAddText == null ? null : (text, _) => onAddText(text)),
+            onAddImage: onAddImage == null
+                ? null
+                : (bytes, extension, _) => onAddImage(bytes, extension),
           ),
           child: const Text('open'),
         ),

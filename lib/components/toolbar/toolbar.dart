@@ -110,6 +110,9 @@ class ToolbarState extends State<Toolbar> {
   final showExportOptions = ValueNotifier(false);
   final toolOptionsType = ValueNotifier(ToolOptions.hide);
 
+  /// Which way the toolbar runs now: upright or flat.
+  var axis = Axis.horizontal;
+
   @override
   void initState() {
     _assignKeybindings();
@@ -190,12 +193,6 @@ class ToolbarState extends State<Toolbar> {
   @override
   Widget build(BuildContext context) {
     final alignment = stows.editorToolbarAlignment.value;
-    final isToolbarVertical =
-        alignment == AxisDirection.left || alignment == AxisDirection.right;
-    final axis = isToolbarVertical ? Axis.vertical : Axis.horizontal;
-    final buttonPadding = isToolbarVertical
-        ? Toolbar._buttonPaddingVertical
-        : Toolbar._buttonPaddingHorizontal;
 
     if (widget.currentTool == Select.currentSelect) {
       // Enable selection bar only when selection is done
@@ -208,6 +205,18 @@ class ToolbarState extends State<Toolbar> {
       listenable: widget.bar,
       builder: (context, _) {
         final bar = widget.bar;
+        // Docked, it follows Settings; moved, it stands upright against
+        // the left or right edge and lies flat anywhere else
+        final isToolbarVertical = bar.docked
+            ? alignment == AxisDirection.left ||
+                  alignment == AxisDirection.right
+            : bar.atSideEdge;
+        final axis = this.axis = isToolbarVertical
+            ? Axis.vertical
+            : Axis.horizontal;
+        final buttonPadding = isToolbarVertical
+            ? Toolbar._buttonPaddingVertical
+            : Toolbar._buttonPaddingHorizontal;
         final pill = bar.minimized
             ? MinimizedFloatingBar(bar: bar, child: _currentToolButton(context))
             : _pill(context, axis: axis, buttonPadding: buttonPadding);
@@ -309,6 +318,7 @@ class ToolbarState extends State<Toolbar> {
               .hide => const SizedBox.square(dimension: SizePicker.smallLength),
               .pen => panel(
                 PenModal(
+                  axis: axis,
                   getTool: () => Pen.currentPen,
                   setTool: widget.setTool,
                 ),
@@ -614,6 +624,7 @@ class ToolbarItemContext {
   final EdgeInsets padding;
 
   Toolbar get toolbar => state.widget;
+  Axis get axis => state.axis;
   Tool get currentTool => toolbar.currentTool;
   bool get readOnly => toolbar.readOnly;
 

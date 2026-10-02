@@ -1,141 +1,161 @@
-# <img src="https://github.com/saber-notes/saber/raw/main/assets/icon/icon.png" width="30" height="30" alt="Logo"> Saber
+# <img src="assets/icon/icon.png" width="32" height="32" alt=""> nts
 
-[<img src='https://github.com/saber-notes/saber/blob/main/assets_raw/badges/google-play-badge.svg'
-    alt='Get it on Google Play'
-    height=50>][google_play]
-&nbsp;
-[<img src="https://github.com/saber-notes/saber/blob/main/assets_raw/badges/f-droid-badge.svg"
-    alt="Get it on F-Droid"
-    height=50>][f-droid]
-&nbsp;
-[<img src="https://github.com/saber-notes/saber/blob/main/assets_raw/badges/app-store-badge.svg"
-    alt="Download on the App Store"
-    height=50>][app_store]
-&nbsp;
-[<img src="https://github.com/saber-notes/saber/blob/main/assets_raw/badges/windows-badge.png"
-    alt="Download for Windows"
-    height=50>][download_windows]
-&nbsp;
-[<img src="https://github.com/saber-notes/saber/blob/main/assets_raw/badges/flathub-badge.svg"
-    alt="Download on Flathub"
-    height=50>][flathub]
-&nbsp;
-[<img src="https://github.com/saber-notes/saber/blob/main/assets_raw/badges/appimage-logo.svg"
-    alt="Get it as an AppImage"
-    height=50>][download_appimage]
+nts is a handwriting notes app for iPad and Mac. You write with an Apple Pencil, a finger or a mouse. Notes are kept in your own iCloud Drive, and you can ask AI about anything you circle.
 
-[English](https://github.com/saber-notes/saber/blob/main/README.md) |
-[čeština](https://github.com/saber-notes/saber/blob/main/README-cs.md) |
-[Deutsch](https://github.com/saber-notes/saber/blob/main/README-de.md) |
-[中文 (简体中文, 中国)](https://github.com/saber-notes/saber/blob/main/README-zh-CN.md) |
-[中文 (繁體, 台灣)](https://github.com/saber-notes/saber/blob/main/README-zh-TW.md) |
-[العربية](https://github.com/saber-notes/saber/blob/main/README-ar.md) |
-[Tiếng Việt](https://github.com/saber-notes/saber/blob/main/README-vi.md)
-
-Saber is the notes app built for handwriting.
-
-It's designed to be as simple and intuitive as possible, while still delivering unique features that you'll actually use. Additionally, Saber is available across all your devices, large and small, and syncs between them seamlessly.
-
-Notably, it can invert your notes when you're in dark mode. This allows you to write with white ink on a black background, which is much easier on the eyes in low-light environments like when the teacher turns off the lights in class.
-Images and PDFs are also inverted, so you can still use a digital printout or a textbook without the fuss.
-
-Saber uses a dual-password system to protect your notes from anyone but you, even if they have complete control over the server. You can safely store your notes on the official Saber server, another server, or even host your own!
-
-The app is completely open-source so that anyone can view the source code and see exactly what it's doing and how it handles your data. Many other note-taking apps are closed-source and proprietary, meaning that their inner workings are a mystery to the public.
-
-As someone who studies maths, highlighting multi-line equations was always a hassle with other apps, where the highlighter would change color when it overlapped with itself. Another problem I had was that in some apps, the highlighter would render on top of the text, fading it out and making it hard to read.
-Saber's highlighter has no such issues. It utilizes canvas compositing to render the highlighter in a way that is consistent with/better than traditional paper, where it handles overlaps and maintains color consistency.
-
-Saber has everything you need to keep your notes organized. Create folders inside folders inside folders to your heart's content with no limit on the number of nested folders. And even though a note may be buried deep within a nested folder, you can still access it easily with your most recent notes always available on the home screen.
-
-Discover a whole new way to capture and organize your thoughts with Saber. Whether you're a student, professional, or creative mind, Saber is your trusted companion for digital handwriting. Download now and let your ideas flow freely!
-
-[![Latest release](https://img.shields.io/github/v/release/saber-notes/saber)](https://github.com/saber-notes/saber/releases/latest)
-[![Flathub](https://img.shields.io/flathub/v/com.adilhanney.saber)](https://flathub.org/apps/details/com.adilhanney.saber)
-[![F-Droid](https://img.shields.io/f-droid/v/com.adilhanney.saber)](https://f-droid.org/en/packages/com.adilhanney.saber/)
-[![GitHub downloads](https://img.shields.io/github/downloads/saber-notes/saber/total?label=GitHub%20downloads)](https://github.com/saber-notes/saber/releases)
-[![Flathub downloads](https://img.shields.io/flathub/downloads/com.adilhanney.saber?label=Flathub%20downloads)](https://flathub.org/apps/details/com.adilhanney.saber)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/adil192)](https://github.com/sponsors/adil192)
-[![License](https://img.shields.io/github/license/saber-notes/saber)](https://github.com/saber-notes/saber/blob/main/LICENSE.md)
-[![Translation status](https://hosted.weblate.org/widget/saber-notes/saber/svg-badge.svg)](https://hosted.weblate.org/engage/saber-notes/)
-[![Codecov](https://codecov.io/gh/saber-notes/saber/branch/main/graph/badge.svg?token=EGQSN0THW2)](https://codecov.io/gh/saber-notes/saber)
-
-<details open>
-<summary>Tap to show/hide screenshots</summary>
-
-<div>
-<img src="https://github.com/saber-notes/saber/raw/main/metadata/en-US/images/phoneScreenshots/1_home.png" width="180">
-<img src="https://github.com/saber-notes/saber/raw/main/metadata/en-US/images/phoneScreenshots/2_editor.png" width="180">
-<img src="https://github.com/saber-notes/saber/raw/main/metadata/en-US/images/phoneScreenshots/3_login.png" width="180">
-<img src="https://github.com/saber-notes/saber/raw/main/metadata/en-US/images/phoneScreenshots/4_settings.png" width="180">
-</div>
-</details>
+nts is a personal project. It isn't on the App Store, and it isn't affiliated with Saber or its authors. It's a modified version of [Saber](https://github.com/saber-notes/saber) (see [Credits and license](#credits-and-license)).
 
 ## Features
 
-Please see [#1 Saber progress][progress].
+### Kinds of notes
 
-## Install
+- **Notebook.** Pages of paper, one after another, with lined, grid, dot, Cornell, music staff or blank backgrounds.
+- **Whiteboard.** No paper and no pages: one large surface you can pan around in any direction. It uses the app's Night or Paper colours.
+- **Endless page.** One long sheet with no page breaks. It keeps growing as you write near the bottom.
+- **Slides.** Landscape 16:9 pages, for annotating lecture slides or drawing wide diagrams.
+- **Flashcards.** Index cards, each with a front and a back. **Study** shows one card at a time: tap it to flip it, swipe for the next one, and shuffle the deck.
 
-Please see
-[Install Saber](https://github.com/saber-notes/saber/wiki/install)
-on the wiki.
+### Writing and drawing
 
-## Build from source
+- **Pens.** Fountain pen, ballpoint, pencil, brush pen, calligraphy pen and highlighter. Overlapping highlighter strokes never get darker. Ink stays smooth at every zoom level.
+- **Hold to snap.** Draw a line, rectangle, square, circle, oval, triangle or star, then hold the pen still at the end. It turns into a clean shape, and you can see it before you lift. Turn this on or off in Settings › Writing.
+- **Text boxes.** With the Text tool, tap anywhere to type. Drag a box by its grip with a finger or the Pencil, even while you're still typing. Drag its right edge to change the width, and pick its size and colour. On iPad you can also handwrite into a box with Scribble. Text typed in older versions becomes a text box automatically.
+- **Eraser.** Erases whole strokes, or only the parts it passes over. Its outline follows the Pencil, a finger or the mouse, and updates as you change its size. You can also scribble over ink to erase it.
+- **Lasso.** Select freehand or with a rectangle, then move, resize, rotate, recolour, copy, cut, paste, screenshot, add a link, or turn handwriting into text. Handwriting recognition runs on the device with Apple's Vision framework.
+- **Study tools.** Tape that hides what's under it until you tap it, a ruler for straight lines, insert space, fill, and a laser pointer for presenting.
 
-Please see
-[Build Saber](https://github.com/saber-notes/saber/wiki/build)
-on the wiki.
+### The space beside the page
 
-## Links
+The empty space to the left and right of each page is usable too:
 
-- [Nextcloud server][nextcloud]
-- [Privacy policy][privacy]
-- [License][license]
-- [Releases][releases]
+- **Images.** Drag a picture in from another app, such as Photos, Safari or Files beside nts on an iPad, or Finder on a Mac. It goes beside the page, on the side nearest where you drop it (on a whiteboard, right where you drop it). With the lasso tool, press an image and drag it anywhere: onto the page, out to either side, or back.
+- **Move notes aside.** Lasso some ink and tap **Move beside the page** (left or right) to free up room on the page. The same buttons bring it back.
+- **Readable cards.** Anything beside the page sits on a card in the page's colour, edged in red so it's clear what was moved there. If the ink would be hard to read on the page colour, the card switches to light or dark to keep it readable.
+- **Writing there.** You can write, erase and lasso beside the page as well. Zoom out or scroll sideways to reach it.
 
-## Translating
+### Organizing
 
-All translations are thanks to our community of contributors.
+- **Folders.** View them as a gallery or a list. Give each folder a muted colour and an icon, such as a spider lily, lotus, blossom, leaf or a subject. The colour and icon are saved inside the folder, so they sync with it.
+- **iCloud Drive.** Choose a folder in iCloud Drive and use the same folder on your iPad and Mac. iCloud Drive does the syncing; there's no nts server or account.
+- **PDFs.** Import a PDF to write on it, and export any note as a PDF or an image.
 
-If you'd like to help out translating Saber, head to [Weblate](https://hosted.weblate.org/engage/saber-notes/)!
+### Toolbar
 
-[![Translation status](https://hosted.weblate.org/widget/saber-notes/multi-auto.svg)](https://hosted.weblate.org/engage/saber-notes/)
+- **Your tools.** Add, remove and reorder buttons from the **+** sheet, and save pen presets for the colours and sizes you use most.
+- **Move it anywhere.** Drag the toolbar by its grip. Against the left or right edge of the screen it stands upright; anywhere else it lies flat. It also minimizes to a small circle.
 
-Note: To avoid falling back to English, any gaps in the translations are filled
-in by machine translation until a human can contribute.
+### Ask AI
 
-## Supporting Saber
+Circle part of a note and ask for an explanation with an example, a paragraph, a graph, an illustration, a video or web sources. Each answer can be added on the page, or beside it on the left or right.
 
-If you like Saber, please consider supporting it by:
-- Spreading the word!
-- Starring the project on GitHub
-- Sponsoring me on [GitHub Sponsors](https://github.com/sponsors/adil192)
-- Donating via [PayPal](https://paypal.me/adilhanney)
-- Buying more storage on the Nextcloud server: see [Pricing](pricing.md)
+AI uses accounts you sign in to in Settings › AI accounts:
 
-## Development notes
+- **ChatGPT**, with your ChatGPT plan
+- **Claude**, through Claude Code installed on your Mac (Mac only)
+- **Google** (Gemini and YouTube), through an OAuth client in your own Google Cloud project
 
-Please see
-[Maintainer notes](https://github.com/saber-notes/saber/wiki/Maintainer-notes)
-on the wiki.
+Each provider's own terms apply to your account.
 
+## Build and install
 
-[f-droid]: https://f-droid.org/packages/com.adilhanney.saber/
-[flathub]: https://flathub.org/apps/details/com.adilhanney.saber
-[google_play]: https://play.google.com/store/apps/details?id=com.adilhanney.saber
-[snap]: https://snapcraft.io/saber
-[app_store]: https://apps.apple.com/us/app/saber/id1671523739
-[download_windows]: https://github.com/saber-notes/saber/releases/download/v1.36.1/SaberInstaller_v1.36.1.exe
-[download_appimage]: https://github.com/saber-notes/saber/releases/download/v1.36.1/Saber-1.36.1-x86_64.AppImage
+nts pins its own Flutter version as a git submodule in `submodules/flutter`. Always use `./submodules/flutter/bin/flutter`, not a Flutter you installed separately.
 
-[nextcloud]: https://nc.saber.adil.hanney.org/
+### What you need
 
-[privacy]: https://github.com/saber-notes/saber/blob/main/privacy_policy.md
-[license]: https://github.com/saber-notes/saber/blob/main/LICENSE.md
+- A Mac with [Xcode](https://apps.apple.com/app/xcode/id497799835). Open it once so it finishes installing its components.
+- [Homebrew](https://brew.sh), then CocoaPods and Rust (one of nts's packages needs Rust):
 
-[releases]: https://github.com/saber-notes/saber/releases
-[issues]: https://github.com/saber-notes/saber/issues
-[progress]: https://github.com/saber-notes/saber/discussions/1
+  ```sh
+  brew install cocoapods rustup
+  export PATH="/opt/homebrew/opt/rustup/bin:$PATH"  # Homebrew's rustup isn't on PATH by default
+  rustup default stable
+  ```
 
-[f-droid-manifest]: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/com.adilhanney.saber.yml
+### Get the code
+
+```sh
+git clone --recurse-submodules https://github.com/mehmetbisen17/nts nts
+cd nts
+./submodules/flutter/bin/flutter pub get
+```
+
+If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`.
+
+### Mac
+
+```sh
+./submodules/flutter/bin/flutter build macos --release
+open build/macos/Build/Products/Release/nts.app
+```
+
+Drag `nts.app` into Applications to keep it. The Mac build is signed to run locally, so it doesn't need an Apple ID.
+
+### iPad
+
+1. Open `ios/Runner.xcworkspace` in Xcode. In the **Runner** target, under **Signing & Capabilities**, choose your team. A free Apple ID works (add it in Xcode › Settings › Accounts). If Xcode says the bundle identifier is taken, change it to something unique, such as `com.yourname.nts`.
+2. Connect the iPad with a cable, trust the Mac, and turn on **Developer Mode** (Settings › Privacy & Security).
+3. Install a release build:
+
+   ```sh
+   ./submodules/flutter/bin/flutter devices          # find your iPad's name
+   ./submodules/flutter/bin/flutter run --release -d "Your iPad"
+   ```
+
+   Press `q` once it has launched. The app stays installed.
+4. The first time, trust your developer profile on the iPad in Settings › General › VPN & Device Management.
+
+**Free Apple ID:** apps signed with a free account run for **7 days**. After that, nts won't open until you run step 3 again. Your notes live in iCloud Drive, so reinstalling doesn't touch them. A paid Apple Developer account extends this to a year.
+
+### First launch
+
+- **Settings › iCloud:** pick or create a folder in iCloud Drive, for example `nts`. Choose the same folder on every device.
+- **Settings › AI accounts:** sign in to the AI providers you want to use.
+
+## Development
+
+```sh
+export PATH="/opt/homebrew/opt/rustup/bin:$PWD/submodules/flutter/bin:$PATH"
+flutter analyze
+flutter test
+```
+
+Where things are:
+
+| Folder | What's in it |
+|---|---|
+| `lib/pages/editor/` | The editor screen, and flashcard study |
+| `lib/components/canvas/` | The page canvas: drawing, gestures, images, text boxes and the space beside pages |
+| `lib/components/toolbar/` | The toolbar, the colour and size bar, and the lasso's actions |
+| `lib/data/editor/` | The note model: pages, kinds of notes, text boxes, undo history and saving |
+| `lib/data/tools/` | Pens, eraser, lasso and shapes |
+| `lib/components/home/`, `lib/pages/home/` | The library, folders and settings |
+| `lib/components/ai/`, `lib/data/ai/` | Ask AI and the AI accounts |
+| `lib/data/icloud/` | Access to the iCloud Drive folder |
+| `packages/sbn/` | Parts of the `.sbn2` note format |
+| `test/` | Tests |
+
+Notes are saved as `.sbn2` files (BSON), Saber's note format. nts writes format version 21, which adds kinds of notes and text boxes. Saber opens these files read-only.
+
+## Privacy
+
+Your notes stay on your devices and in your own iCloud Drive. nts has no analytics or crash reporting. AI features only send something when you tap an AI action, and only to the provider you chose. See the [privacy policy](privacy_policy.md).
+
+## Credits and license
+
+nts is a modified version of [Saber](https://github.com/saber-notes/saber), copyright © 2022–2026 Adil Hanney and contributors, which is free software under the GNU General Public License v3.0.
+
+Changes made for nts in 2026 include:
+
+- the Higan design, with Night and Paper themes;
+- iCloud Drive storage in place of Nextcloud;
+- the whiteboard, endless page, slides and flashcard note types;
+- text boxes;
+- the space beside pages;
+- hold to snap shapes;
+- folder colours and icons;
+- the customizable, movable toolbar;
+- new tools;
+- Ask AI.
+
+The original copyright notices are kept in the app and in this repository.
+
+nts is distributed under the same license, the [GNU General Public License v3.0](LICENSE.md). You can use, study, change and share it under the terms of that license. It comes with no warranty.

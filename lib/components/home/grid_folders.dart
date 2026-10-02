@@ -9,10 +9,12 @@ import 'package:nts/components/home/masonry_files.dart';
 import 'package:nts/components/home/new_folder_dialog.dart';
 import 'package:nts/components/home/preview_card.dart';
 import 'package:nts/components/home/rename_folder_button.dart';
+import 'package:nts/components/theming/higan/higan_lily.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
 import 'package:nts/components/toolbar/floating_bar.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/folder_style.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/i18n/strings.g.dart';
 import 'package:nts/pages/editor/editor.dart';
@@ -20,7 +22,12 @@ import 'package:nts/pages/editor/editor.dart';
 /// What a folder tile shows: how many notes, when the newest one was saved,
 /// and up to 3 of the newest notes for the fanned preview stack.
 class FolderInfo {
-  const new({this.notes = 0, this.modified, this.previews = const []});
+  const new({
+    this.notes = 0,
+    this.modified,
+    this.previews = const [],
+    this.style = FolderStyle.none,
+  });
 
   final int notes;
   final DateTime? modified;
@@ -28,20 +35,26 @@ class FolderInfo {
   /// Note paths without the extension.
   final List<String> previews;
 
+  /// Its colour and emblem.
+  final FolderStyle style;
+
   static Future<FolderInfo> load(String folderPath) async {
     final dir = folderPath.endsWith('/') ? folderPath : '$folderPath/';
-    final files =
-        (await FileManager.getChildrenOfDirectory(
-          dir,
-          sortMetric: .lastModifiedNewToOld,
-        ))?.files ??
-        const [];
+    final (children, style) = await (
+      FileManager.getChildrenOfDirectory(
+        dir,
+        sortMetric: .lastModifiedNewToOld,
+      ),
+      FolderStyle.read(dir),
+    ).wait;
+    final files = children?.files ?? const [];
     return FolderInfo(
       notes: files.length,
       modified: files.isEmpty
           ? null
           : FileManager.lastModified('$dir${files.first}${Editor.extension}'),
       previews: [for (final file in files.take(3)) '$dir$file'],
+      style: style,
     );
   }
 
@@ -73,9 +86,14 @@ class GridFolders extends StatelessWidget {
     this.viewMode = .gallery,
     this.showNavigation = false,
     this.onDropNotes,
+    this.path = '',
   });
 
   final bool isAtRoot;
+
+  /// The folder these are in, e.g. '' at the root or '/School',
+  /// for their styles (see [FolderStyle]).
+  final String path;
 
   /// Called with a folder's name, or '..' for the back row.
   final void Function(String) onTap;
@@ -106,6 +124,7 @@ class GridFolders extends StatelessWidget {
           final width = constraints.crossAxisExtent;
           Widget folder(int index) => _Folder(
             name: folders[index],
+            folderPath: '$path/${folders[index]}',
             info: infos[folders[index]] ?? const FolderInfo(),
             viewMode: viewMode,
             narrow: width < 560,
@@ -165,6 +184,7 @@ class GridFolders extends StatelessWidget {
 class _Folder extends StatefulWidget {
   const new({
     required this.name,
+    required this.folderPath,
     required this.info,
     required this.viewMode,
     required this.narrow,
@@ -178,6 +198,9 @@ class _Folder extends StatefulWidget {
   });
 
   final String name;
+
+  /// From the root, e.g. '/School/Physics'.
+  final String folderPath;
   final FolderInfo info;
   final FolderViewMode viewMode;
   final bool narrow, topBorder;
@@ -197,6 +220,37 @@ class _FolderState extends State<_Folder> {
   var expanded = false;
   var hovered = false;
 
+  /// Its style as just changed here, until the folder list reloads.
+  FolderStyle? _style;
+  FolderStyle get style => _style ?? widget.info.style;
+
+  @override
+  void didUpdateWidget(_Folder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The list reloaded (e.g. with a style from another device)
+    if (widget.info.style != oldWidget.info.style ||
+        widget.folderPath != oldWidget.folderPath) {
+      _style = null;
+    }
+  }
+
+  Future<void> _editStyle() async {
+    // (Captured first: this tile may show another folder by the time the
+    // sheet closes. And from disk, as the move dialog doesn't load styles.)
+    final path = widget.folderPath;
+    final initial = _style ?? await FolderStyle.read(path);
+    if (!mounted) return;
+    final picked = await showFolderStyleSheet(context, initial);
+    if (picked == null || picked == initial) return;
+    if (mounted && widget.folderPath == path) {
+      setState(() {
+        _style = picked;
+        expanded = false;
+      });
+    }
+    await FolderStyle.write(path, picked);
+  }
+
   /// Where the last click landed, for the menu (right-click on a list row
   /// doesn't say where).
   var _lastDown = Offset.zero;
@@ -213,6 +267,7 @@ class _FolderState extends State<_Folder> {
     _lastDown,
     actions: [
       (t.home.menu.open, () => widget.onTap(widget.name)),
+      (t.nts.folderStyle.title, _editStyle),
       (
         t.home.renameFolder.rename,
         () => showRenameFolderDialog(
@@ -252,6 +307,11 @@ class _FolderState extends State<_Folder> {
   }
 
   List<Widget> get _actions => [
+    IconButton(
+      tooltip: t.nts.folderStyle.title,
+      onPressed: _editStyle,
+      icon: const Icon(Symbols.palette),
+    ),
     RenameFolderButton(
       folderName: widget.name,
       doesFolderExist: widget.doesFolderExist,
@@ -284,7 +344,7 @@ class _FolderState extends State<_Folder> {
             onTap: _tap,
             onLongPress: _toggle,
             onSecondaryTap: _showMenu,
-            leading: _MiniStack(info.previews.firstOrNull),
+            leading: _MiniStack(info.previews.firstOrNull, style: style),
             trailing: expanded
                 ? _actions
                 : [
@@ -339,6 +399,7 @@ class _FolderState extends State<_Folder> {
   Widget _tile(bool dropping) {
     final c = context.higan;
     final info = widget.info;
+    final tint = style.tint;
     return Column(
       crossAxisAlignment: .start,
       mainAxisSize: .min,
@@ -350,11 +411,19 @@ class _FolderState extends State<_Folder> {
             clipBehavior: .antiAlias,
             decoration: BoxDecoration(
               // Recessed in Paper, so the pages stand off it.
-              color: c.well,
+              // A colour only tints it, so it stays easy on the eyes.
+              color: tint == null
+                  ? c.well
+                  : Color.alphaBlend(
+                      tint.withValues(alpha: c.isNight ? 0.2 : 0.16),
+                      c.well,
+                    ),
               borderRadius: const .all(.circular(HiganRadius.card)),
               border: Border.all(
                 color: dropping
                     ? c.higan
+                    : tint != null
+                    ? tint.withValues(alpha: hovered || expanded ? 0.7 : 0.45)
                     : hovered || expanded
                     ? c.hairlineStrong
                     : c.hairline,
@@ -369,6 +438,12 @@ class _FolderState extends State<_Folder> {
                     fanned: hovered || dropping,
                   ),
                 ),
+                if (style.emblem != null)
+                  Positioned(
+                    left: HiganSpace.m,
+                    top: HiganSpace.m,
+                    child: FolderEmblem(style, size: 22),
+                  ),
                 Positioned(
                   left: 0,
                   right: 0,
@@ -470,18 +545,22 @@ class _FanStack extends StatelessWidget {
   }
 }
 
-/// A 44×57 list thumbnail: the newest note's page with another behind it.
+/// A 44×57 list thumbnail: the newest note's page with another behind it,
+/// tinted and marked with the folder's [style].
 class _MiniStack extends StatelessWidget {
-  const new(this.preview);
+  const new(this.preview, {this.style = FolderStyle.none});
 
   final String? preview;
+  final FolderStyle style;
 
   @override
   Widget build(BuildContext context) {
+    final tint = style.tint;
     return SizedBox(
       width: 44,
       height: 57,
       child: Stack(
+        clipBehavior: .none,
         children: [
           Positioned.fill(
             child: Transform.rotate(
@@ -501,7 +580,211 @@ class _MiniStack extends StatelessWidget {
               ),
             ),
           ),
+          // The colour as a frame on the page (it would be hidden under it)
+          if (tint != null)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: tint.withValues(alpha: 0.85),
+                      width: 2,
+                    ),
+                    borderRadius: const .all(.circular(3)),
+                  ),
+                ),
+              ),
+            ),
+          if (style.emblem != null)
+            Positioned(
+              right: -6,
+              bottom: -6,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: context.higan.surface2,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.higan.hairlineStrong),
+                ),
+                child: Padding(
+                  padding: const .all(3),
+                  child: FolderEmblem(style, size: 14),
+                ),
+              ),
+            ),
         ],
+      ),
+    );
+  }
+}
+
+/// A folder's emblem in its colour: the spider lily, or an icon.
+class FolderEmblem extends StatelessWidget {
+  const new(this.style, {super.key, this.size = 20});
+
+  final FolderStyle style;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final emblem = style.emblem;
+    if (emblem == null) return SizedBox.square(dimension: size);
+    final icon = FolderStyle.emblems[emblem];
+    if (icon == null) {
+      return HiganLily(size: size, animate: false);
+    }
+    return Icon(
+      icon,
+      size: size,
+      weight: 300,
+      color: style.tint ?? context.higan.textSecondary,
+    );
+  }
+}
+
+/// Picks a folder's colour and emblem, or returns null if dismissed.
+Future<FolderStyle?> showFolderStyleSheet(
+  BuildContext context,
+  FolderStyle initial,
+) => showModalBottomSheet<FolderStyle>(
+  context: context,
+  showDragHandle: true,
+  backgroundColor: context.higan.surface1,
+  constraints: const BoxConstraints(maxWidth: 500),
+  // Taller than 9/16 of the window if it needs to be (short Mac windows)
+  isScrollControlled: true,
+  builder: (context) => _FolderStyleSheet(initial),
+);
+
+class _FolderStyleSheet extends StatefulWidget {
+  const new(this.initial);
+
+  final FolderStyle initial;
+
+  @override
+  State<_FolderStyleSheet> createState() => _FolderStyleSheetState();
+}
+
+class _FolderStyleSheetState extends State<_FolderStyleSheet> {
+  late var style = widget.initial;
+
+  Widget _choice({
+    required bool selected,
+    required String label,
+    required VoidCallback onTap,
+    required Widget child,
+  }) {
+    final c = context.higan;
+    return Semantics(
+      selected: selected,
+      button: true,
+      label: label,
+      child: Tooltip(
+        message: label,
+        child: InkResponse(
+          onTap: onTap,
+          radius: 26,
+          child: Container(
+            width: HiganTap.min,
+            height: HiganTap.min,
+            alignment: .center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selected ? c.text : Colors.transparent,
+                width: 1.5,
+              ),
+            ),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.higan;
+    final names = t.nts.folderStyle;
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const .fromLTRB(20, 0, 20, 20),
+        child: Column(
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
+          children: [
+            Text(names.title, style: HiganText.body(context)),
+            const SizedBox(height: 16),
+            HiganLabel(names.colour),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
+              children: [
+                _choice(
+                  selected: style.color == null,
+                  label: names.none,
+                  onTap: () =>
+                      setState(() => style = style.copyWith(color: () => null)),
+                  child: Icon(Symbols.block, size: 20, color: c.textTertiary),
+                ),
+                for (final MapEntry(key: name, value: color)
+                    in FolderStyle.colors.entries)
+                  _choice(
+                    selected: style.color == name,
+                    label: names.colours[name] ?? name,
+                    onTap: () => setState(
+                      () => style = style.copyWith(color: () => name),
+                    ),
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.85),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            HiganLabel(names.emblem),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
+              children: [
+                _choice(
+                  selected: style.emblem == null,
+                  label: names.none,
+                  onTap: () => setState(
+                    () => style = style.copyWith(emblem: () => null),
+                  ),
+                  child: Icon(Symbols.block, size: 20, color: c.textTertiary),
+                ),
+                for (final name in FolderStyle.emblems.keys)
+                  _choice(
+                    selected: style.emblem == name,
+                    label: names.emblems[name] ?? name,
+                    onTap: () => setState(
+                      () => style = style.copyWith(emblem: () => name),
+                    ),
+                    child: FolderEmblem(
+                      FolderStyle(color: style.color, emblem: name),
+                      size: 22,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: .centerRight,
+              child: FilledButton(
+                onPressed: () => Navigator.pop(context, style),
+                child: Text(names.done),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

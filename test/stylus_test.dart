@@ -12,9 +12,7 @@ import 'utils/test_mock_channel_handlers.dart';
 void main() {
   group('Stylus', () {
     FlavorConfig.setup();
-    FileManager.documentsDirectory =
-        '$tmpDir/stylus_test/'
-        '${FileManager.appRootDirectoryPrefix}';
+    FileManager.documentsDirectory = '$tmpDir/stylus_test/nts';
     stows.editorFingerDrawing.value = false;
 
     // If you quickly draw, sometimes there's no hover event before the pointer down event

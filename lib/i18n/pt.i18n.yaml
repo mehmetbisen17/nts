@@ -10,7 +10,6 @@ home:
     settings: Configurações
   tooltips:
     newNote: Nova nota
-    showUpdateDialog: Mostrar caixa de diálogo de atualização
     exportNote: Exportar nota
   create:
     newNote: Nova nota
@@ -89,9 +88,6 @@ settings:
     layoutSize: Tipo de leiaute
     customAccentColor: Cor de destaque personalizada
     hyperlegibleFont: Fonte hiperlegível
-    shouldCheckForUpdates: Verificar automaticamente as atualizações do nts
-    shouldAlwaysAlertForUpdates: Atualizações mais rápidas
-    allowInsecureConnections: Permitir conexões inseguras
     editorToolbarAlignment: Alinhamento da barra de ferramentas do editor
     editorToolbarShowInFullscreen: Mostrar a barra de ferramentas do editor no modo de ecrã cheio
     editorAutoInvert: Inverter as notas no modo escuro
@@ -112,7 +108,6 @@ settings:
     sentry(OUTDATED): Relatório de erro
   prefDescriptions:
     hyperlegibleFont: Atkinson Hyperlegible aumenta a legibilidade para leitores com baixa visão
-    allowInsecureConnections: (Não recomendado) Permitir que o nts conecte a servidores com certificados autoassinados/não-confiáveis
     preferGreyscale: Para ecrãs e-ink
     autoClearWhiteboardOnExit: Ainda será sincronizado com os seus outros dispositivos
     disableEraserAfterUse: Voltar automaticamente para a caneta depois de usar a borracha
@@ -123,7 +118,6 @@ settings:
       fixedOff: O desenho com o dedo está desativado
     editorPromptRename: Pode sempre renomear as notas mais tarde
     printPageIndicators: Mostrar os indicadores de página nas exportações
-    shouldAlwaysAlertForUpdates: Conte-me sobre atualizações assim que elas estiverem disponíveis
     sentry:
       active(OUTDATED): Ativo
       inactive(OUTDATED): Inativo
@@ -156,9 +150,7 @@ settings:
     cancel(OUTDATED): Cancelar
     select(OUTDATED): Selecionar
     mustBeEmpty(OUTDATED): A pasta selecionada deve estar vazia
-    mustBeDoneSyncing(OUTDATED): Certifique-se de que a sincronização esteja completa antes de mudar a pasta
     unsupported(OUTDATED): Este recurso é atualmente apenas para desenvolvedores. O uso dele provavelmente resultará em perda de dados.
-  resyncEverything(OUTDATED): Sincronizar tudo
   openDataDir(OUTDATED): Abrir pasta nts
   autosaveDisabled(OUTDATED): Nunca
   shapeRecognitionDisabled(OUTDATED): Nunca
@@ -168,81 +160,13 @@ logs:
   debuggingInfo(OUTDATED): Os logs contêm informações úteis para depuração e desenvolvimento
   noLogs(OUTDATED): Nenhum log aqui!
   useTheApp(OUTDATED): Os logs aparecerão aqui enquanto você usa o aplicativo
-login:
-  title: Login
-  form:
-    agreeToPrivacyPolicy(rich): Ao fazer login, concorda com a ${linkToPrivacyPolicy(Política de Privacidade)}.
-  signup(rich): Ainda não tem uma conta? ${linkToSignup(Registe-se agora)}!
-  status:
-    loggedOut: Desconectado
-    tapToLogin: Toque para fazer login com o Nextcloud
-    loggedIn: Logado com o Nextcloud
-    hi(OUTDATED): Olá, $u!
-    almostDone(OUTDATED): Quase pronto para sincronizar, toque para finalizar o login
-  ncLoginStep:
-    loginFlow:
-      pleaseAuthorize(OUTDATED): Por favor, autorize o nts a acessar sua conta Nextcloud
-      followPrompts(OUTDATED): Por favor, siga as instruções na interface do Nextcloud
-      browserDidntOpen(OUTDATED): A página de login não abriu? Clique aqui
-    whereToStoreData(OUTDATED): "Escolha onde você deseja armazenar seus dados:"
-    saberNcServer(OUTDATED): Servidor Nextcloud do nts
-    otherNcServer(OUTDATED): Outro servidor Nextcloud
-    serverUrl(OUTDATED): URL do servidor
-    loginWithSaber(OUTDATED): Entrar com nts
-    loginWithNextcloud(OUTDATED): Fazer login com o Nextcloud
-  encLoginStep:
-    encFaq(OUTDATED):
-    - q(OUTDATED): O que é uma senha de criptografia? Por que usar duas senhas?
-      a(OUTDATED): |-
-        A senha do Nextcloud é usada para acessar a nuvem. A senha de criptografia "scrambles" seus dados antes que eles cheguem à nuvem.
-        Mesmo que alguém acesse sua conta do Nextcloud, suas anotações permanecerão seguras e criptografadas com uma senha separada. Isso lhe fornece uma segunda camada de segurança para proteger seus dados.
-        Ninguém pode acessar suas anotações no servidor sem sua senha de criptografia, mas isso também significa que se você esquecer sua senha de criptografia, perderá o acesso aos seus dados.
-    - q(OUTDATED): Eu ainda não configurei uma senha de criptografia. Onde eu a obtenho?
-      a(OUTDATED): |-
-        Escolha uma nova senha de criptografia e insira-a acima.
-        O nts gerará suas chaves de criptografia automaticamente a partir desta senha.
-    - q(OUTDATED): Posso usar a mesma senha da minha conta Nextcloud?
-      a(OUTDATED): Sim, mas tenha em mente que seria mais fácil para o administrador do servidor ou outra pessoa acessar suas anotações se obtiverem acesso à sua conta Nextcloud.
-    enterEncPassword(OUTDATED): "Para proteger seus dados, por favor, insira sua senha de criptografia:"
-    newToSaber(OUTDATED): Novo no nts? Basta inserir uma nova senha de criptografia.
-    encPassword(OUTDATED): senha de criptografia
-    encFaqTitle(OUTDATED): Perguntas frequentes
-    wrongEncPassword(OUTDATED): Falha na descriptografia com a senha fornecida. Por favor, tente inseri-la novamente.
-    connectionFailed(OUTDATED): Algo deu errado ao conectar ao servidor. Por favor, tente novamente mais tarde.
-  notYou(rich,OUTDATED): Não você? ${undoLogin(Escolher outra conta)}.
-profile:
-  title: O meu perfil
-  logout: Sair
-  quickLinks:
-    serverHomepage: Página inicial do servidor
-    deleteAccount: Apagar a conta
-  faq:
-  - q: Perderei as minhas notas se eu sair da minha conta?
-    a: Não. As suas notas permanecerão tanto no seu dispositivo quanto no servidor. Elas não serão sincronizadas com o servidor até fazer login novamente. Tenha certeza que a sincronização foi finalizada antes de sair, de modo que não perca nenhum dado (veja o progresso da sincronização no ecrã inicial).
-  - q: Como mudo a minha palavra-passe do Nextcloud?
-    a: Vá para o website do seu servidor e faça login. Depois vá para Configurações > Segurança > Mudar palavra-passe. Precisará sair da conta e fazer login novamente no nts depois de mudar a sua palavra-passe.
-  - q: Como mudo a minha palavra-passe de criptografia?
-  - q: Como posso apagar a minha conta?
-    a: |-
-      Toque no "@:profile.quickLinks.deleteAccount" botão acima e faça login se necessário.
-      Se estiver a usar o servidor oficial do nts, a sua conta será apagada depois de um período de carência de uma semana. Pode entrar em contacto comigo em adilhanney@disroot.org durante este período para cancelar o apagar.
-      Se usar um servidor de terceiros, pode ser que não haja uma opção de apagar a sua conta: precisará consultar a política de privacidade do servidor para mais informações.
-  quotaUsage(OUTDATED): Você está usando $used de $total ($percent%)
-  connectedTo(OUTDATED): Conectado a
-  faqTitle(OUTDATED): Perguntas frequentes
 appInfo:
   licenseNotice: |-
     nts (modified from Saber)  Copyright © 2022-$buildYear  Adil Hanney
     Este programa vem sem absolutamente nenhuma garantia. Este é um software livre e pode redistribuí-lo sob certas condições.
   debug: DEBUG
-  sponsorButton: Toque aqui para me patrocinar ou comprar mais armazenamento
   licenseButton: Toque aqui para ver mais informações de licença
   privacyPolicyButton: Toque aqui para ver a política de privacidade
-update:
-  updateAvailable: Atualização disponível
-  updateAvailableDescription: "Uma nova versão da app está disponível, com estas mudanças:"
-  update: Atualizar
-  downloadNotAvailableYet(OUTDATED): O download ainda não está disponível para a sua plataforma. Por favor, verifique novamente em breve.
 editor:
   toolbar:
     toggleColors: Paleta de cores (Ctrl C)
@@ -329,8 +253,6 @@ editor:
     lineHeightDescription(OUTDATED): Também controla o tamanho do texto para notas digitadas
     lineThickness(OUTDATED): Espessura da linha
     lineThicknessDescription(OUTDATED): espessura da linha de fundo
-    watchServer(OUTDATED): Fique atento às atualizações no servidor
-    watchServerReadOnly(OUTDATED): A edição está desativada ao assistir ao servidor
   readOnlyBanner:
     title: Modo somente leitura
     watchingServer(OUTDATED): Você está atualmente monitorando atualizações no servidor. A edição está desativada neste modo.

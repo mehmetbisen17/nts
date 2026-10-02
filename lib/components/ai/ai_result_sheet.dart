@@ -49,14 +49,16 @@ extension AiActionLabels on AiAction {
 /// account `AiRouter` picks, and shows the answer as it comes. Closing
 /// the sheet stops it.
 ///
-/// [onAddText] and [onAddImage] put the answer on the page;
-/// null (e.g. in read-only notes) hides "Add to page".
+/// [onAddText] and [onAddImage] put the answer on the page (`side` 0) or
+/// beside it (-1 on the left, 1 on the right); null (e.g. in read-only
+/// notes) hides "Add to page".
 Future<void> showAiResult(
   BuildContext context, {
   required AiAction action,
   required AiInput input,
-  void Function(String text)? onAddText,
-  void Function(Uint8List bytes, String extension)? onAddImage,
+  void Function(String text, int side)? onAddText,
+  void Function(Uint8List bytes, String extension, int side)? onAddImage,
+  bool besidePage = true,
 }) => showModalBottomSheet(
   context: context,
   isScrollControlled: true,
@@ -71,6 +73,7 @@ Future<void> showAiResult(
       input: input,
       onAddText: onAddText,
       onAddImage: onAddImage,
+      besidePage: besidePage,
     ),
   ),
 );
@@ -82,12 +85,16 @@ class AiResultSheet extends StatefulWidget {
     required this.input,
     this.onAddText,
     this.onAddImage,
+    this.besidePage = true,
   }) : assert(action != .video && action != .source);
 
   final AiAction action;
   final AiInput input;
-  final void Function(String text)? onAddText;
-  final void Function(Uint8List bytes, String extension)? onAddImage;
+  final void Function(String text, int side)? onAddText;
+  final void Function(Uint8List bytes, String extension, int side)? onAddImage;
+
+  /// Whether the answer can go beside the page (not on a whiteboard).
+  final bool besidePage;
 
   /// Whether [error] is fixed in Settings → AI accounts or AI actions,
   /// e.g. by picking another account when a plan's limit is reached.
@@ -254,7 +261,8 @@ class _AiResultSheetState extends State<AiResultSheet> {
     if (mounted) setState(() => _copied = true);
   }
 
-  Future<void> _addToPage() async {
+  /// Adds the answer on the page ([side] 0) or beside it (-1, 1).
+  Future<void> _addToPage([int side = 0]) async {
     // A chart takes a moment to become a PNG: meanwhile the sheet may be
     // closed, and popping again would close the note.
     final navigator = Navigator.of(context);
@@ -262,10 +270,10 @@ class _AiResultSheetState extends State<AiResultSheet> {
     bool open() => mounted && (route?.isCurrent ?? false);
     setState(() => _adding = true);
     if (_text case final text?) {
-      widget.onAddText?.call(text);
+      widget.onAddText?.call(text, side);
     } else if (await _image() case (final bytes, final extension)?) {
       if (!open()) return;
-      widget.onAddImage?.call(bytes, extension);
+      widget.onAddImage?.call(bytes, extension, side);
     }
     if (open()) navigator.pop();
   }
@@ -369,10 +377,47 @@ class _AiResultSheetState extends State<AiResultSheet> {
                           label: Text(_copied ? t.ai.copied : t.ai.copy),
                         ),
                       if (canAdd)
-                        FilledButton.icon(
-                          onPressed: _done ? _addToPage : null,
-                          icon: const Icon(Symbols.add, size: 16, weight: 400),
-                          label: Text(t.ai.addToPage),
+                        // Beside the page on the left, on it, or on the
+                        // right, kept together (smaller when narrow)
+                        FittedBox(
+                          fit: .scaleDown,
+                          child: Row(
+                            mainAxisSize: .min,
+                            spacing: 4,
+                            children: [
+                              if (widget.besidePage)
+                                IconButton.outlined(
+                                  tooltip: t.nts.side.addLeft,
+                                  onPressed: _done
+                                      ? () => _addToPage(-1)
+                                      : null,
+                                  icon: const Icon(
+                                    Symbols.dock_to_left,
+                                    size: 18,
+                                    weight: 300,
+                                  ),
+                                ),
+                              FilledButton.icon(
+                                onPressed: _done ? _addToPage : null,
+                                icon: const Icon(
+                                  Symbols.add,
+                                  size: 16,
+                                  weight: 400,
+                                ),
+                                label: Text(t.ai.addToPage),
+                              ),
+                              if (widget.besidePage)
+                                IconButton.outlined(
+                                  tooltip: t.nts.side.addRight,
+                                  onPressed: _done ? () => _addToPage(1) : null,
+                                  icon: const Icon(
+                                    Symbols.dock_to_right,
+                                    size: 18,
+                                    weight: 300,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                     ],
                   ),

@@ -1,5 +1,6 @@
 import Cocoa
 import FlutterMacOS
+import ImageIO
 import Vision
 
 class MainFlutterWindow: NSWindow {
@@ -23,6 +24,7 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
     ICloudFolderChannel.register(messenger: flutterViewController.engine.binaryMessenger, window: self)
     HandwritingChannel.register(messenger: flutterViewController.engine.binaryMessenger)
+    ImageChannel.register(messenger: flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }
@@ -272,5 +274,50 @@ enum SandboxMigration {
     }
     defaults.set(true, forKey: marker)
     NSLog("nts: copied %d settings from the old app sandbox", copied)
+  }
+}
+
+// MARK: - Image conversion
+
+/// Channel 'nts/image': turns a picture Flutter can't decode (e.g. a HEIC
+/// photo from Photos or Files) into a JPEG, with ImageIO. Dart side:
+/// lib/pages/editor/editor.dart (`_toJpeg`).
+enum ImageChannel {
+  static func register(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "nts/image", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "jpeg" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard let bytes = call.arguments as? FlutterStandardTypedData else {
+        result(FlutterError(code: "BAD_ARGS", message: "Missing image", details: nil))
+        return
+      }
+      DispatchQueue.global(qos: .userInitiated).async {
+        let jpeg = toJpeg(bytes.data)
+        DispatchQueue.main.async {
+          result(jpeg.map { FlutterStandardTypedData(bytes: $0) })
+        }
+      }
+    }
+  }
+
+  /// [data] as a JPEG, or nil if ImageIO can't read it.
+  static func toJpeg(_ data: Data) -> Data? {
+    guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+          let image = CGImageSourceCreateImageAtIndex(source, 0, [
+            kCGImageSourceCreateThumbnailWithTransform: true,
+          ] as CFDictionary)
+    else { return nil }
+    let output = NSMutableData()
+    guard let destination = CGImageDestinationCreateWithData(
+      output as CFMutableData, "public.jpeg" as CFString, 1, nil)
+    else { return nil }
+    // Keep the photo's orientation
+    let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
+    CGImageDestinationAddImage(destination, image, properties)
+    guard CGImageDestinationFinalize(destination) else { return nil }
+    return output as Data
   }
 }

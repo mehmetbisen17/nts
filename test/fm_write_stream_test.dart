@@ -48,18 +48,26 @@ void main() {
       // write to file
       await file.create(recursive: true);
       await file.writeAsString('test_content');
-      await Future.delayed(const Duration(milliseconds: 1));
-      expect(events, hasLength(greaterThanOrEqualTo(2)));
+      // The OS reports changes a little later (macOS batches them)
+      await _until(() => events.any((e) => e.type == FileOperationType.write));
+      expect(events, isNotEmpty);
       expect(events.last.filePath, '/test'); // without the extension
       expect(events.last.type, FileOperationType.write);
       events.clear();
 
       // delete file
       await file.delete();
-      await Future.delayed(const Duration(milliseconds: 1));
+      await _until(() => events.any((e) => e.type == FileOperationType.delete));
       expect(events, hasLength(greaterThanOrEqualTo(1)));
       expect(events.last.filePath, '/test'); // without the extension
       expect(events.last.type, FileOperationType.delete);
     });
   });
+}
+
+/// Waits up to 3 seconds for [done].
+Future<void> _until(bool Function() done) async {
+  for (var i = 0; i < 300 && !done(); i++) {
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
 }

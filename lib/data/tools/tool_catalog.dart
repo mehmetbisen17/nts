@@ -342,7 +342,11 @@ abstract final class ToolCatalog {
       icon: Symbols.insert_page_break,
       label: () => t.editor.menu.insertPage,
       build: (b) => b.button(
-        enabled: !b.readOnly && b.editor != null,
+        // A whiteboard or an endless page is just the one page
+        enabled:
+            !b.readOnly &&
+            b.editor != null &&
+            !b.editor!.coreInfo.noteType.singlePage,
         onPressed: () => b.editor!.insertPageAfterCurrent(),
       ),
     ),
@@ -522,6 +526,7 @@ abstract final class ToolCatalog {
       // the favorites and the "save" button
       span: () => stows.penPresets.value.length + 1,
       build: (b) => PenPresetButtons(
+        axis: b.axis,
         currentTool: b.currentTool,
         enabled: !b.readOnly,
         selectTool: b.state.selectTool,

@@ -7,7 +7,8 @@ import 'dart:ui' as ui;
 import 'package:collapsible/collapsible.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kDebugMode;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kDebugMode, listEquals;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -18,6 +19,9 @@ import 'package:logging/logging.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:nts/components/ai/ai_menu.dart';
 import 'package:nts/components/canvas/_asset_cache.dart';
+import 'package:nts/components/canvas/_canvas_painter.dart';
+import 'package:nts/components/canvas/_circle_stroke.dart';
+import 'package:nts/components/canvas/_rectangle_stroke.dart';
 import 'package:nts/components/canvas/_stroke.dart';
 import 'package:nts/components/canvas/canvas.dart';
 import 'package:nts/components/canvas/canvas_gesture_detector.dart';
@@ -27,6 +31,7 @@ import 'package:nts/components/canvas/inner_canvas.dart';
 import 'package:nts/components/canvas/link_dialog.dart';
 import 'package:nts/components/canvas/ruler.dart';
 import 'package:nts/components/canvas/save_indicator.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/editor/read_only_banner.dart';
 import 'package:nts/components/navbar/responsive_navbar.dart';
 import 'package:nts/components/theming/adaptive_alert_dialog.dart';
@@ -48,6 +53,7 @@ import 'package:nts/data/editor/page.dart';
 import 'package:nts/data/extensions/change_notifier_extensions.dart';
 import 'package:nts/data/extensions/matrix4_extensions.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
+import 'package:nts/data/is_this_a_test.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/data/services/handwriting.dart';
 import 'package:nts/data/services/selection_clipboard.dart';
@@ -65,22 +71,32 @@ import 'package:nts/data/tools/shape_pen.dart';
 import 'package:nts/data/tools/tape.dart';
 import 'package:nts/data/tools/tool_catalog.dart';
 import 'package:nts/i18n/strings.g.dart';
+import 'package:nts/pages/editor/flashcard_study.dart';
 import 'package:nts/pages/home/whiteboard.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
 import 'package:sbn/change.dart';
 import 'package:sbn/tool_id.dart';
 import 'package:super_clipboard/super_clipboard.dart';
+import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 typedef _PhotoInfo = ({Uint8List bytes, String extension});
 
 class Editor extends StatefulWidget {
-  new({super.key, String? path, this.embedded = false, this.pdfPath})
-    : initialPath = path != null
-          ? Future.value(path)
-          : FileManager.newFilePath('/'),
-      needsNaming = path == null;
+  new({
+    super.key,
+    String? path,
+    this.embedded = false,
+    this.pdfPath,
+    this.noteType,
+  }) : initialPath = path != null
+           ? Future.value(path)
+           : FileManager.newFilePath('/'),
+       needsNaming = path == null;
+
+  /// The kind of note to make, if it's new.
+  final NoteType? noteType;
 
   final Future<String> initialPath;
   final bool needsNaming;
@@ -136,7 +152,11 @@ class EditorState extends State<Editor> {
 
   /// The area below the header where the toolbar and top bar can be moved.
   final _barAreaKey = GlobalKey();
-  late final _toolbarBar = FloatingBar('toolbar', areaKey: _barAreaKey);
+  late final _toolbarBar = FloatingBar(
+    'toolbar',
+    areaKey: _barAreaKey,
+    turns: true,
+  );
   late final _topBarBar = FloatingBar('topBar', areaKey: _barAreaKey);
 
   double get scrollY {
@@ -273,8 +293,22 @@ class EditorState extends State<Editor> {
     }
   }
 
+  /// Saves when the app is put away or quit, before the autosave delay.
+  late final AppLifecycleListener _lifecycle;
+
   @override
   void initState() {
+    _lifecycle = AppLifecycleListener(
+      onHide: () => unawaited(saveToFile()),
+      onExitRequested: () async {
+        // (The note is written first; the thumbnail after it can wait)
+        await saveToFile().timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {},
+        );
+        return .exit;
+      },
+    );
     DynamicMaterialApp.addFullscreenListener(_setState);
     _transformationController.addListener(_onTransformChanged);
 
@@ -319,32 +353,31 @@ class EditorState extends State<Editor> {
       listenToQuillChanges(coreInfo.pages[pageIndex].quill, pageIndex);
     }
 
+    // A new note of the kind asked for
+    // A new note (or an empty one, like a cleared whiteboard tab) of the
+    // kind asked for
+    final newType = widget.noteType;
+    if (newType != null &&
+        coreInfo.noteType != newType &&
+        coreInfo.isEmpty &&
+        !coreInfo.readOnly) {
+      coreInfo.noteType = newType;
+      coreInfo.pages = [];
+    }
+
     if (coreInfo.isEmpty) {
       createPage(-1);
     } else {
       for (final page in coreInfo.pages) {
         page.backgroundImage?.onMoveImage = onMoveImage;
         page.backgroundImage?.onDeleteImage = onDeleteImage;
-        page.backgroundImage?.onMiscChange = autosaveAfterDelay;
+        page.backgroundImage?.onMiscChange = autosaveUnrecordedChange;
         for (final image in page.images) {
           image.onMoveImage = onMoveImage;
           image.onDeleteImage = onDeleteImage;
-          image.onMiscChange = autosaveAfterDelay;
+          image.onMiscChange = autosaveUnrecordedChange;
         }
       }
-    }
-
-    if (currentTool == Tool.textEditing) {
-      int pageIndex;
-      if (coreInfo.initialPageIndex != null) {
-        pageIndex = coreInfo.initialPageIndex!;
-      } else {
-        pageIndex = 0;
-      }
-      assert(pageIndex < coreInfo.pages.length);
-
-      quillFocus.value = coreInfo.pages[pageIndex].quill
-        ..focusNode.requestFocus();
     }
 
     if (coreInfo.filePath == Whiteboard.filePath &&
@@ -398,16 +431,37 @@ class EditorState extends State<Editor> {
   }
 
   /// Creates pages until the given page index exists,
-  /// plus an extra blank page
+  /// plus an extra blank page (or card, see [EditorCoreInfo.addBlankEnd]).
+  /// An endless page grows instead.
   void createPage(int pageIndex) {
-    while (pageIndex >= coreInfo.pages.length - 1) {
-      final page = EditorPage();
-      coreInfo.pages.add(page);
-      listenToQuillChanges(page.quill, coreInfo.pages.length - 1);
+    final type = coreInfo.noteType;
+    if (type.singlePage) {
+      if (coreInfo.pages.isEmpty) _addPage(coreInfo.newPage());
+      if (type == .endless) coreInfo.pages.first.growToFit();
+      return;
+    }
+    while (type != .flashcards && pageIndex >= coreInfo.pages.length - 1) {
+      _addPage(coreInfo.newPage());
+    }
+    // A blank card after the card that was written on
+    if (type == .flashcards) {
+      if (coreInfo.pages.length.isOdd) _addPage(coreInfo.newPage());
+      final card = pageIndex < 0 ? -1 : pageIndex ~/ 2;
+      while (card >= coreInfo.pages.length ~/ 2 - 1) {
+        _addPage(coreInfo.newPage());
+        _addPage(coreInfo.newPage());
+      }
     }
   }
 
+  void _addPage(EditorPage page) {
+    coreInfo.pages.add(page);
+    listenToQuillChanges(page.quill, coreInfo.pages.length - 1);
+  }
+
   void removeExcessPages() {
+    if (coreInfo.noteType.singlePage) return;
+    if (coreInfo.noteType == .flashcards) return _removeExcessCards();
     bool removedAPage = false;
 
     // remove excess pages if all pages >= this one are empty
@@ -449,8 +503,26 @@ class EditorState extends State<Editor> {
     }
   }
 
+  /// Like [removeExcessPages] for flashcards: leaves one blank card at
+  /// the end.
+  void _removeExcessCards() {
+    final pages = coreInfo.pages;
+    bool cardIsEmpty(int end) =>
+        pages[end - 1].isEmpty && pages[end - 2].isEmpty;
+    while (pages.length >= 4 &&
+        pages.length.isEven &&
+        cardIsEmpty(pages.length) &&
+        cardIsEmpty(pages.length - 2)) {
+      pages.removeLast().dispose();
+      pages.removeLast().dispose();
+    }
+  }
+
   void undo([EditorHistoryItem? item]) {
+    final byUser = item == null;
     if (item == null) {
+      // Typing in a text box is recorded first, so it's what's undone
+      _commitTextBox();
       if (!history.canUndo) return;
 
       // if we disabled redo, re-enable it
@@ -508,15 +580,27 @@ class EditorState extends State<Editor> {
             ..links = item.linkChange!.previous
             ..redrawStrokes();
 
+        case .textBoxes:
+          createPage(item.pageIndex);
+          coreInfo.pages[item.pageIndex].textBoxes =
+              item.textBoxChange!.previous;
+
         case .deletePage:
+          // A card comes back half at a time, with an odd page count
+          // in between, which createPage would pad with an extra page.
+          // (Trailing blank cards may have been trimmed since.)
+          final cards = coreInfo.noteType == .flashcards;
           // make sure we already have a (blank/otherwise) page at this index
-          createPage(item.pageIndex - 1);
+          if (!cards) createPage(item.pageIndex - 1);
+          final at = cards
+              ? min(item.pageIndex, coreInfo.pages.length)
+              : item.pageIndex;
 
           // insert the page at the correct index
-          coreInfo.pages.insert(item.pageIndex, item.page!);
+          coreInfo.pages.insert(at, item.page!);
 
           // fix the page indices of all pages after this one
-          for (int i = item.pageIndex + 1; i < coreInfo.pages.length; ++i) {
+          for (int i = at; i < coreInfo.pages.length; ++i) {
             final page = coreInfo.pages[i];
             page.updatePageIndex(i);
           }
@@ -549,6 +633,7 @@ class EditorState extends State<Editor> {
               image.dstRect.bottom - item.offset!.bottom,
             );
           }
+        // (Text boxes moved with it are restored below)
 
         case .quillChange:
           final quill = coreInfo.pages[item.pageIndex].quill;
@@ -567,27 +652,63 @@ class EditorState extends State<Editor> {
           coreInfo.backgroundPattern = item.backgroundPatternChange!.previous;
       }
 
+      // Text boxes deleted, added or moved along with ink (e.g. with the
+      // lasso, or by clearing a page)
+      if (item.type != .textBoxes && item.textBoxChange != null) {
+        final page = coreInfo.pages[item.pageIndex];
+        page.textBoxes = item.textBoxChange!.previous;
+        final select = Select.currentSelect;
+        if (item.type == .move && select.doneSelecting) {
+          final ids = {for (final box in select.selectResult.textBoxes) box.id};
+          select.selectResult.textBoxes = [
+            for (final box in page.textBoxes)
+              if (ids.contains(box.id)) box,
+          ];
+        }
+      }
+
       if (item.type != .move) {
         Select.currentSelect.unselect();
       }
     });
 
     autosaveAfterDelay();
+
+    // A flashcard is added or removed as its front and back: undo both
+    if (byUser && _halfACard(history.canUndo ? history.peekUndo() : null)) {
+      undo();
+    }
   }
 
+  /// Whether a card was only half added or removed, and [next] (the next
+  /// step in the history) is its other half.
+  bool _halfACard(EditorHistoryItem? next) =>
+      coreInfo.noteType == .flashcards &&
+      coreInfo.pages.length.isOdd &&
+      (next?.type == .insertPage || next?.type == .deletePage);
+
   void redo() {
+    _commitTextBox();
     if (!history.canRedo) return;
     final item = history.redo();
+    // (See [_halfACard])
+    void redoTheOtherHalf() {
+      if (_halfACard(history.canRedo ? history.peekRedo() : null)) redo();
+    }
 
+    // Text boxes that changed along with ink go forward again
+    final textBoxes = item.textBoxChange?.reverse();
     switch (item.type) {
       case .draw:
-        undo(item.copyWith(type: .erase));
+        undo(item.copyWith(type: .erase, textBoxChange: textBoxes));
       case .erase:
-        undo(item.copyWith(type: .draw));
+        undo(item.copyWith(type: .draw, textBoxChange: textBoxes));
       case .deletePage:
         undo(item.copyWith(type: .insertPage));
+        redoTheOtherHalf();
       case .insertPage:
         undo(item.copyWith(type: .deletePage));
+        redoTheOtherHalf();
       case .move:
         undo(
           item.copyWith(
@@ -597,6 +718,7 @@ class EditorState extends State<Editor> {
               -item.offset!.right,
               -item.offset!.bottom,
             ),
+            textBoxChange: textBoxes,
           ),
         );
       case .quillChange:
@@ -636,14 +758,17 @@ class EditorState extends State<Editor> {
         );
       case .links:
         undo(item.copyWith(linkChange: item.linkChange!.reverse()));
+      case .textBoxes:
+        undo(item.copyWith(textBoxChange: item.textBoxChange!.reverse()));
     }
   }
 
+  /// The page at [focalPoint], counting the space beside it
+  /// (see [EditorPage.areaWithSides]).
   int? onWhichPageIsFocalPoint(Offset focalPoint) {
     for (int i = 0; i < coreInfo.pages.length; ++i) {
       if (coreInfo.pages[i].renderBox == null) continue;
-      final pageBounds = Offset.zero & coreInfo.pages[i].size;
-      if (pageBounds.contains(
+      if (coreInfo.pages[i].areaWithSides.contains(
         coreInfo.pages[i].renderBox!.globalToLocal(focalPoint),
       ))
         return i;
@@ -770,6 +895,7 @@ class EditorState extends State<Editor> {
         when currentTool is Pen) {
       _rulerEdge = ruler.edgeNear(box.globalToLocal(details.focalPoint));
     }
+    Pen.followsRuler = _rulerEdge != null;
     final position = page.renderBox!.globalToLocal(
       _snapToRuler(details.focalPoint),
     );
@@ -799,6 +925,7 @@ class EditorState extends State<Editor> {
       } else if (onSelectedPage &&
           select.selectResult.path.contains(position)) {
         // drag selection in onDrawUpdate
+        _textBoxesBeforeMove = page.textBoxes;
       } else {
         select.onDragStart(position, dragPageIndex!);
         history.canRedo = true; // selection doesn't affect history
@@ -836,12 +963,14 @@ class EditorState extends State<Editor> {
       (currentTool as Pen).onDragUpdate(position, currentPressure);
       page.redrawStrokes();
     } else if (currentTool is Eraser) {
-      (currentTool as Eraser).erase(
+      // Only repainted when something was erased
+      if ((currentTool as Eraser).erase(
         position,
         page.strokes,
         from: previousPosition,
-      );
-      page.redrawStrokes();
+      )) {
+        page.redrawStrokes();
+      }
     } else if (currentTool is Select) {
       final select = currentTool as Select;
       if (select.isTransforming) {
@@ -853,6 +982,7 @@ class EditorState extends State<Editor> {
         for (final image in select.selectResult.images) {
           image.dstRect = image.dstRect.shift(offset);
         }
+        _shiftSelectedTextBoxes(page, offset);
         select.selectResult.path = select.selectResult.path.shift(offset);
       } else {
         select.onDragUpdate(position);
@@ -875,6 +1005,8 @@ class EditorState extends State<Editor> {
     var askAi = false;
     setState(() {
       if (currentTool is Pen) {
+        // Shift means a straight line, not the shape it would snap to
+        if (_straightLine) Pen.snapPreview = null;
         final newStroke = (currentTool as Pen).onDragEnd();
         if (newStroke == null) return;
         if (newStroke.isEmpty) return;
@@ -910,11 +1042,16 @@ class EditorState extends State<Editor> {
           }
         }
 
-        if (_straightLine
-            ? newStroke.length > 1
-            : stows.autoStraightenLines.value &&
-                  currentTool is! ShapePen &&
-                  newStroke.isStraightLine()) {
+        // (Not along the ruler: it's straight already, and snapping it
+        // level would pull it off the ruler)
+        if (_rulerEdge == null &&
+            newStroke is! CircleStroke &&
+            newStroke is! RectangleStroke &&
+            (_straightLine
+                ? newStroke.length > 1
+                : stows.autoStraightenLines.value &&
+                      currentTool is! ShapePen &&
+                      newStroke.isStraightLine())) {
           newStroke.convertToLine();
         }
 
@@ -963,6 +1100,8 @@ class EditorState extends State<Editor> {
         if (select.doneSelecting) {
           // A lasso that closes where it started also adds up to zero
           if (moveOffset == .zero) return;
+          final textBoxesBefore = _textBoxesBeforeMove;
+          _textBoxesBeforeMove = null;
           history.recordChange(
             EditorHistoryItem(
               type: .move,
@@ -975,11 +1114,16 @@ class EditorState extends State<Editor> {
                 moveOffset.dx,
                 moveOffset.dy,
               ),
+              textBoxChange:
+                  textBoxesBefore == null ||
+                      select.selectResult.textBoxes.isEmpty
+                  ? null
+                  : Change(previous: textBoxesBefore, current: page.textBoxes),
             ),
           );
         } else {
           shouldSave = false;
-          select.onDragEnd(page.strokes, page.images);
+          select.onDragEnd(page.strokes, page.images, page.textBoxes);
 
           // "Ask AI" also reads imported pages and typed text, or says
           // there's nothing to read
@@ -1050,6 +1194,170 @@ class EditorState extends State<Editor> {
       return true;
     }
     return false;
+  }
+
+  /// Ends typing in a text box now (see [TextBoxes.commit]), so the undo
+  /// history has it before anything else changes.
+  static void _commitTextBox() {
+    final commit = TextBoxes.commit;
+    TextBoxes.commit = null;
+    commit?.call();
+  }
+
+  /// Replaces [pageIndex]'s text boxes while they're typed in or moved.
+  void _editTextBoxes(int pageIndex, List<PageTextBox> boxes) {
+    if (coreInfo.readOnly) return;
+    coreInfo.pages[pageIndex].textBoxes = boxes;
+    createPage(pageIndex); // e.g. so an endless page grows
+    _setStateSoon();
+    // Saved while typing, before it's in the history
+    history.markUnrecordedChange();
+    autosaveAfterDelay();
+  }
+
+  /// Makes the change to [pageIndex]'s text boxes since [before]
+  /// one step in the undo history.
+  void _recordTextBoxes(int pageIndex, List<PageTextBox> before) {
+    final page = coreInfo.pages.elementAtOrNull(pageIndex);
+    if (page == null || listEquals(before, page.textBoxes)) return;
+    history.recordChange(
+      EditorHistoryItem(
+        type: .textBoxes,
+        pageIndex: pageIndex,
+        strokes: const [],
+        images: const [],
+        textBoxChange: Change(previous: before, current: page.textBoxes),
+      ),
+    );
+    _setStateSoon();
+    autosaveAfterDelay();
+  }
+
+  /// [setState], after this frame if it's being built (e.g. when a text
+  /// box finishes as the Text tool is put down).
+  void _setStateSoon() {
+    if (!mounted) return;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
+  /// Pans the canvas so [rect] (in global coordinates) isn't under the
+  /// keyboard or off the top or bottom of the canvas, e.g. a text box
+  /// being typed in. (A text field would scroll itself into view, but the
+  /// canvas isn't a scrolling list.)
+  void _revealGlobalRect(Rect rect) {
+    final box =
+        _canvasGestureDetectorKey.currentContext?.findRenderObject()
+            as RenderBox?;
+    if (!mounted || box == null || !box.attached) return;
+    const margin = 24.0;
+    final canvas = box.localToGlobal(Offset.zero) & box.size;
+    final keyboardTop =
+        MediaQuery.sizeOf(context).height -
+        MediaQuery.viewInsetsOf(context).bottom;
+    final bottom = min(canvas.bottom, keyboardTop) - margin;
+    final top = canvas.top + margin;
+    double shift(double low, double high, double start, double end) {
+      var by = 0.0;
+      if (end > high) by = high - end;
+      if (start + by < low) by = low - start;
+      return by;
+    }
+
+    final dx = shift(
+      canvas.left + margin,
+      canvas.right - margin,
+      rect.left,
+      rect.right,
+    );
+    final dy = shift(top, bottom, rect.top, rect.bottom);
+    if (dx.abs() < 1 && dy.abs() < 1) return;
+    _transformationController.value =
+        Matrix4.translationValues(dx, dy, 0) * _transformationController.value;
+  }
+
+  /// With the Text tool, a tap on a page (or beside it) starts a text box
+  /// there. (A tap on a box goes to the box.)
+  void _onTextTap(TapUpDetails details) {
+    final pageIndex = onWhichPageIsFocalPoint(details.globalPosition);
+    if (pageIndex == null) return;
+    addTextBox(
+      pageIndex,
+      coreInfo.pages[pageIndex].renderBox!.globalToLocal(
+        details.globalPosition,
+      ),
+    );
+  }
+
+  /// Adds a text box with [text] on [pageIndex] (with its first line
+  /// centred on [at]), to type in straight away if [text] is empty.
+  /// Kept on the page, or beside it if [at] is.
+  PageTextBox addTextBox(
+    int pageIndex,
+    Offset at, {
+    String text = '',
+    double? width,
+    bool atTopLeft = false,
+  }) {
+    final page = coreInfo.pages[pageIndex];
+    // A fresh id, even if the box being typed in is about to go away
+    final id = PageTextBox.nextId(page.textBoxes);
+    // The box being typed in is finished first, as its own undo step
+    _commitTextBox();
+    final area = _areaAt(page, at.dx);
+    final before = page.textBoxes;
+    const fontSize = PageTextBox.defaultFontSize;
+    final boxWidth = min(
+      width ?? TextBoxes.newWidth,
+      max(PageTextBox.minWidth, area.right - area.left),
+    );
+    final draft = PageTextBox(
+      id: id,
+      position: .zero,
+      width: boxWidth,
+      text: text,
+      fontSize: fontSize,
+      color: TextBoxes.color,
+    );
+    // On the page, top to bottom (an endless page grows instead)
+    final height = TextBoxes.boundsOf(draft).height;
+    final y = atTopLeft
+        ? at.dy
+        : at.dy - fontSize * PageTextBox.lineSpacing / 2;
+    final box = draft.copyWith(
+      position: Offset(
+        at.dx.clamp(area.left, max(area.left, area.right - boxWidth)),
+        coreInfo.noteType == .endless
+            ? max(0, y)
+            : y.clamp(0, max(0, page.size.height - height)),
+      ),
+    );
+    if (text.isEmpty) {
+      TextBoxes.pending = (pageIndex: pageIndex, id: box.id, before: before);
+    }
+    _editTextBoxes(pageIndex, [...before, box]);
+    if (text.isNotEmpty) _recordTextBoxes(pageIndex, before);
+    return box;
+  }
+
+  /// Recolours the text box being typed in, if any. (Part of its typing,
+  /// as one undo step.)
+  void _recolorTextBox(Color color) {
+    final focused = TextBoxes.focused.value;
+    if (focused == null) return; // the colour for the next box
+    final (pageIndex, id) = focused;
+    final page = coreInfo.pages.elementAtOrNull(pageIndex);
+    if (page == null) return;
+    _editTextBoxes(pageIndex, [
+      for (final box in page.textBoxes)
+        if (box.id == id) box.copyWith(color: color) else box,
+    ]);
   }
 
   /// Taps in read-only notes, which can't draw.
@@ -1137,7 +1445,7 @@ class EditorState extends State<Editor> {
         _canvasGestureDetectorKey.currentState?.containerBounds.maxWidth ??
         MediaQuery.sizeOf(context).width;
     return _transformationController.value.approxScale *
-        min(1.0, width / page.size.width);
+        (page.isBoard ? 1.0 : min(1.0, width / page.size.width));
   }
 
   CanvasToolInput _canvasToolInput(EditorPage page, Offset position) => (
@@ -1278,6 +1586,15 @@ class EditorState extends State<Editor> {
   }
 
   void autosaveAfterDelay() {
+    // After any change (a stroke, a moved selection or image, inserted
+    // space...), an endless page makes room below what's on it
+    if (coreInfo.noteType == .endless &&
+        coreInfo.pages.isNotEmpty &&
+        coreInfo.pages.first.growToFit()) {
+      _setStateSoon();
+    }
+    // (saveToFile checks for changes made meanwhile once its write ends)
+    if (savingState.value == .saving) return;
     if (history.isCurrentStateSaved) return cancelAutosaveAndMarkSaved();
 
     late final void Function() callback;
@@ -1304,9 +1621,17 @@ class EditorState extends State<Editor> {
     startTimer();
   }
 
+  /// Autosaves a change that isn't in the undo history (page order, line
+  /// spacing, image options...), which [autosaveAfterDelay] alone skips.
+  void autosaveUnrecordedChange() {
+    history.markUnrecordedChange();
+    autosaveAfterDelay();
+  }
+
   void cancelAutosaveAndMarkSaved() {
     _delayedSaveTimer?.cancel();
     savingState.value = .saved;
+    history.takeUnrecordedChanges();
     history.markLastChangeAsSaved();
   }
 
@@ -1352,6 +1677,8 @@ class EditorState extends State<Editor> {
     final Uint8List bson;
     final OrderedAssetCache assets;
     coreInfo.assetCache.allowRemovingAssets = false;
+    final hadUnrecordedChanges = history.takeUnrecordedChanges();
+    final savedChange = history.lastChange;
     try {
       (bson, assets) = coreInfo.saveToBinary(
         currentPageIndex: currentPageIndex,
@@ -1378,10 +1705,13 @@ class EditorState extends State<Editor> {
               ),
         FileManager.removeUnusedAssets(filePath, numAssets: assets.length),
       ]);
+      history.markSaved(savedChange, midChange: hadUnrecordedChanges);
       savingState.value = .saved;
-      history.markLastChangeAsSaved();
+      // Changed while writing: save that too
+      if (!history.isCurrentStateSaved) autosaveAfterDelay();
     } catch (e, st) {
       log.severe('Failed to save file: $e', e, st);
+      if (hadUnrecordedChanges) history.markUnrecordedChange();
       savingState.value = .waitingToSave;
       if (kDebugMode) rethrow;
       return;
@@ -1389,15 +1719,26 @@ class EditorState extends State<Editor> {
 
     if (!mounted) return;
     final page = coreInfo.pages.first;
-    final previewHeight = page.previewHeight(lineHeight: coreInfo.lineHeight);
-    final thumbnailSize = Size(720, 720 * previewHeight / page.size.width);
+    // (A long endless page: just its top)
+    final previewHeight = coreInfo.noteType == .endless
+        ? min(
+            page.previewHeight(lineHeight: coreInfo.lineHeight),
+            page.size.width * 1.5,
+          )
+        : page.previewHeight(lineHeight: coreInfo.lineHeight);
+    // A whiteboard's is what's drawn on it, not the whole board
+    final area = page.isBoard ? page.contentRect : null;
+    final thumbnailSize = area != null
+        ? Size(720, 720 * area.height / area.width)
+        : Size(720, 720 * previewHeight / page.size.width);
     final thumbnail = await EditorExporter.screenshotPage(
       coreInfo: coreInfo,
       pageIndex: 0,
       rasterizeAllStrokes: true,
       targetSize: thumbnailSize,
-      cropHeight: previewHeight,
+      cropHeight: area == null ? previewHeight : null,
       pixelRatio: 1,
+      area: area,
     );
     final thumbnailPng = await thumbnail.toByteData(format: .png);
     thumbnail.dispose();
@@ -1521,20 +1862,35 @@ class EditorState extends State<Editor> {
     List<_PhotoInfo>? photoInfos,
     int? pageIndex,
     Offset? at,
+    List<Rect>? dstRects,
   }) async {
     if (coreInfo.readOnly) return 0;
 
     final currentPageIndex = pageIndex ?? this.currentPageIndex;
-    final dstRect = at == null ? Rect.zero : at & Size.zero;
 
     photoInfos ??= await _pickPhotosWithFilePicker();
-    if (photoInfos.isEmpty) return 0;
+    photoInfos = [for (final photo in photoInfos) ?await _toJpeg(photo)];
+    if (photoInfos.isEmpty || !mounted) return 0;
+
+    // Where it goes: centred on [at] (on the page or beside it), or else
+    // in the middle of what's in view
+    final page = coreInfo.pages[currentPageIndex];
+    at ??= _inViewOn(page);
+    dstRects ??= [
+      for (final (i, photoInfo) in photoInfos.indexed)
+        await placeImage(
+          page,
+          // Several fan out a little, so they don't hide each other
+          at + Offset(i * 24, i * 24),
+          photoInfo,
+        ),
+    ];
 
     // use the Select tool so that the user can move the new image
     currentTool = Select.currentSelect;
 
     final images = [
-      for (final _PhotoInfo photoInfo in photoInfos)
+      for (final (i, photoInfo) in photoInfos.indexed)
         if (photoInfo.extension == '.svg')
           SvgEditorImage(
             id: coreInfo.nextImageId++,
@@ -1542,10 +1898,10 @@ class EditorState extends State<Editor> {
             svgFile: null,
             pageIndex: currentPageIndex,
             pageSize: coreInfo.pages[currentPageIndex].size,
-            dstRect: dstRect,
+            dstRect: dstRects[i],
             onMoveImage: onMoveImage,
             onDeleteImage: onDeleteImage,
-            onMiscChange: autosaveAfterDelay,
+            onMiscChange: autosaveUnrecordedChange,
             onLoad: () => setState(() {}),
             assetCache: coreInfo.assetCache,
           )
@@ -1556,10 +1912,10 @@ class EditorState extends State<Editor> {
             imageProvider: MemoryImage(photoInfo.bytes),
             pageIndex: currentPageIndex,
             pageSize: coreInfo.pages[currentPageIndex].size,
-            dstRect: dstRect,
+            dstRect: dstRects[i],
             onMoveImage: onMoveImage,
             onDeleteImage: onDeleteImage,
-            onMiscChange: autosaveAfterDelay,
+            onMiscChange: autosaveUnrecordedChange,
             onLoad: () => setState(() {}),
             assetCache: coreInfo.assetCache,
           ),
@@ -1578,6 +1934,291 @@ class EditorState extends State<Editor> {
     autosaveAfterDelay();
 
     return images.length;
+  }
+
+  /// The middle of what's in view of [page], on the page (e.g. where an
+  /// inserted photo goes, rather than its top corner, which on a
+  /// whiteboard is far away).
+  Offset _inViewOn(EditorPage page) {
+    final canvas =
+        _canvasGestureDetectorKey.currentContext?.findRenderObject()
+            as RenderBox?;
+    final box = page.renderBox;
+    if (canvas == null || box == null || !box.attached || !canvas.attached) {
+      return page.size.center(Offset.zero);
+    }
+    final local = box.globalToLocal(
+      canvas.localToGlobal(canvas.size.center(Offset.zero)),
+    );
+    return Offset(
+      local.dx.clamp(0, page.size.width),
+      local.dy.clamp(0, page.size.height),
+    );
+  }
+
+  /// Adds an image near [anchor] on [pageIndex]: below it on the page
+  /// ([side] 0), or beside the page at its height (-1 left, 1 right), out
+  /// of the way of what's there, and scrolls to it.
+  Future<void> addImageNear(
+    int pageIndex,
+    int side,
+    Rect anchor,
+    Uint8List bytes,
+    String extension,
+  ) async {
+    final page = coreInfo.pages[pageIndex];
+    final photo = (bytes: bytes, extension: extension);
+    final Rect rect;
+    if (side == 0 || page.isBoard) {
+      final placed = await placeImage(page, anchor.bottomCenter, photo);
+      rect = placed.translate(0, placed.height / 2 + EditorPage.sideGap);
+    } else {
+      final sized = await placeImage(
+        page,
+        Offset(side < 0 ? -1 : page.size.width + 1, anchor.top),
+        photo,
+      );
+      rect = spotBeside(page, side, sized.size, anchor.top) & sized.size;
+    }
+    if (!mounted) return;
+    await _pickPhotos(
+      photoInfos: [photo],
+      pageIndex: pageIndex,
+      dstRects: [rect],
+    );
+    if (!mounted) return;
+    setState(() {});
+    revealPageRect(pageIndex, rect);
+  }
+
+  /// Where an image dropped or pasted at [at] on [page] goes: centred
+  /// there and kept inside the area it's in (the page, or the space beside
+  /// it), at most [_maxPlacedImage] of its width.
+  /// Zero-sized (sized when it loads, see [EditorImage.firstLoad]) if its
+  /// size can't be read, e.g. for an svg.
+  @visibleForTesting
+  static Future<Rect> placeImage(
+    EditorPage page,
+    Offset at,
+    ({Uint8List bytes, String extension}) photoInfo,
+  ) async {
+    final area = _areaAt(page, at.dx);
+    Size natural;
+    try {
+      if (photoInfo.extension == '.svg') throw const FormatException('svg');
+      final buffer = await ui.ImmutableBuffer.fromUint8List(photoInfo.bytes);
+      final descriptor = await ui.ImageDescriptor.encoded(buffer);
+      natural = Size(descriptor.width.toDouble(), descriptor.height.toDouble());
+      descriptor.dispose();
+      buffer.dispose();
+    } catch (_) {
+      return Rect.fromLTWH(
+        at.dx.clamp(area.left, area.right),
+        at.dy.clamp(area.top, area.bottom),
+        0,
+        0,
+      );
+    }
+    // Smaller beside the page, where there's less of it in view
+    final most = area.left < 0 || area.left >= page.size.width
+        ? _maxPlacedImageBeside
+        : _maxPlacedImage;
+    final size = EditorImage.resize(
+      natural,
+      Size(area.width * most, area.height * most),
+    );
+    final rect = Rect.fromCenter(
+      center: at,
+      width: size.width,
+      height: size.height,
+    );
+    return rect.shift(
+      Offset(
+        rect.left < area.left
+            ? area.left - rect.left
+            : min(0, area.right - rect.right),
+        rect.top < area.top
+            ? area.top - rect.top
+            : min(0, area.bottom - rect.bottom),
+      ),
+    );
+  }
+
+  static const _maxPlacedImage = 0.6, _maxPlacedImageBeside = 0.45;
+
+  /// The page, or the space beside it on the side of [x].
+  static Rect _areaAt(EditorPage page, double x) {
+    const gap = EditorPage.sideGap;
+    final width = page.size.width, height = page.size.height;
+    return switch (x) {
+      < 0 => Rect.fromLTRB(-page.sideWidth, 0, -gap, height),
+      _ when x > width => Rect.fromLTRB(
+        width + gap,
+        0,
+        width + page.sideWidth,
+        height,
+      ),
+      _ => Offset.zero & page.size,
+    };
+  }
+
+  /// [child], taking images dragged in from other apps (see
+  /// [_onPerformDrop]). Not in tests, which have no drag and drop plugin.
+  Widget _dropImages({required Widget child}) {
+    if (isThisATest) return child;
+    return DropRegion(
+      // File links too: Finder and Files hand over an image file as its
+      // link, and a drag of a kind no region lists never reaches the app
+      formats: [..._imageFormats.keys, Formats.fileUri],
+      // (Finder and Files may offer an image file as just its link)
+      onDropOver: (event) =>
+          !coreInfo.readOnly &&
+              event.session.items.any(
+                (item) =>
+                    _imageFormats.keys.any(item.canProvide) ||
+                    item.canProvide(Formats.fileUri),
+              )
+          ? DropOperation.copy
+          : DropOperation.none,
+      onPerformDrop: _onPerformDrop,
+      child: child,
+    );
+  }
+
+  /// Images dragged in from other apps (e.g. Photos or Safari beside nts
+  /// on an iPad, or Finder on a Mac) go where they're dropped: on the page,
+  /// or beside it.
+  Future<void> _onPerformDrop(PerformDropEvent event) async {
+    log.info('Drop at ${event.position.global}');
+    if (coreInfo.readOnly) return;
+    final global = event.position.global;
+    final pageIndex = onWhichPageIsFocalPoint(global) ?? currentPageIndex;
+    final box = coreInfo.pages[pageIndex].renderBox;
+    final page = coreInfo.pages[pageIndex];
+    final local = box == null
+        ? page.size.center(Offset.zero)
+        : box.globalToLocal(global);
+    final at = Offset(
+      local.dx.clamp(page.areaWithSides.left, page.areaWithSides.right),
+      local.dy.clamp(0, page.size.height),
+    );
+
+    // As asked: beside the page, on the side nearest the drop, at its
+    // height. (From there it can be dragged onto the page.)
+    final side = at.dx < page.size.width / 2 ? -1 : 1;
+    final photoInfos = <_PhotoInfo>[];
+    await Future.wait([
+      for (final item in event.session.items)
+        if (item.dataReader case final reader?)
+          if (_imageFormats.keys.where(reader.canProvide).firstOrNull
+              case final format?)
+            _readFile(reader, format).then((photo) {
+              if (photo != null) photoInfos.add(photo);
+            })
+          else if (reader.canProvide(Formats.fileUri))
+            _readImageFileUri(reader).then((photo) {
+              if (photo != null) photoInfos.add(photo);
+            }),
+    ]);
+    log.info(
+      'Dropped ${event.session.items.length} item(s), '
+      '${photoInfos.length} image(s)',
+    );
+    if (!mounted || photoInfos.isEmpty) return;
+    if (page.isBoard) {
+      // A whiteboard has no sides: where it was dropped
+      await _pickPhotos(photoInfos: photoInfos, pageIndex: pageIndex, at: at);
+      if (mounted) setState(() {});
+      return;
+    }
+    for (final photo in photoInfos) {
+      if (!mounted) return;
+      final drawable = await _toJpeg(photo);
+      if (drawable == null) continue;
+      final sized = await placeImage(
+        page,
+        Offset(side < 0 ? -1 : page.size.width + 1, at.dy),
+        drawable,
+      );
+      final top = (at.dy - sized.height / 2)
+          .clamp(0, max(0, page.size.height - sized.height))
+          .toDouble();
+      await addImageNear(
+        pageIndex,
+        side,
+        Rect.fromLTWH(at.dx, top, 0, 0),
+        drawable.bytes,
+        drawable.extension,
+      );
+    }
+  }
+
+  /// The image file that [reader] links to, or null if it isn't one.
+  Future<_PhotoInfo?> _readImageFileUri(DataReader reader) {
+    final completer = Completer<_PhotoInfo?>();
+    final progress = reader.getValue<Uri>(
+      Formats.fileUri,
+      (uri) async {
+        try {
+          final path = uri?.toFilePath();
+          final extension = path == null || !path.contains('.')
+              ? ''
+              : path.substring(path.lastIndexOf('.')).toLowerCase();
+          final isImage =
+              _imageFormats.values.contains(extension) || extension == '.jpg';
+          completer.complete(
+            isImage
+                ? (bytes: await File(path!).readAsBytes(), extension: extension)
+                : null,
+          );
+        } catch (e) {
+          log.warning('Could not read a dropped file', e);
+          if (!completer.isCompleted) completer.complete(null);
+        }
+      },
+      onError: (e) {
+        log.warning('Could not read a dropped file', e);
+        if (!completer.isCompleted) completer.complete(null);
+      },
+    );
+    if (progress == null) completer.complete(null);
+    return completer.future;
+  }
+
+  /// The image [format] from [reader], or null if it's empty or fails.
+  Future<_PhotoInfo?> _readFile(DataReader reader, FileFormat format) {
+    final completer = Completer<_PhotoInfo?>();
+    final progress = reader.getFile(
+      format,
+      (file) async {
+        try {
+          final bytes = <int>[];
+          await for (final chunk in file.getStream()) {
+            bytes.addAll(chunk);
+          }
+          final name = file.fileName;
+          completer.complete(
+            bytes.isEmpty
+                ? null
+                : (
+                    bytes: Uint8List.fromList(bytes),
+                    extension: name != null && name.contains('.')
+                        ? name.substring(name.lastIndexOf('.'))
+                        : _imageFormats[format]!,
+                  ),
+          );
+        } catch (e) {
+          log.warning('Could not read a dropped image', e);
+          if (!completer.isCompleted) completer.complete(null);
+        }
+      },
+      onError: (e) {
+        log.warning('Could not read a dropped image', e);
+        if (!completer.isCompleted) completer.complete(null);
+      },
+    );
+    if (progress == null) completer.complete(null);
+    return completer.future;
   }
 
   Future<List<_PhotoInfo>> _pickPhotosWithFilePicker() async {
@@ -1600,6 +2241,8 @@ class EditorState extends State<Editor> {
         'webp',
         'psd',
         'exr',
+        'heic',
+        'heif',
       ],
     );
     if (files.isEmpty) return const [];
@@ -1620,6 +2263,13 @@ class EditorState extends State<Editor> {
   Future<bool> importPdf() async {
     if (coreInfo.readOnly) return false;
     if (!Editor.canRasterPdf) return false;
+    // A PDF's pages need a note of pages, not one sheet or flashcards
+    if (coreInfo.noteType.singlePage || coreInfo.noteType == .flashcards) {
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text(t.nts.noteTypes.pdfNeedsPages)));
+      return false;
+    }
 
     final file = await FilePicker.pickFile(
       type: FileType.custom,
@@ -1657,7 +2307,7 @@ class EditorState extends State<Editor> {
           naturalSize: pdfPage.size,
           onMoveImage: onMoveImage,
           onDeleteImage: onDeleteImage,
-          onMiscChange: autosaveAfterDelay,
+          onMiscChange: autosaveUnrecordedChange,
           onLoad: () => setState(() {}),
           assetCache: coreInfo.assetCache,
         ),
@@ -1694,7 +2344,31 @@ class EditorState extends State<Editor> {
     Formats.ico: '.ico',
     Formats.svg: '.svg',
     Formats.webp: '.webp',
+    // iPhone and iPad photos: turned into JPEGs (see [_toJpeg])
+    Formats.heic: '.heic',
+    Formats.heif: '.heif',
   };
+
+  static const _imageChannel = MethodChannel('nts/image');
+
+  /// [photo] as something Flutter can draw: a HEIC or HEIF photo becomes a
+  /// JPEG (with Apple's ImageIO, see `ImageChannel` in AppDelegate.swift
+  /// and MainFlutterWindow.swift), anything else stays as it is.
+  /// Null if it can't be converted.
+  static Future<_PhotoInfo?> _toJpeg(_PhotoInfo photo) async {
+    final extension = photo.extension.toLowerCase();
+    if (extension != '.heic' && extension != '.heif') return photo;
+    try {
+      final jpeg = await _imageChannel.invokeMethod<Uint8List>(
+        'jpeg',
+        photo.bytes,
+      );
+      return jpeg == null ? null : (bytes: jpeg, extension: '.jpeg');
+    } catch (e) {
+      Logger('EditorState').warning('Could not convert a $extension photo', e);
+      return null;
+    }
+  }
 
   /// Whether the system clipboard has an image that [paste] can take
   /// (on iOS, whether it might).
@@ -1713,13 +2387,8 @@ class EditorState extends State<Editor> {
   /// clipboard, whichever was copied last. It goes on [pageIndex] (the page
   /// in view if null), at [at] if given (e.g. where a right-click was).
   Future paste({int? pageIndex, Offset? at}) async {
-    // Ctrl+V while typing (a note's text, its name, a link) is the text's
-    if (currentTool == Tool.textEditing ||
-        FocusManager.instance.primaryFocus?.context
-                ?.findAncestorWidgetOfExactType<EditableText>() !=
-            null) {
-      return;
-    }
+    // Ctrl+V while typing (a text box, the note's name, a link) is the text's
+    if (_textFieldFocused) return;
     void pasteSelection() =>
         SelectionClipboard.paste(this, pageIndex: pageIndex, at: at);
     if (SelectionClipboard.isNewest) return pasteSelection();
@@ -1780,7 +2449,7 @@ class EditorState extends State<Editor> {
     );
   }
 
-  /// Exports the current note as an SBA (Saber Archive) file.
+  /// Exports the current note as an SBA (sbn archive) file.
   Future exportAsSba(BuildContext context) async {
     final sba = await coreInfo.saveToSba(currentPageIndex: currentPageIndex);
     if (!context.mounted) return;
@@ -1799,9 +2468,12 @@ class EditorState extends State<Editor> {
   /// to ensure high quality while averting Out-Of-Memory exceptions on large canvases.
   Future exportAsPng(BuildContext context) async {
     final page = coreInfo.pages[currentPageIndex];
+    // What's drawn on a whiteboard, or the page and what's beside it
+    final area = EditorExporter.areaOf(page);
 
     const maxRasterizableSize = 3000.0;
-    var targetPixelRatio = maxRasterizableSize / page.size.longestSide;
+    var targetPixelRatio =
+        maxRasterizableSize / (area?.size ?? page.size).longestSide;
     if (targetPixelRatio > 1) targetPixelRatio = 1;
 
     try {
@@ -1810,6 +2482,7 @@ class EditorState extends State<Editor> {
         pageIndex: currentPageIndex,
         rasterizeAllStrokes: true,
         pixelRatio: targetPixelRatio,
+        area: area,
       );
       final pngBytes = await image.toByteData(format: .png);
       image.dispose();
@@ -1847,21 +2520,11 @@ class EditorState extends State<Editor> {
     if (mounted) setState(() {});
   }
 
+  /// The Text tool: tap to start a text box, or tap one to type in it.
   void toggleTextEditing() => setState(() {
-    if (currentTool == Tool.textEditing) {
-      currentTool = Pen.currentPen;
-      for (final page in coreInfo.pages) {
-        // unselect text, but maintain cursor position
-        page.quill.controller.moveCursorToPosition(
-          page.quill.controller.selection.extentOffset,
-        );
-        page.quill.focusNode.unfocus();
-      }
-    } else {
-      currentTool = Tool.textEditing;
-      quillFocus.value = coreInfo.pages[currentPageIndex].quill
-        ..focusNode.requestFocus();
-    }
+    currentTool = currentTool == Tool.textEditing
+        ? Pen.currentPen
+        : Tool.textEditing;
   });
 
   void duplicateSelection() {
@@ -1888,10 +2551,26 @@ class EditorState extends State<Editor> {
       page.strokes.addAll(duplicatedStrokes);
       page.images.addAll(duplicatedImages);
 
+      final textBoxesBefore = page.textBoxes;
+      var nextId = PageTextBox.nextId(page.textBoxes);
+      final duplicatedTextBoxes = [
+        for (final box in select.selectResult.textBoxes)
+          PageTextBox(
+            id: nextId++,
+            position: box.position + duplicationFeedbackOffset,
+            width: box.width,
+            text: box.text,
+            fontSize: box.fontSize,
+            color: box.color,
+          ),
+      ];
+      page.textBoxes = [...page.textBoxes, ...duplicatedTextBoxes];
+
       select.selectResult = select.selectResult.copyWith(
         strokes: duplicatedStrokes,
         images: duplicatedImages,
         path: select.selectResult.path.shift(duplicationFeedbackOffset),
+        textBoxes: duplicatedTextBoxes,
       );
 
       history.recordChange(
@@ -1900,6 +2579,9 @@ class EditorState extends State<Editor> {
           pageIndex: select.selectResult.pageIndex,
           strokes: duplicatedStrokes,
           images: duplicatedImages,
+          textBoxChange: duplicatedTextBoxes.isEmpty
+              ? null
+              : Change(previous: textBoxesBefore, current: page.textBoxes),
         ),
       );
       autosaveAfterDelay();
@@ -1915,6 +2597,10 @@ class EditorState extends State<Editor> {
       final page = coreInfo.pages[pageIndex];
       final strokes = select.selectResult.strokes;
       final images = select.selectResult.images;
+      final textBoxIds = {
+        for (final box in select.selectResult.textBoxes) box.id,
+      };
+      final textBoxesBefore = page.textBoxes;
 
       for (final stroke in strokes) {
         page.strokes.remove(stroke);
@@ -1922,6 +2608,10 @@ class EditorState extends State<Editor> {
       for (final image in images) {
         page.images.remove(image);
       }
+      page.textBoxes = [
+        for (final box in page.textBoxes)
+          if (!textBoxIds.contains(box.id)) box,
+      ];
 
       select.unselect();
 
@@ -1931,6 +2621,9 @@ class EditorState extends State<Editor> {
           pageIndex: pageIndex,
           strokes: strokes,
           images: images,
+          textBoxChange: textBoxIds.isEmpty
+              ? null
+              : Change(previous: textBoxesBefore, current: page.textBoxes),
         ),
       );
       autosaveAfterDelay();
@@ -1942,7 +2635,9 @@ class EditorState extends State<Editor> {
   void selectAll([int? pageIndex]) {
     pageIndex ??= currentPageIndex;
     final page = coreInfo.pages[pageIndex];
-    if (page.strokes.isEmpty && page.images.isEmpty) return;
+    if (page.strokes.isEmpty && page.images.isEmpty && page.textBoxes.isEmpty) {
+      return;
+    }
     currentTool = Select.currentSelect;
     final select = Select.currentSelect
       ..unselect()
@@ -1951,23 +2646,48 @@ class EditorState extends State<Editor> {
         strokes: [...page.strokes],
         images: [...page.images],
         path: Path(),
+        textBoxes: page.textBoxes,
       )
       ..doneSelecting = true;
     select.selectResult.path.addRect(select.selectionBounds!.inflate(8));
     setState(() {});
   }
 
-  /// Moves the lasso's selection by [offset] (in page units), e.g. with
-  /// the arrow keys.
-  void _nudgeSelection(Offset offset) {
+  /// The page's text boxes when the lasso's selection started moving.
+  List<PageTextBox>? _textBoxesBeforeMove;
+
+  /// Moves the text boxes in the lasso's selection on [page] by [offset].
+  void _shiftSelectedTextBoxes(EditorPage page, Offset offset) {
+    final selection = Select.currentSelect.selectResult;
+    if (selection.textBoxes.isEmpty) return;
+    final ids = {for (final box in selection.textBoxes) box.id};
+    page.textBoxes = [
+      for (final box in page.textBoxes)
+        if (ids.contains(box.id))
+          box.copyWith(position: box.position + offset)
+        else
+          box,
+    ];
+    selection.textBoxes = [
+      for (final box in page.textBoxes)
+        if (ids.contains(box.id)) box,
+    ];
+  }
+
+  /// Moves the lasso's selection by [offset] (in page units, undoably),
+  /// e.g. with the arrow keys.
+  void moveSelectionBy(Offset offset) {
     final select = Select.currentSelect;
     final selection = select.selectResult;
+    final page = coreInfo.pages[selection.pageIndex];
+    final textBoxesBefore = page.textBoxes;
     for (final stroke in selection.strokes) {
       stroke.shift(offset);
     }
     for (final image in selection.images) {
       image.dstRect = image.dstRect.shift(offset);
     }
+    _shiftSelectedTextBoxes(page, offset);
     selection.path = selection.path.shift(offset);
     history.recordChange(
       EditorHistoryItem(
@@ -1976,6 +2696,9 @@ class EditorState extends State<Editor> {
         strokes: selection.strokes,
         images: selection.images,
         offset: .fromLTRB(offset.dx, offset.dy, offset.dx, offset.dy),
+        textBoxChange: selection.textBoxes.isEmpty
+            ? null
+            : Change(previous: textBoxesBefore, current: page.textBoxes),
       ),
     );
     coreInfo.pages[selection.pageIndex].redrawStrokes();
@@ -1983,9 +2706,119 @@ class EditorState extends State<Editor> {
     autosaveAfterDelay();
   }
 
-  /// Whether a text field (e.g. the note's name) or the note's text
-  /// has the keyboard.
-  bool get _isTyping => currentTool == Tool.textEditing || _textFieldFocused;
+  /// Where [bounds] is on its page: -1 beside it on the left, 0 on it,
+  /// 1 beside it on the right.
+  static int sideOf(Rect bounds, Size pageSize) => bounds.center.dx < 0
+      ? -1
+      : bounds.center.dx > pageSize.width
+      ? 1
+      : 0;
+
+  /// Moves the selection one place left ([direction] -1) or right (1):
+  /// from the page to the space beside it, or from there back onto the
+  /// page, keeping its height. Beside the page, it goes next to anything
+  /// already there instead of on top of it.
+  void moveSelectionToSide(int direction) {
+    final select = Select.currentSelect;
+    final bounds = select.selectionBounds;
+    if (coreInfo.readOnly || !select.doneSelecting || bounds == null) return;
+    final page = coreInfo.pages[select.selectResult.pageIndex];
+    if (page.isBoard) return; // a whiteboard has no sides
+    final width = page.size.width;
+    const gap = EditorPage.sideGap;
+    final from = sideOf(bounds, page.size);
+    final to = (from + direction).clamp(-1, 1);
+    if (to == from) return;
+
+    final left = to == 0
+        // Back onto the page, by the edge it came from
+        ? (from < 0 ? gap : width - gap - bounds.width)
+        : spotBeside(
+            page,
+            to,
+            bounds.size,
+            bounds.top,
+            ignore: {
+              ...select.selectResult.strokes,
+              ...select.selectResult.images,
+              for (final box in select.selectResult.textBoxes) box.id,
+            },
+          ).dx;
+    moveSelectionBy(Offset(left - bounds.left, 0));
+    revealPageRect(
+      select.selectResult.pageIndex,
+      bounds.shift(Offset(left - bounds.left, 0)),
+    );
+  }
+
+  /// Where something of [size] goes beside [page] on [side] (-1 left,
+  /// 1 right) with its top at [top]: next to the page, further out past
+  /// anything already there (except what's in [ignore]: strokes, images
+  /// and text box ids), and no further out than the space beside the page,
+  /// where the pen can still reach it.
+  Offset spotBeside(
+    EditorPage page,
+    int side,
+    Size size,
+    double top, {
+    Set<Object> ignore = const {},
+  }) {
+    const gap = EditorPage.sideGap;
+    final width = page.size.width;
+    var left = side < 0 ? -gap - size.width : width + gap;
+    final taken = [
+      for (final (rect, _) in SideCardsPainter.sideGroups(page))
+        if (sideOf(rect, page.size) == side) rect,
+    ];
+    // Skip past what's in the way, further from the page
+    for (var moved = true; moved;) {
+      moved = false;
+      final target = Rect.fromLTWH(left, top, size.width, size.height);
+      for (final rect in taken) {
+        if (!rect.overlaps(target)) continue;
+        if (_coversOnly(rect, page, ignore)) continue;
+        final next = side < 0 ? rect.left - gap - size.width : rect.right + gap;
+        if (next == left) continue;
+        left = next;
+        moved = true;
+      }
+    }
+    left = side < 0
+        ? min(-gap - size.width, max(left, -page.sideWidth))
+        : max(width + gap, min(left, width + page.sideWidth - size.width));
+    return Offset(left, top);
+  }
+
+  /// Whether everything in [rect] beside [page] is in [selected] (strokes,
+  /// images, and text boxes by id), so it isn't in the way.
+  static bool _coversOnly(Rect rect, EditorPage page, Set<Object> selected) =>
+      page.strokes.every(
+        (stroke) => selected.contains(stroke) || !rect.overlaps(stroke.bounds),
+      ) &&
+      page.images.every(
+        (image) => selected.contains(image) || !rect.overlaps(image.dstRect),
+      ) &&
+      page.textBoxes.every(
+        (box) =>
+            selected.contains(box.id) ||
+            !rect.overlaps(TextBoxes.boundsOf(box)),
+      );
+
+  /// Shows [rect] on [pageIndex] after the next frame, e.g. something just
+  /// added beside the page, which may be off screen.
+  void revealPageRect(int pageIndex, Rect rect) =>
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final box = coreInfo.pages.elementAtOrNull(pageIndex)?.renderBox;
+        if (!mounted || box == null || !box.attached) return;
+        _revealGlobalRect(
+          MatrixUtils.transformRect(box.getTransformTo(null), rect),
+        );
+      });
+
+  /// Typing in a text box (or another text field, like the note's name).
+  /// The Text tool on its own isn't typing: shortcuts still work until a
+  /// box has the keyboard.
+  bool get _isTyping => _textFieldFocused;
 
   /// Whether the note's keyboard shortcuts apply: not while typing (text
   /// has its own, e.g. ⌘F finds and ⌘0 is normal text in the note's text),
@@ -2050,7 +2883,7 @@ class EditorState extends State<Editor> {
         _ => null,
       };
       if (nudge != null) {
-        _nudgeSelection(nudge);
+        moveSelectionBy(nudge);
         return true;
       }
       if (key == LogicalKeyboardKey.delete ||
@@ -2166,8 +2999,46 @@ class EditorState extends State<Editor> {
   /// Null when it's elsewhere.
   final _mouse = ValueNotifier<({Offset position, int buttons})?>(null);
 
+  /// The Pencil or finger erasing (see [_onMouse]), -1 during a pinch.
+  int? _outlinePointer;
+
   void _onMouse(PointerEvent event) {
-    if (event.kind != PointerDeviceKind.mouse) return;
+    if (event.kind != PointerDeviceKind.mouse) {
+      // The Pencil (or an erasing finger) moves the eraser's outline while
+      // it erases. (iPadOS reports a hovering Pencil as a mouse, so the
+      // outline used to freeze when the Pencil touched down.)
+      if (currentTool is! Eraser) return;
+      // Fingers that only pan or zoom don't
+      if (event.kind == PointerDeviceKind.touch &&
+          !stows.editorFingerDrawing.value) {
+        return;
+      }
+      if (event is PointerDownEvent) {
+        if (_outlinePointer != null) {
+          // A second finger: a pinch, so no outline until they lift
+          _outlinePointer = -1;
+          _mouse.value = null;
+          return;
+        }
+        _outlinePointer = event.pointer;
+      }
+      final ended =
+          event is PointerUpEvent ||
+          event is PointerCancelEvent ||
+          // (iPadOS also sends an exit when the Pencil lifts; still down,
+          // it only passed over e.g. the toolbar, and comes back)
+          (event is PointerExitEvent && !event.down);
+      if (ended) {
+        if (event.pointer == _outlinePointer || _outlinePointer == -1) {
+          _outlinePointer = null;
+          _mouse.value = null;
+        }
+        return;
+      }
+      if (event.pointer != _outlinePointer) return;
+      _mouse.value = (position: event.position, buttons: 0);
+      return;
+    }
     _mouse.value = event is PointerExitEvent
         ? null
         : (position: event.position, buttons: event.buttons);
@@ -2187,6 +3058,7 @@ class EditorState extends State<Editor> {
       onPointerDown: _onMouse,
       onPointerMove: _onMouse,
       onPointerUp: _onMouse,
+      onPointerCancel: _onMouse,
       child: child,
     ),
   );
@@ -2262,7 +3134,22 @@ class EditorState extends State<Editor> {
       onDrawStart: onDrawStart,
       onDrawUpdate: onDrawUpdate,
       onDrawEnd: onDrawEnd,
-      onTapUp: coreInfo.readOnly ? _onReadOnlyTap : null,
+      onTapUp: coreInfo.readOnly
+          ? _onReadOnlyTap
+          : currentTool == Tool.textEditing
+          ? _onTextTap
+          : null,
+      // Once the Pencil is in use, fingers (and resting palms) don't start
+      // text boxes; they still pan, and move boxes by their grips
+      tapDevices:
+          currentTool == Tool.textEditing && !stows.editorFingerDrawing.value
+          ? const {
+              PointerDeviceKind.stylus,
+              PointerDeviceKind.invertedStylus,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.trackpad,
+            }
+          : null,
       onPointerDown: (position) => _pointerDownPosition = position,
       onSecondaryTap: (position) => unawaited(_showCanvasMenu(position)),
       onHovering: onHovering,
@@ -2321,6 +3208,9 @@ class EditorState extends State<Editor> {
           (currentTool as Pen).color = color;
         } else if (currentTool is Fill) {
           (currentTool as Fill).color = color;
+        } else if (currentTool == Tool.textEditing) {
+          TextBoxes.color = color;
+          _recolorTextBox(color);
         } else if (currentTool is Select) {
           // Changes color of selected strokes
           final select = currentTool as Select;
@@ -2481,25 +3371,30 @@ class EditorState extends State<Editor> {
                           child: Stack(
                             children: [
                               Positioned.fill(
-                                child: _withMouseCursor(
-                                  RulerOverlay(
-                                    key: _rulerKey,
-                                    ruler: ruler,
-                                    child: AnimatedOpacity(
-                                      opacity: isLoading ? 0 : 1,
-                                      duration: HiganMotion.medium,
-                                      child: canvas,
+                                child: _dropImages(
+                                  child: _withMouseCursor(
+                                    RulerOverlay(
+                                      key: _rulerKey,
+                                      ruler: ruler,
+                                      child: AnimatedOpacity(
+                                        opacity: isLoading ? 0 : 1,
+                                        duration: HiganMotion.medium,
+                                        child: canvas,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                               Positioned.fill(
                                 child: IgnorePointer(
-                                  child: CustomPaint(
-                                    painter: _EraserOutline(
-                                      this,
-                                      color: c.text,
-                                      halo: c.bg,
+                                  // Repaints on every move, without the canvas
+                                  child: RepaintBoundary(
+                                    child: CustomPaint(
+                                      painter: _EraserOutline(
+                                        this,
+                                        color: c.text,
+                                        halo: c.bg,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -2648,30 +3543,48 @@ class EditorState extends State<Editor> {
               ),
             ],
             const SizedBox(width: 12),
-            // On phones, pages are inserted from the page manager
-            if (!isPhone) ...[
+            if (coreInfo.noteType == .flashcards) ...[
               HiganCircleButton(
-                icon: Symbols.insert_page_break,
-                tooltip: t.editor.menu.insertPage,
-                onPressed: insertPageAfterCurrent,
+                icon: Symbols.school,
+                tooltip: t.nts.flashcards.study,
+                onPressed: () => showFlashcardStudy(context, coreInfo),
               ),
               const SizedBox(width: 8),
             ],
-            HiganCircleButton(
-              icon: Symbols.grid_view,
-              tooltip: t.editor.pages,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AdaptiveAlertDialog(
-                    title: Text(t.editor.pages),
-                    content: pageManager(context),
-                    actions: const [],
-                  ),
-                );
-              },
-            ),
-            const SizedBox(width: 8),
+            // On phones, pages are inserted from the page manager.
+            // A whiteboard or an endless page is just the one page.
+            if (!isPhone && !coreInfo.noteType.singlePage) ...[
+              if (coreInfo.noteType == .flashcards)
+                HiganCircleButton(
+                  icon: Symbols.add_card,
+                  tooltip: t.nts.flashcards.addCard,
+                  onPressed: insertPageAfterCurrent,
+                )
+              else
+                HiganCircleButton(
+                  icon: Symbols.insert_page_break,
+                  tooltip: t.editor.menu.insertPage,
+                  onPressed: insertPageAfterCurrent,
+                ),
+              const SizedBox(width: 8),
+            ],
+            if (!coreInfo.noteType.singlePage) ...[
+              HiganCircleButton(
+                icon: Symbols.grid_view,
+                tooltip: t.editor.pages,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AdaptiveAlertDialog(
+                      title: Text(t.editor.pages),
+                      content: pageManager(context),
+                      actions: const [],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
+            ],
             HiganCircleButton(
               icon: Symbols.more_horiz,
               tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
@@ -2683,17 +3596,26 @@ class EditorState extends State<Editor> {
     );
   }
 
+  int get _readoutPage =>
+      _readoutPageIndex.value.clamp(0, coreInfo.pages.length - 1);
+
   /// E.g. "MATHEMATICS · PAGE 2 / 4 · SAVED".
   String _headerReadout({required bool withFolder}) {
     final folder = p.dirname(coreInfo.filePath);
     return [
       if (withFolder && folder != '/' && folder != '.' && folder.isNotEmpty)
         p.basename(folder),
-      if (coreInfo.pages.isNotEmpty && coreInfo.readOnlyReason != .placeholder)
-        t.higan.pageOf(
-          n: _readoutPageIndex.value.clamp(0, coreInfo.pages.length - 1) + 1,
-          total: coreInfo.pages.length,
-        ),
+      if (coreInfo.pages.isEmpty ||
+          coreInfo.readOnlyReason == .placeholder ||
+          coreInfo.noteType.singlePage)
+        ...const <String>[]
+      else if (coreInfo.noteType == .flashcards)
+        t.nts.flashcards.cardOf(
+          n: _readoutPage ~/ 2 + 1,
+          total: coreInfo.pages.length ~/ 2,
+        )
+      else
+        t.higan.pageOf(n: _readoutPage + 1, total: coreInfo.pages.length),
       if (savingState.value == .saved) t.higan.saved else t.higan.saving,
     ].join(' · ');
   }
@@ -2715,12 +3637,15 @@ class EditorState extends State<Editor> {
     constraints: const BoxConstraints(maxWidth: 500),
   );
 
-  /// Inserts a page after the one in view and scrolls to it.
+  /// Inserts a page (or a card) after the one in view and scrolls to it.
   void insertPageAfterCurrent() {
+    if (coreInfo.noteType.singlePage) return;
     final currentPageIndex = this.currentPageIndex;
     insertPageAfter(currentPageIndex);
     CanvasGestureDetector.scrollToPage(
-      pageIndex: currentPageIndex + 1,
+      pageIndex: coreInfo.noteType == .flashcards
+          ? (currentPageIndex ~/ 2) * 2 + 2
+          : currentPageIndex + 1,
       pages: coreInfo.pages,
       screenWidth: MediaQuery.sizeOf(context).width,
       transformationController: _transformationController,
@@ -2758,13 +3683,13 @@ class EditorState extends State<Editor> {
         if (coreInfo.readOnly) return;
         coreInfo.lineHeight = lineHeight;
         stows.lastLineHeight.value = lineHeight;
-        autosaveAfterDelay();
+        autosaveUnrecordedChange();
       }),
       setLineThickness: (lineThickness) => setState(() {
         if (coreInfo.readOnly) return;
         coreInfo.lineThickness = lineThickness;
         stows.lastLineThickness.value = lineThickness;
-        autosaveAfterDelay();
+        autosaveUnrecordedChange();
       }),
       removeBackgroundImage: () => setState(() {
         if (coreInfo.readOnly) return;
@@ -2774,7 +3699,7 @@ class EditorState extends State<Editor> {
         page.images.add(page.backgroundImage!);
         page.backgroundImage = null;
 
-        autosaveAfterDelay();
+        autosaveUnrecordedChange();
       }),
       redrawImage: () => setState(() {}),
       clearPage: () {
@@ -2783,7 +3708,7 @@ class EditorState extends State<Editor> {
       clearAllPages: clearAllPages,
       redrawAndSave: () => setState(() {
         if (coreInfo.readOnly) return;
-        autosaveAfterDelay();
+        autosaveUnrecordedChange();
       }),
       pickPhotos: _pickPhotos,
       importPdf: importPdf,
@@ -2801,6 +3726,11 @@ class EditorState extends State<Editor> {
       page: page,
       pageIndex: pageIndex,
       textEditing: currentTool == Tool.textEditing,
+      textBoxCallbacks: (
+        edit: _editTextBoxes,
+        record: _recordTextBoxes,
+        reveal: _revealGlobalRect,
+      ),
       coreInfo: coreInfo,
       // The header's readout shows the page, except in full screen.
       // (It would also peek out around the floating toolbar.)
@@ -2829,7 +3759,7 @@ class EditorState extends State<Editor> {
         CanvasImage.activeListener
             .notifyListenersPlease(); // un-select active image
 
-        autosaveAfterDelay();
+        autosaveUnrecordedChange();
         setState(() {});
       },
       currentTool: currentTool,
@@ -2843,77 +3773,109 @@ class EditorState extends State<Editor> {
       currentPageIndex: currentPageIndex,
       redrawAndSave: () => setState(() {
         if (coreInfo.readOnly) return;
-        autosaveAfterDelay();
+        autosaveUnrecordedChange();
       }),
       insertPageAfter: insertPageAfter,
       duplicatePage: (int pageIndex) => setState(() {
-        if (coreInfo.readOnly) return;
-        final page = coreInfo.pages[pageIndex];
-        final newPage = page.copyWith(
-          strokes: page.strokes
-              .map((stroke) => stroke.copy()..pageIndex += 1)
-              .toList(),
-          images: page.images
-              .map((image) => image.copy()..pageIndex += 1)
-              .toList(),
-          quill: QuillStruct(
-            controller: flutter_quill.QuillController(
-              document: flutter_quill.Document.fromDelta(
-                page.quill.controller.document.toDelta(),
+        if (coreInfo.readOnly || coreInfo.noteType.singlePage) return;
+        // A flashcard's front and back go together
+        final (first, count) = _pagesOf(pageIndex);
+        for (var i = 0; i < count; i++) {
+          final page = coreInfo.pages[first + i];
+          final at = first + count + i;
+          final newPage = page.copyWith(
+            strokes: page.strokes.map((stroke) => stroke.copy()).toList(),
+            images: page.images.map((image) => image.copy()).toList(),
+            quill: QuillStruct(
+              controller: flutter_quill.QuillController(
+                document: flutter_quill.Document.fromDelta(
+                  page.quill.controller.document.toDelta(),
+                ),
+                selection: const TextSelection.collapsed(offset: 0),
               ),
-              selection: const TextSelection.collapsed(offset: 0),
+              focusNode: FocusNode(debugLabel: 'Quill Focus Node'),
             ),
-            focusNode: FocusNode(debugLabel: 'Quill Focus Node'),
-          ),
-          backgroundImage: page.backgroundImage?.copy()?..pageIndex += 1,
-        );
-        coreInfo.pages.insert(pageIndex + 1, newPage);
-        listenToQuillChanges(newPage.quill, pageIndex + 1);
-        history.recordChange(
-          EditorHistoryItem(
-            type: .insertPage,
-            pageIndex: pageIndex,
-            strokes: const [],
-            images: const [],
-            page: newPage,
-          ),
-        );
+            backgroundImage: page.backgroundImage?.copy(),
+          );
+          coreInfo.pages.insert(at, newPage);
+          listenToQuillChanges(newPage.quill, at);
+          history.recordChange(
+            EditorHistoryItem(
+              type: .insertPage,
+              pageIndex: at,
+              strokes: const [],
+              images: const [],
+              page: newPage,
+            ),
+          );
+        }
+        _updatePageIndices(first);
         autosaveAfterDelay();
       }),
       clearPage: clearPage,
       deletePage: (int pageIndex) => setState(() {
-        if (coreInfo.readOnly) return;
-        final page = coreInfo.pages.removeAt(pageIndex);
-        createPage(pageIndex - 1);
-        history.recordChange(
-          EditorHistoryItem(
-            type: .deletePage,
-            pageIndex: pageIndex,
-            strokes: const [],
-            images: const [],
-            page: page,
-          ),
-        );
+        if (coreInfo.readOnly || coreInfo.noteType.singlePage) return;
+        final (first, count) = _pagesOf(pageIndex);
+        // The back first, so undo brings the front back first
+        for (var i = count - 1; i >= 0; i--) {
+          if (first + i >= coreInfo.pages.length) continue;
+          final page = coreInfo.pages.removeAt(first + i);
+          history.recordChange(
+            EditorHistoryItem(
+              type: .deletePage,
+              pageIndex: first + i,
+              strokes: const [],
+              images: const [],
+              page: page,
+            ),
+          );
+        }
+        _updatePageIndices(first);
+        createPage(first - 1);
         autosaveAfterDelay();
       }),
       transformationController: _transformationController,
     );
   }
 
+  /// The pages that go with [pageIndex] as (first, count): its card's
+  /// front and back for flashcards, or just it.
+  (int, int) _pagesOf(int pageIndex) => coreInfo.noteType == .flashcards
+      ? (pageIndex ~/ 2 * 2, 2)
+      : (pageIndex, 1);
+
+  /// Tells the pages from [from] on which page they are.
+  void _updatePageIndices(int from) {
+    for (var i = max(0, from); i < coreInfo.pages.length; i++) {
+      coreInfo.pages[i].updatePageIndex(i);
+    }
+  }
+
+  /// Adds a page after [pageIndex], or for flashcards, a card (a front
+  /// and a back) after its card. Whiteboards and endless pages have just
+  /// the one page.
   void insertPageAfter(int pageIndex) => setState(() {
-    if (coreInfo.readOnly) return;
-    final page = EditorPage();
-    coreInfo.pages.insert(pageIndex + 1, page);
-    listenToQuillChanges(page.quill, pageIndex + 1);
-    history.recordChange(
-      EditorHistoryItem(
-        type: .insertPage,
-        pageIndex: pageIndex + 1,
-        strokes: const [],
-        images: const [],
-        page: page,
-      ),
-    );
+    if (coreInfo.readOnly || coreInfo.noteType.singlePage) return;
+    final cards = coreInfo.noteType == .flashcards;
+    // After the back of the card
+    final at = cards ? (pageIndex ~/ 2) * 2 + 2 : pageIndex + 1;
+    for (var i = 0; i < (cards ? 2 : 1); i++) {
+      final page = coreInfo.newPage();
+      coreInfo.pages.insert(at + i, page);
+      listenToQuillChanges(page.quill, at + i);
+      history.recordChange(
+        EditorHistoryItem(
+          type: .insertPage,
+          pageIndex: at + i,
+          strokes: const [],
+          images: const [],
+          page: page,
+        ),
+      );
+    }
+    for (var i = at; i < coreInfo.pages.length; i++) {
+      coreInfo.pages[i].updatePageIndex(i);
+    }
     autosaveAfterDelay();
   });
 
@@ -2923,8 +3885,10 @@ class EditorState extends State<Editor> {
     setState(() {
       final removedStrokes = page.strokes.toList();
       final removedImages = page.images.toList();
+      final textBoxesBefore = page.textBoxes;
       page.strokes.clear();
       page.images.clear();
+      page.textBoxes = const [];
       removeExcessPages();
       history.recordChange(
         EditorHistoryItem(
@@ -2932,10 +3896,23 @@ class EditorState extends State<Editor> {
           pageIndex: pageIndex,
           strokes: removedStrokes,
           images: removedImages,
+          // Back with the ink in one undo
+          textBoxChange: textBoxesBefore.isEmpty
+              ? null
+              : Change(previous: textBoxesBefore, current: const []),
         ),
       );
       autosaveAfterDelay();
     });
+  }
+
+  /// Removes [pageIndex]'s text boxes (undoably).
+  void _clearTextBoxes(int pageIndex) {
+    final page = coreInfo.pages[pageIndex];
+    if (page.textBoxes.isEmpty) return;
+    final before = page.textBoxes;
+    page.textBoxes = const [];
+    _recordTextBoxes(pageIndex, before);
   }
 
   void clearAllPages() {
@@ -2943,11 +3920,12 @@ class EditorState extends State<Editor> {
     setState(() {
       final removedStrokes = <Stroke>[];
       final removedImages = <EditorImage>[];
-      for (final page in coreInfo.pages) {
+      for (final (i, page) in coreInfo.pages.indexed) {
         removedStrokes.addAll(page.strokes);
         removedImages.addAll(page.images);
         page.strokes.clear();
         page.images.clear();
+        _clearTextBoxes(i);
       }
       removeExcessPages();
       history.recordChange(
@@ -3039,6 +4017,7 @@ class EditorState extends State<Editor> {
     _topBarBar.dispose();
 
     _delayedSaveTimer?.cancel();
+    _lifecycle.dispose();
     _lastSeenPointerCountTimer?.cancel();
     _opening.cancel();
 
@@ -3076,7 +4055,14 @@ class EditorState extends State<Editor> {
 /// The eraser's size around the mouse, which has no cursor for it.
 class _EraserOutline extends CustomPainter {
   new(this.editor, {required this.color, required this.halo})
-    : super(repaint: editor._mouse);
+    : super(
+        // The size and zoom change it too, without the pointer moving
+        repaint: Listenable.merge([
+          editor._mouse,
+          stows.eraserSize,
+          editor._transformationController,
+        ]),
+      );
 
   final EditorState editor;
 

@@ -14,9 +14,7 @@ void main() {
     for (final disableEraserAfterUse in const [true, false]) {
       testWidgets('$disableEraserAfterUse', (tester) async {
         FlavorConfig.setup();
-        FileManager.documentsDirectory =
-            '$tmpDir/disableEraserAfterUse/'
-            '${FileManager.appRootDirectoryPrefix}';
+        FileManager.documentsDirectory = '$tmpDir/disableEraserAfterUse/nts';
         stows.disableEraserAfterUse.value = disableEraserAfterUse;
 
         await tester.pumpWidget(MaterialApp(home: Editor()));

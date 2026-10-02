@@ -39,10 +39,7 @@ class TranslationsJa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$ja sentry = _Translations$sentry$ja._(_root);
 	@override late final _Translations$settings$ja settings = _Translations$settings$ja._(_root);
 	@override late final _Translations$logs$ja logs = _Translations$logs$ja._(_root);
-	@override late final _Translations$login$ja login = _Translations$login$ja._(_root);
-	@override late final _Translations$profile$ja profile = _Translations$profile$ja._(_root);
 	@override late final _Translations$appInfo$ja appInfo = _Translations$appInfo$ja._(_root);
-	@override late final _Translations$update$ja update = _Translations$update$ja._(_root);
 	@override late final _Translations$editor$ja editor = _Translations$editor$ja._(_root);
 }
 
@@ -113,7 +110,6 @@ class _Translations$settings$ja extends Translations$settings$en {
 		'左側',
 	];
 	@override late final _Translations$settings$reset$ja reset = _Translations$settings$reset$ja._(_root);
-	@override String get resyncEverything => 'すべてを同期する';
 	@override String get openDataDir => 'nts フォルダーを開く';
 	@override late final _Translations$settings$customDataDir$ja customDataDir = _Translations$settings$customDataDir$ja._(_root);
 	@override String get autosaveDisabled => '一度もない';
@@ -134,52 +130,6 @@ class _Translations$logs$ja extends Translations$logs$en {
 	@override String get useTheApp => 'ログはアプリを使うと表示されます';
 }
 
-// Path: login
-class _Translations$login$ja extends Translations$login$en {
-	_Translations$login$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'ログイン';
-	@override late final _Translations$login$form$ja form = _Translations$login$form$ja._(_root);
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'まだアカウントをお持ちでないですか？ '),
-		linkToSignup('今すぐ登録'),
-		const TextSpan(text: '!'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'お問い合わせ '),
-		undoLogin('別のアカウントを選択'),
-		const TextSpan(text: '.'),
-	]);
-	@override late final _Translations$login$status$ja status = _Translations$login$status$ja._(_root);
-	@override late final _Translations$login$ncLoginStep$ja ncLoginStep = _Translations$login$ncLoginStep$ja._(_root);
-	@override late final _Translations$login$encLoginStep$ja encLoginStep = _Translations$login$encLoginStep$ja._(_root);
-}
-
-// Path: profile
-class _Translations$profile$ja extends Translations$profile$en {
-	_Translations$profile$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'プロフィール';
-	@override String get logout => 'ログアウト';
-	@override String quotaUsage({required Object total, required Object used, required Object percent}) => '${total} のうち、 ${used} (${percent}%) を使用しています。';
-	@override String get connectedTo => '接続する';
-	@override late final _Translations$profile$quickLinks$ja quickLinks = _Translations$profile$quickLinks$ja._(_root);
-	@override String get faqTitle => 'よくある質問';
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$ja._(_root),
-		_Translations$profile$faq$1$ja._(_root),
-		_Translations$profile$faq$2$ja._(_root),
-		_Translations$profile$faq$3$ja._(_root),
-	];
-	@override String quotaUsageUncapped({required Object used}) => '${used} を使用しています';
-}
-
 // Path: appInfo
 class _Translations$appInfo$ja extends Translations$appInfo$en {
 	_Translations$appInfo$ja._(TranslationsJa root) : this._root = root, super.internal(root);
@@ -189,22 +139,8 @@ class _Translations$appInfo$ja extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nこのプログラムには一切の保証がありません。これはフリーソフトウェアであり、一定の条件下で再配布することを歓迎します。';
 	@override String get debug => 'デバッグ';
-	@override String get sponsorButton => '私のスポンサーになる、またはストレージを購入する際は、ここをタップしてください。';
 	@override String get licenseButton => 'ライセンス情報を見るには、ここをタップして';
 	@override String get privacyPolicyButton => 'プライバシーポリシーを見るには、ここをタップして';
-}
-
-// Path: update
-class _Translations$update$ja extends Translations$update$en {
-	_Translations$update$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => '更新が可能です';
-	@override String get updateAvailableDescription => '新バージョンのアプリがリリースされ、以下の変更があった：';
-	@override String get update => '更新';
-	@override String get downloadNotAvailableYet => 'お使いのプラットフォームではまだダウンロードできません。しばらくしてからもう一度ご確認ください。';
 }
 
 // Path: editor
@@ -251,7 +187,6 @@ class _Translations$home$tooltips$ja extends Translations$home$tooltips$en {
 
 	// Translations
 	@override String get newNote => '新しいメモ';
-	@override String get showUpdateDialog => '更新ダイアログの表示';
 	@override String get exportNote => 'メモを書き出す';
 }
 
@@ -410,9 +345,6 @@ class _Translations$settings$prefLabels$ja extends Translations$settings$prefLab
 	@override String get layoutSize => 'レイアウトの種類';
 	@override String get customAccentColor => 'オリジナルの色';
 	@override String get hyperlegibleFont => 'Hyperlegible フォント';
-	@override String get shouldCheckForUpdates => 'ntsの更新を自動的に確認する';
-	@override String get shouldAlwaysAlertForUpdates => 'より速いアップデート';
-	@override String get allowInsecureConnections => '安全でない接続を許可する';
 	@override String get editorToolbarAlignment => '編集ツールバーの位置調整';
 	@override String get editorToolbarShowInFullscreen => 'フルスクリーンモードで編集ツールバーを表示する';
 	@override String get editorAutoInvert => 'ダークモードでメモを反転';
@@ -441,7 +373,6 @@ class _Translations$settings$prefDescriptions$ja extends Translations$settings$p
 
 	// Translations
 	@override String get hyperlegibleFont => 'Atkinson Hyperlegibleは、弱視読者の読みやすさを向上させます。';
-	@override String get allowInsecureConnections => '(非推奨) nts が自己署名/信頼できない証明書を持つサーバーに接続できるようにする';
 	@override String get preferGreyscale => 'e-inkディスプレイ用';
 	@override String get autoClearWhiteboardOnExit => '他のデバイスと同期されます';
 	@override String get disableEraserAfterUse => '消しゴムの使用後、自動的にペンに戻す';
@@ -452,7 +383,6 @@ class _Translations$settings$prefDescriptions$ja extends Translations$settings$p
 	@override String get autosave => '短い遅延のあとに自動保存するか';
 	@override String get shapeRecognitionDelay => '形のプレビューを更新する頻度';
 	@override String get autoStraightenLines => 'シェイプペンを使わずに長い線真っすぐにする';
-	@override String get shouldAlwaysAlertForUpdates => '更新が利用可能になったらすぐに教えてください';
 	@override late final _Translations$settings$prefDescriptions$sentry$ja sentry = _Translations$settings$prefDescriptions$sentry$ja._(_root);
 	@override String get autoDisableFingerDrawingWhenStylusDetected => 'スタイラスが検出されたときに指の描画をオフにする';
 }
@@ -512,127 +442,7 @@ class _Translations$settings$customDataDir$ja extends Translations$settings$cust
 	@override String get cancel => '取消';
 	@override String get select => '選択';
 	@override String get mustBeEmpty => '選択するフォルダは空でなければなりません';
-	@override String get mustBeDoneSyncing => 'フォルダを変更する前に、同期が完了していることを確認してください';
 	@override String get unsupported => 'この機能は現在、開発者向けです。 これにより、データが失われる可能性があります.';
-}
-
-// Path: login.form
-class _Translations$login$form$ja extends Translations$login$form$en {
-	_Translations$login$form$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'ログインすることにより、'),
-		linkToPrivacyPolicy('プライベートポリシー'),
-		const TextSpan(text: 'に同意したものとみなされます。'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$ja extends Translations$login$status$en {
-	_Translations$login$status$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'ログアウト';
-	@override String get tapToLogin => 'タップしてNextcloudにログイン';
-	@override String hi({required Object u}) => 'こんにちは、${u}!';
-	@override String get almostDone => '同期の準備がほぼ完了しました。タップしてログインを完了してください。';
-	@override String get loggedIn => 'Nextcloudでログイン';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$ja extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get whereToStoreData => 'データを保存する場所を選択してください:';
-	@override String get saberNcServer => 'nts の Nextcloud サーバー';
-	@override String get otherNcServer => 'その他のNextcloudサーバー';
-	@override String get serverUrl => 'サーバーのURL';
-	@override String get loginWithSaber => 'nts にログイン';
-	@override String get loginWithNextcloud => 'Nextcloudでログイン';
-	@override late final _Translations$login$ncLoginStep$loginFlow$ja loginFlow = _Translations$login$ncLoginStep$loginFlow$ja._(_root);
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$ja extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get enterEncPassword => 'データを保護するために、暗号化パスワードを入力してください:';
-	@override String get newToSaber => 'nts は初めてですか？新しい暗号化パスワードを入力するだけです。';
-	@override String get encPassword => '暗号化パスワード';
-	@override String get encFaqTitle => 'よくある質問';
-	@override String get wrongEncPassword => '入力されたパスワードでは、復号に失敗しました。 もう一度入力してください。';
-	@override String get connectionFailed => 'サーバ接続時に問題が発生しました。後でもう一度お試しください.';
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$ja._(_root),
-		_Translations$login$encLoginStep$encFaq$1$ja._(_root),
-		_Translations$login$encLoginStep$encFaq$2$ja._(_root),
-	];
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$ja extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'サーバーホームページ';
-	@override String get deleteAccount => 'アカウントの削除';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$ja extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'ログアウトするとメモが消えてしまいますか？';
-	@override String get a => 'いいえ。メモはデバイスとサーバーの両方に残ります。ログインし直すまで、サーバーとは同期されません。データを失わないように、ログアウトする前に同期が完了したことを確認してください（ホーム画面の同期進行状況をご覧ください）。';
-}
-
-// Path: profile.faq.1
-class _Translations$profile$faq$1$ja extends Translations$profile$faq$1$en {
-	_Translations$profile$faq$1$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Nextcloudのパスワードを変更する方法を教えてください';
-	@override String get a => 'サーバーのウェブサイトにアクセスし、ログインします。「設定」>「セキュリティ」>「パスワードの変更」を選択します。パスワード変更後は、ntsからログアウトし、再度ログインする必要があります。';
-}
-
-// Path: profile.faq.2
-class _Translations$profile$faq$2$ja extends Translations$profile$faq$2$en {
-	_Translations$profile$faq$2$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '暗号化パスワードの変更方法を教えてください。';
-	@override String get a => '1. ntsからログアウトする。データが失われないように、ログアウトする前に同期が完了していることを確認してください（ホーム画面で同期の進行状況を確認できます）。\n2. サーバーのウェブサイトにアクセスし、「Saber」フォルダを削除してください。これにより、サーバーからすべてのメモが削除されます。\n3. ntsに再ログインする。ログイン時に新しい暗号化パスワードを選択できます。\n4. 他のデバイスでもログアウトしてログインし直すことをお忘れなく。';
-}
-
-// Path: profile.faq.3
-class _Translations$profile$faq$3$ja extends Translations$profile$faq$3$en {
-	_Translations$profile$faq$3$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'アカウントを削除するにはどうすればよいですか？';
-	@override String get a => '上部の"${_root.profile.quickLinks.deleteAccount}"ボタンをタップし、必要であればログインしてください。nts公式サーバーを利用している場合、1週間の猶予期間の後にアカウントが削除されます。この期間中であれば、adilhanney@disroot.orgまでご連絡いただければ、削除を取り消すことが可能です。サードパーティのサーバーをご利用の場合、アカウントを削除するオプションがない場合があります。詳細については、ご利用のサーバープライバシーポリシーをご確認ください。';
 }
 
 // Path: editor.toolbar
@@ -759,8 +569,6 @@ class _Translations$editor$menu$ja extends Translations$editor$menu$en {
 	@override String get lineThicknessDescription => '背景の線の太さ';
 	@override String get backgroundPattern => '背景パターン';
 	@override String get import => 'インポート';
-	@override String get watchServer => 'サーバのアップデートを見る';
-	@override String get watchServerReadOnly => 'サーバーに接続できないときは、編集できません';
 	@override late final _Translations$editor$menu$boxFits$ja boxFits = _Translations$editor$menu$boxFits$ja._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$ja bgPatterns = _Translations$editor$menu$bgPatterns$ja._(_root);
 	@override String get backgroundImageFit => '背景画像';
@@ -867,49 +675,6 @@ class _Translations$settings$prefDescriptions$sentry$ja extends Translations$set
 	@override String get inactive => '無効';
 	@override String get activeUntilRestart => 'アプリを再起動するまで有効';
 	@override String get inactiveUntilRestart => 'アプリを再起動するまでの無効';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$ja extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'nts に登録して、あなたのNextcloudアカウントにアクセスしてください';
-	@override String get followPrompts => 'Nextcloud のプロンプトに従ってください';
-	@override String get browserDidntOpen => 'ログインページが開かなかった場合はここをクリック';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$ja extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '暗号化パスワードとは何ですか？なぜ2つのパスワードを使用するのですか？';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$ja extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => '暗号化パスワードは未設定です。 どこで設定できますか？';
-	@override String get a => '両方に新しい暗号化パスワードを入力してください。\nnts は自動で新しい暗号化キーを生成します。';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$ja extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$ja._(TranslationsJa root) : this._root = root, super.internal(root);
-
-	final TranslationsJa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Nextcloud アカウントと同じパスワードを使うことはできますか?';
 }
 
 // Path: editor.menu.boxFits

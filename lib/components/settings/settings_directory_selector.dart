@@ -141,7 +141,7 @@ class _DirectorySelectorState extends State<DirectorySelector> {
                   style: const TextStyle(
                     fontSize: 13,
                     fontFamily: 'FiraMono',
-                    fontFamilyFallback: saberMonoFontFallbacks,
+                    fontFamilyFallback: ntsMonoFontFallbacks,
                   ),
                 ),
               ),

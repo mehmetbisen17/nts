@@ -4,7 +4,7 @@ import 'package:nts/components/canvas/canvas_gesture_detector.dart';
 import 'package:nts/components/canvas/canvas_preview.dart';
 import 'package:nts/components/theming/higan/higan_tokens.dart';
 import 'package:nts/components/theming/higan/higan_widgets.dart';
-import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/components/theming/nts_theme.dart';
 import 'package:nts/data/editor/editor_core_info.dart';
 import 'package:nts/i18n/strings.g.dart';
 
@@ -81,24 +81,29 @@ class _EditorPageManagerState extends State<EditorPageManager> {
                             decoration: BoxDecoration(
                               boxShadow: context.higan.paperShadow,
                             ),
-                            child: CanvasPreview(
-                              pageIndex: pageIndex,
-                              height: null,
-                              coreInfo: widget.coreInfo,
+                            // (Without what's beside the page)
+                            child: ClipRect(
+                              child: CanvasPreview(
+                                pageIndex: pageIndex,
+                                height: null,
+                                coreInfo: widget.coreInfo,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      MouseRegion(
-                        cursor: SystemMouseCursors.resizeUpDown,
-                        child: ReorderableDragStartListener(
-                          index: pageIndex,
-                          child: const Padding(
-                            padding: .all(8),
-                            child: Icon(Symbols.drag_handle, weight: 300),
+                      // A flashcard's front and back stay together
+                      if (widget.coreInfo.noteType != .flashcards)
+                        MouseRegion(
+                          cursor: SystemMouseCursors.resizeUpDown,
+                          child: ReorderableDragStartListener(
+                            index: pageIndex,
+                            child: const Padding(
+                              padding: .all(8),
+                              child: Icon(Symbols.drag_handle, weight: 300),
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                   Row(
@@ -158,6 +163,7 @@ class _EditorPageManagerState extends State<EditorPageManager> {
         },
         onReorderItem: (oldIndex, newIndex) {
           if (oldIndex == newIndex) return;
+          if (widget.coreInfo.noteType == .flashcards) return;
           widget.coreInfo.pages.insert(
             newIndex,
             widget.coreInfo.pages.removeAt(oldIndex),

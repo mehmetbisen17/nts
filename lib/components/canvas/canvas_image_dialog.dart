@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nts/components/canvas/image/editor_image.dart';
 import 'package:nts/components/theming/adaptive_icon.dart';
 import 'package:nts/components/theming/adaptive_switch.dart';
-import 'package:nts/components/theming/saber_theme.dart';
+import 'package:nts/components/theming/nts_theme.dart';
 import 'package:nts/data/file_manager/file_manager.dart';
 import 'package:nts/data/prefs.dart';
 import 'package:nts/i18n/strings.g.dart';

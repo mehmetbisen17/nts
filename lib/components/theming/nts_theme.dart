@@ -4,7 +4,7 @@ import 'package:nts/data/prefs.dart';
 import 'package:sbn/font_fallbacks.dart';
 import 'package:yaru/yaru.dart';
 
-abstract class SaberTheme {
+abstract class NtsTheme {
   static ThemeData createTheme(
     ColorScheme colorScheme,
     TargetPlatform platform,
@@ -93,14 +93,14 @@ abstract class SaberTheme {
             fontFamily: stows.hyperlegibleFont.value
                 ? 'AtkinsonHyperlegibleNext'
                 : 'Adwaita Sans',
-            fontFamilyFallback: saberSansSerifFontFallbacks,
+            fontFamilyFallback: ntsSansSerifFontFallbacks,
           )
         : createYaruDarkTheme(
             primaryColor: primaryColor,
             fontFamily: stows.hyperlegibleFont.value
                 ? 'AtkinsonHyperlegibleNext'
                 : 'Adwaita Sans',
-            fontFamilyFallback: saberSansSerifFontFallbacks,
+            fontFamilyFallback: ntsSansSerifFontFallbacks,
           );
     base = base.copyWith(visualDensity: .defaultDensityForPlatform(platform));
     return getThemeFromYaruFixed(base, platform);
@@ -156,7 +156,7 @@ abstract class _Components {
     if (stows.hyperlegibleFont.value) {
       return textTheme.withFont(
         fontFamily: 'AtkinsonHyperlegibleNext',
-        fontFamilyFallback: saberSansSerifFontFallbacks,
+        fontFamilyFallback: ntsSansSerifFontFallbacks,
       );
     } else if (platform == .linux) {
       // Flutter picks Roboto but Adwaita Sans is a better default
@@ -195,7 +195,7 @@ abstract class _Components {
   static const appBarTheme = AppBarTheme(centerTitle: false);
 }
 
-extension SaberThemePlatform on TargetPlatform {
+extension NtsThemePlatform on TargetPlatform {
   bool get isCupertino => switch (this) {
     .iOS => true,
     .macOS => true,

@@ -10,7 +10,6 @@ home:
     settings: Beállítások
   tooltips:
     newNote: Új jegyzet
-    showUpdateDialog: Frissítési párbeszédablak megjelenítése
     exportNote: Jegyzet exportálása
   create:
     newNote: Új jegyzet
@@ -95,9 +94,6 @@ settings:
     layoutSize: Elrendezési mód
     customAccentColor: Egyéni hangsúlyszín
     hyperlegibleFont: Atkinson Hyperlegible betűtípus
-    shouldCheckForUpdates: Automatikusan ellenőrzi az nts frissítéseket
-    shouldAlwaysAlertForUpdates: Gyorsabb értesítések a frissítésekről
-    allowInsecureConnections: Nem biztonságos kapcsolatok engedélyezése
     editorToolbarAlignment: A szerkesztő eszköztár igazítása
     editorToolbarShowInFullscreen: A szerkesztő eszköztár megjelenítése teljes képernyős módban
     editorAutoInvert: Jegyzetek színének felcserélése sötét módban
@@ -118,7 +114,6 @@ settings:
     sentry: Hibajelentés
   prefDescriptions:
     hyperlegibleFont: Az Atkinson Hyperlegible növeli az olvashatóságot a gyengén látók számára
-    allowInsecureConnections: (Nem ajánlott) Engedélyezi, hogy az nts ön-aláírt vagy nem megbízható tanúsítványokat használó szerverekhez csatlakozzon
     preferGreyscale: E-tinta kijelzőkhöz
     autoClearWhiteboardOnExit: A tábla törlésre kerül, amikor kilép az alkalmazásból
     disableEraserAfterUse: Automatikusan visszavált a tollra, miután a radírt használta
@@ -133,7 +128,6 @@ settings:
     autosave: Automatikus mentés rövid idő után, vagy soha
     shapeRecognitionDelay: Milyen gyakran frissüljön az alakzat előnézete
     autoStraightenLines: Automatikusan kiegyenesíti a hosszú vonalakat anélkül, hogy az alakzat tollat kellene használni
-    shouldAlwaysAlertForUpdates: Értesítsen a frissítésekről, amint elérhetővé válnak
     sentry:
       active: Aktív
       inactive: Inaktív
@@ -158,13 +152,11 @@ settings:
   reset:
     title: Visszaállítsa ezt a beállítást?
     button: Visszaállítás
-  resyncEverything: Minden újraszinkronizálása
   openDataDir: nts mappa megnyitása
   customDataDir:
     cancel: Mégse
     select: Kiválasztás
     mustBeEmpty: A kiválasztott mappának üresnek kell lennie
-    mustBeDoneSyncing: Győződjön meg arról, hogy a szinkronizálás befejeződött, mielőtt módosítja a mappát
     unsupported: Ez a funkció jelenleg csak fejlesztőknek való. Használata adatvesztést okozhat.
   autosaveDisabled: Soha
   shapeRecognitionDisabled: Soha
@@ -174,88 +166,13 @@ logs:
   debuggingInfo: A naplók hibakereséshez és fejlesztéshez hasznos információkat tartalmaznak
   noLogs: Itt nincsenek naplók!
   useTheApp: A naplók itt jelennek meg az alkalmazás használata során
-login:
-  title: Bejelentkezés
-  form:
-    agreeToPrivacyPolicy(rich): A bejelentkezéssel elfogadja a ${linkToPrivacyPolicy(Adatvédelmi irányelvek)}.
-  signup(rich): Még nincsen fiókja? ${linkToSignup(Regisztrálás)}!
-  notYou(rich): Nem Ön az? ${undoLogin(Fiókváltás)}.
-  status:
-    loggedOut: Kijelentkezve
-    tapToLogin: Kattintson a Nextclouddal való bejelentkezéshez
-    hi: Üdv, $u!
-    almostDone: Majdnem készen áll a szinkronizálásra, koppintson a bejelentkezés befejezéséhez
-    loggedIn: Bejelentkezve a Nextclouddal
-  ncLoginStep:
-    whereToStoreData: "Válassza ki, hol szeretné tárolni az adatait:"
-    saberNcServer: Az nts Nextcloud szervere
-    otherNcServer: Másik Nextcloud szerver
-    serverUrl: Szerver URL
-    loginWithSaber: Bejelentkezés nts-sel
-    loginWithNextcloud: Bejelentkezés Nextcloud-dal
-    loginFlow:
-      pleaseAuthorize: Kérjük, engedélyezze az nts számára a Nextcloud-fiókjához való hozzáférést
-      followPrompts: Kérjük, kövesse a Nextcloud felületén megjelenő utasításokat
-      browserDidntOpen: Nem nyílt meg a bejelentkezési oldal? Kattintson ide
-  encLoginStep:
-    enterEncPassword: "Az adatai védelme érdekében kérjük, adja meg a titkosítási jelszavát:"
-    newToSaber: Először használja az nts-t? Adjon meg egy új titkosítási jelszót.
-    encPassword: Titkosítási jelszó
-    encFaqTitle: Gyakran ismételt kérdések
-    wrongEncPassword: A megadott jelszóval a visszafejtés nem sikerült. Kérjük, próbálja meg újra megadni.
-    connectionFailed: Hiba történt a szerverhez való csatlakozás során. Kérjük, próbálja újra később.
-    encFaq:
-    - q: Mi az a titkosítási jelszó? Miért van szükség két jelszóra?
-      a: |-
-        A Nextcloud jelszó a felhőhöz való hozzáféréshez szükséges. A titkosítási jelszó már azelőtt „összekeveri” az adatait, hogy azok a felhőbe kerülnének.
-        Még ha valaki hozzá is fér a Nextcloud-fiókjához, a jegyzetei továbbra is biztonságban maradnak, mivel külön titkosítási jelszó védi őket. Ez egy második védelmi réteget biztosít az adatai számára.
-        A szerveren senki sem férhet hozzá a jegyzeteihez a titkosítási jelszó nélkül, de ez azt is jelenti, hogy ha elfelejti a titkosítási jelszavát, elveszíti a hozzáférést az adataihoz.
-    - q: Még nem állítottam be titkosítási jelszót. Hol szerezhetem meg?
-      a: |-
-        Válasszon egy új titkosítási jelszót, és adja meg fent.
-        Az nts automatikusan létrehozza a titkosítási kulcsokat ebből a jelszóból.
-    - q: Használhatom ugyanazt a jelszót, mint a Nextcloud-fiókomhoz?
-      a: Igen, de fontos figyelembe venni, hogy így a szerver adminisztrátora vagy más személy könnyebben hozzáférhet a jegyzeteihez, ha hozzájut a Nextcloud-fiókjához.
-profile:
-  title: Profilom
-  logout: Kijelentkezés
-  quotaUsage: "Felhasználva: $used / $total ($percent%)"
-  connectedTo: "Csatlakozva:"
-  quickLinks:
-    serverHomepage: Szerver kezdőlapja
-    deleteAccount: Fiók törlése
-  faqTitle: Gyakran ismételt kérdések
-  faq:
-  - q: Elveszítem a jegyzeteimet, ha kijelentkezem?
-    a: Nem. A jegyzetei mind az eszközén, mind a szerveren megmaradnak. A szerverrel csak akkor lesznek szinkronizálva, ha újra bejelentkezik. Mielőtt kijelentkezik, győződjön meg arról, hogy a szinkronizálás befejeződött, különben adatvesztés történhet (a kezdőképernyőn látható a szinkronizálás állapota).
-  - q: Hogyan változtatom meg a Nextcloud jelszavamat?
-    a: Nyissa meg a szerver weboldalát, és jelentkezzen be. Ezután menjen a Beállítások > Biztonság > Jelszó módosítása menüpontra. A jelszó módosítása után ki kell jelentkeznie az nts-ből, majd újra be kell jelentkeznie.
-  - q: Hogyan változtatom meg a titkosítási jelszavamat?
-    a: |-
-      0. Győződjön meg arról, hogy a szinkronizálás befejeződött (a szinkronizálás állapotát a kezdőképernyőn láthatja).
-      1. Jelentkezzen ki az nts-ből.
-      2. Nyissa meg a szerver weboldalát, és törölje a „Saber” mappát. Ez minden jegyzetét törli a szerverről.
-      3. Jelentkezzen be újra az nts-be. Bejelentkezéskor új titkosítási jelszót választhat.
-      4. Ne felejtkezzen el kijelentkezni, majd újra bejelentkezni az nts-be a többi eszközén is.
-  - q: Hogyan törölhetem a fiókomat?
-    a: |-
-      Koppintson a fenti „@:profile.quickLinks.deleteAccount” gombra, és szükség esetén jelentkezzen be.
-      Ha a hivatalos nts szervert használja, a fiókja 1 hetes türelmi idő után törlésre kerül. Ebben az időszakban a törlés visszavonásához vegye fel a kapcsolatot a következő e-mail címen: adilhanney@disroot.org.
-      Ha harmadik féltől származó szervert használ, előfordulhat, hogy nincs lehetőség a fiók törlésére: további információért tekintse meg a szerver adatvédelmi szabályzatát.
-  quotaUsageUncapped(OUTDATED): Használod a $used-t
 appInfo:
   licenseNotice: |-
     nts (modified from Saber) Copyright © 2022-$buildYear Adil Hanney
     Ez a program nem tartalmaz semmilyen garanciát. Ez egy szabad szoftver, és bizonyos feltételek mellett szabadon terjeszthető.
   debug: DEBUG
-  sponsorButton: Ide kattintva támogathat engem vagy vásárolhat több tárhelyet
   licenseButton: További licencinformációk megtekintéséhez kattintson ide
   privacyPolicyButton: Kattintson ide az adatvédelmi nyilatkozat megtekintéséhez
-update:
-  updateAvailable: Frissítés elérhető
-  updateAvailableDescription: "Az alkalmazás új verziója elérhető:"
-  update: Frissítés
-  downloadNotAvailableYet: A letöltés még nem érhető el a platformján. Kérjük, próbálja meg később.
 editor:
   toolbar:
     toggleColors: Színek váltása (Ctrl+C)
@@ -328,8 +245,6 @@ editor:
     backgroundImageFit: Háttérkép illesztése
     backgroundPattern: Háttérminta
     import: Importálás
-    watchServer: Frissítések figyelése a szerveren
-    watchServerReadOnly: A szerver figyelése közben a szerkesztés le van tiltva
     boxFits:
       fill: Nyújtás
       cover: Kitöltés

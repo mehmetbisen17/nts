@@ -39,10 +39,7 @@ class TranslationsCa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$sentry$ca sentry = _Translations$sentry$ca._(_root);
 	@override late final _Translations$settings$ca settings = _Translations$settings$ca._(_root);
 	@override late final _Translations$logs$ca logs = _Translations$logs$ca._(_root);
-	@override late final _Translations$login$ca login = _Translations$login$ca._(_root);
-	@override late final _Translations$profile$ca profile = _Translations$profile$ca._(_root);
 	@override late final _Translations$appInfo$ca appInfo = _Translations$appInfo$ca._(_root);
-	@override late final _Translations$update$ca update = _Translations$update$ca._(_root);
 	@override late final _Translations$editor$ca editor = _Translations$editor$ca._(_root);
 }
 
@@ -114,7 +111,6 @@ class _Translations$settings$ca extends Translations$settings$en {
 		'Esquerra',
 	];
 	@override String get systemLanguage => 'Automàtic';
-	@override String get resyncEverything => 'Resincronitza tot';
 	@override String get openDataDir => 'Obre la carpeta nts';
 	@override String get autosaveDisabled => 'Né jamais';
 	@override String get shapeRecognitionDisabled => 'Né jamais';
@@ -134,49 +130,6 @@ class _Translations$logs$ca extends Translations$logs$en {
 	@override String get useTheApp => 'Els logs apareixeran aquí mentre utilitzes l\'aplicació';
 }
 
-// Path: login
-class _Translations$login$ca extends Translations$login$en {
-	_Translations$login$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$login$form$ca form = _Translations$login$form$ca._(_root);
-	@override late final _Translations$login$status$ca status = _Translations$login$status$ca._(_root);
-	@override late final _Translations$login$ncLoginStep$ca ncLoginStep = _Translations$login$ncLoginStep$ca._(_root);
-	@override late final _Translations$login$encLoginStep$ca encLoginStep = _Translations$login$encLoginStep$ca._(_root);
-	@override String get title => 'Inloguin';
-	@override TextSpan signup({required InlineSpanBuilder linkToSignup}) => TextSpan(children: [
-		const TextSpan(text: 'No tens aún? '),
-		linkToSignup('Registra\'t-te ara'),
-		const TextSpan(text: '.'),
-	]);
-	@override TextSpan notYou({required InlineSpanBuilder undoLogin}) => TextSpan(children: [
-		const TextSpan(text: 'No tu? '),
-		undoLogin('Elegir otra cuenta'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: profile
-class _Translations$profile$ca extends Translations$profile$en {
-	_Translations$profile$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$profile$quickLinks$ca quickLinks = _Translations$profile$quickLinks$ca._(_root);
-	@override List<dynamic> get faq => [
-		_Translations$profile$faq$0$ca._(_root),
-	];
-	@override String get title => 'El meu perfil';
-	@override String get logout => 'Desconnectar';
-	@override String quotaUsage({required Object used, required Object total, required Object percent}) => 'Estàs utilitzant ${used} de ${total} (${percent}%)';
-	@override String get connectedTo => 'Connectat a';
-	@override String get faqTitle => 'Preguntes freqüents';
-	@override String quotaUsageUncapped({required Object used}) => 'Estàs utilitzant ${used}';
-}
-
 // Path: appInfo
 class _Translations$appInfo$ca extends Translations$appInfo$en {
 	_Translations$appInfo$ca._(TranslationsCa root) : this._root = root, super.internal(root);
@@ -186,22 +139,8 @@ class _Translations$appInfo$ca extends Translations$appInfo$en {
 	// Translations
 	@override String licenseNotice({required Object buildYear}) => 'nts (modified from Saber)  Copyright © 2022-${buildYear}  Adil Hanney\nAquest programa no compta amb cap garantia. És programari lliure, i estàs en el teu dret de distribuir-ho sota certes condicions.';
 	@override String get debug => 'DEBUG';
-	@override String get sponsorButton => 'Prem aquí per a mostrar-me el teu suport o ampliar l\'emmagatzematge';
 	@override String get licenseButton => 'Prem aquí per a més informació sobre la llicència';
 	@override String get privacyPolicyButton => 'Prem aquí per a consultar la política de privacitat';
-}
-
-// Path: update
-class _Translations$update$ca extends Translations$update$en {
-	_Translations$update$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get updateAvailable => 'Actualització disponible';
-	@override String get updateAvailableDescription => 'Ja hi ha disponible una nova versió de l\'aplicació:';
-	@override String get update => 'Actualitzar';
-	@override String get downloadNotAvailableYet => 'Per a la teva plataforma, la descàrrega encara no està disponible.\nSiusplau, torna a intentar-ho més endavant.';
 }
 
 // Path: editor
@@ -249,7 +188,6 @@ class _Translations$home$tooltips$ca extends Translations$home$tooltips$en {
 	// Translations
 	@override String get newNote => 'Nova nota';
 	@override String get exportNote => 'Exportar nota';
-	@override String get showUpdateDialog => 'Mostrar diàlog de actualització';
 }
 
 // Path: home.create
@@ -403,9 +341,6 @@ class _Translations$settings$prefLabels$ca extends Translations$settings$prefLab
 	// Translations
 	@override String get locale => 'Llengua';
 	@override String get layoutSize => 'Format';
-	@override String get shouldCheckForUpdates => 'Comprova si hi ha actualitzacions disponibles per nts';
-	@override String get shouldAlwaysAlertForUpdates => 'Actualitzacions més ràpides';
-	@override String get allowInsecureConnections => 'Permet connexions no segures';
 	@override String get appTheme => 'tema de l\'aplicació';
 	@override String get platform => 'tipus de teme';
 	@override String get customAccentColor => 'Color d\'accent personnalisée';
@@ -440,7 +375,6 @@ class _Translations$settings$prefDescriptions$ca extends Translations$settings$p
 	@override late final _Translations$settings$prefDescriptions$hideFingerDrawing$ca hideFingerDrawing = _Translations$settings$prefDescriptions$hideFingerDrawing$ca._(_root);
 	@override late final _Translations$settings$prefDescriptions$sentry$ca sentry = _Translations$settings$prefDescriptions$sentry$ca._(_root);
 	@override String get hyperlegibleFont => 'Increxeix la legibilitat per als usuaris amb baixa visió';
-	@override String get allowInsecureConnections => '(No recomanhat) Permitir a nts conectar a serveis amb certs autogenerades/no fiables';
 	@override String get preferGreyscale => 'Per a dispositius e-ink';
 	@override String get autoClearWhiteboardOnExit => 'Borra la llista blanca després de sortir de l\'aplicació';
 	@override String get disableEraserAfterUse => 'Automàticament torna al bolífer després de utilitzar l\'efaçador';
@@ -451,7 +385,6 @@ class _Translations$settings$prefDescriptions$ca extends Translations$settings$p
 	@override String get autosave => 'Auto-guardat després d\'un retard curt, o mai';
 	@override String get shapeRecognitionDelay => 'Quetre freqüentament actualitzar la previsualització de la forma';
 	@override String get autoStraightenLines => 'Rectifica les línies llonges sense avoir a utilitzar el rotuli de forma';
-	@override String get shouldAlwaysAlertForUpdates => 'Diga-me sobre as atualizações assim que estiverem disponíveis';
 }
 
 // Path: settings.themeModes
@@ -509,93 +442,7 @@ class _Translations$settings$customDataDir$ca extends Translations$settings$cust
 	@override String get cancel => 'Cancelar';
 	@override String get select => 'Seleccionar';
 	@override String get mustBeEmpty => 'La carpeta seleccionada debe estar vacía';
-	@override String get mustBeDoneSyncing => 'Asegúrate de que la sincronización esté completa antes de cambiar la carpeta';
 	@override String get unsupported => 'Aquesta funcició és actualment només per desenvolupadors. L\'ús d\'ella pot resultar en pèrdua de dades.';
-}
-
-// Path: login.form
-class _Translations$login$form$ca extends Translations$login$form$en {
-	_Translations$login$form$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override TextSpan agreeToPrivacyPolicy({required InlineSpanBuilder linkToPrivacyPolicy}) => TextSpan(children: [
-		const TextSpan(text: 'Al iniciar sesión, aceptas la '),
-		linkToPrivacyPolicy('Política de privacidad'),
-		const TextSpan(text: '.'),
-	]);
-}
-
-// Path: login.status
-class _Translations$login$status$ca extends Translations$login$status$en {
-	_Translations$login$status$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get loggedOut => 'Desconnectat';
-	@override String get tapToLogin => 'Toca per iniciar la sessió amb Nextcloud';
-	@override String hi({required Object u}) => 'Hola, ${u}!';
-	@override String get almostDone => 'Pràcticament preparat per a sincronització, toca per finalitzar la connexió';
-	@override String get loggedIn => 'Ingessat amb Nextcloud';
-}
-
-// Path: login.ncLoginStep
-class _Translations$login$ncLoginStep$ca extends Translations$login$ncLoginStep$en {
-	_Translations$login$ncLoginStep$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override late final _Translations$login$ncLoginStep$loginFlow$ca loginFlow = _Translations$login$ncLoginStep$loginFlow$ca._(_root);
-	@override String get whereToStoreData => 'Escollreu on où voleu guardar els teus dades:';
-	@override String get saberNcServer => 'Serveur Nextcloud de nts';
-	@override String get otherNcServer => 'Un servidor Nextcloud';
-	@override String get serverUrl => 'URL del servidor';
-	@override String get loginWithSaber => 'Inglesar amb nts';
-	@override String get loginWithNextcloud => 'Inglesar amb Nextcloud';
-}
-
-// Path: login.encLoginStep
-class _Translations$login$encLoginStep$ca extends Translations$login$encLoginStep$en {
-	_Translations$login$encLoginStep$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override List<dynamic> get encFaq => [
-		_Translations$login$encLoginStep$encFaq$0$ca._(_root),
-		_Translations$login$encLoginStep$encFaq$1$ca._(_root),
-		_Translations$login$encLoginStep$encFaq$2$ca._(_root),
-	];
-	@override String get enterEncPassword => 'Per protegere i tuoi dati, inserisci la tua password di crittografia:';
-	@override String get newToSaber => 'Nou en nts? Simplement ingresa una nova contrasenya de cifratura.';
-	@override String get encPassword => 'contraseña de cifrado';
-	@override String get encFaqTitle => 'Preguntes freqüents';
-	@override String get wrongEncPassword => 'Descodificació fallada amb la contrasenya proporcionada. Si us plau, intenteu introduir-la de nou.';
-	@override String get connectionFailed => 'Vaixament va tenir lloc connectar-se al servidor. Si us plau, intenteu de nou més tard.';
-}
-
-// Path: profile.quickLinks
-class _Translations$profile$quickLinks$ca extends Translations$profile$quickLinks$en {
-	_Translations$profile$quickLinks$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get serverHomepage => 'pàgina d\'accés del servidor';
-	@override String get deleteAccount => 'Borrar compte';
-}
-
-// Path: profile.faq.0
-class _Translations$profile$faq$0$ca extends Translations$profile$faq$0$en {
-	_Translations$profile$faq$0$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Trobaré si perdré les mes notes si je me déconnecte ?';
 }
 
 // Path: editor.toolbar
@@ -718,7 +565,6 @@ class _Translations$editor$menu$ca extends Translations$editor$menu$en {
 	@override String get lineThicknessDescription => 'Gruix de la línia del fons';
 	@override String get backgroundPattern => 'Patró de fons';
 	@override String get import => 'Importa';
-	@override String get watchServer => 'Cerca actualitzacions disponibles al servidor';
 	@override late final _Translations$editor$menu$boxFits$ca boxFits = _Translations$editor$menu$boxFits$ca._(_root);
 	@override late final _Translations$editor$menu$bgPatterns$ca bgPatterns = _Translations$editor$menu$bgPatterns$ca._(_root);
 	@override String clearPage({required Object page, required Object totalPages}) => 'Borrar pàgina ${page}/${totalPages}';
@@ -726,7 +572,6 @@ class _Translations$editor$menu$ca extends Translations$editor$menu$en {
 	@override String get lineHeight => 'altura de línea';
 	@override String get lineHeightDescription => 'També controla el màxim de text per a les notes tapates.';
 	@override String get backgroundImageFit => 'imatge de fons ajustat';
-	@override String get watchServerReadOnly => 'L\'edició està desactivada mentre siva el servidor';
 }
 
 // Path: editor.readOnlyBanner
@@ -831,51 +676,6 @@ class _Translations$settings$prefDescriptions$sentry$ca extends Translations$set
 	@override String get inactive => 'Inactiu';
 	@override String get activeUntilRestart => 'Actiu fins a que reinicies l\'aplicació';
 	@override String get inactiveUntilRestart => 'Inactiu fins que reinicies l\'aplicació';
-}
-
-// Path: login.ncLoginStep.loginFlow
-class _Translations$login$ncLoginStep$loginFlow$ca extends Translations$login$ncLoginStep$loginFlow$en {
-	_Translations$login$ncLoginStep$loginFlow$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get pleaseAuthorize => 'Permeta a nts accedir a la teva compte de Nextcloud';
-	@override String get followPrompts => 'Si us plauseguda les instruccions a l\'interfície de Nextcloud';
-	@override String get browserDidntOpen => 'La pàgina de connexió no s\'ha obert? Clic aquí';
-}
-
-// Path: login.encLoginStep.encFaq.0
-class _Translations$login$encLoginStep$encFaq$0$ca extends Translations$login$encLoginStep$encFaq$0$en {
-	_Translations$login$encLoginStep$encFaq$0$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Què és una contrasenya de cifratge? Per què utilitzar dues contrasenyes?';
-	@override String get a => 'La contrasenya de Nextcloud es la que se utiliza para acceder a la nube. La contrasenya de cifrado "scrambles" tus datos antes de que lleguen a la nube.\nIncluso si alguien obtiene acceso a tu cuenta de Nextcloud, tus notas seguirán a salvo y cifradas con una contraseña separada. Esto te proporciona una segunda capa de seguridad para proteger tus datos.\nNadie puede acceder a tus notas en el servidor sin tu contraseña de cifrado, pero esto también significa que si olvidas tu contraseña de cifrado, perderás el acceso a tus datos.';
-}
-
-// Path: login.encLoginStep.encFaq.1
-class _Translations$login$encLoginStep$encFaq$1$ca extends Translations$login$encLoginStep$encFaq$1$en {
-	_Translations$login$encLoginStep$encFaq$1$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'No he menet altrepass de cifratge fins ara. On l\'obtenc?';
-	@override String get a => 'Escoll un nou contrasen de cifratge i introduïu-lo a la sota.\nnts generarà les teves clau de cifratge automàticament a partir d\'aquest contrasen.';
-}
-
-// Path: login.encLoginStep.encFaq.2
-class _Translations$login$encLoginStep$encFaq$2$ca extends Translations$login$encLoginStep$encFaq$2$en {
-	_Translations$login$encLoginStep$encFaq$2$ca._(TranslationsCa root) : this._root = root, super.internal(root);
-
-	final TranslationsCa _root; // ignore: unused_field
-
-	// Translations
-	@override String get q => 'Pucso el mate de la teva compte de Nextcloud?';
-	@override String get a => 'Sí, pero ten en cuenta que sería más fácil para el administrador del servidor o alguien más acceder a tus notas si obtienen acceso a tu cuenta de Nextcloud.';
 }
 
 // Path: editor.menu.boxFits

@@ -12,6 +12,7 @@ import 'package:golden_screenshot/golden_screenshot.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:nts/components/canvas/image/editor_image.dart';
 import 'package:nts/components/canvas/pencil_shader.dart';
+import 'package:nts/components/canvas/text_boxes.dart';
 import 'package:nts/components/theming/higan/higan_theme.dart';
 import 'package:nts/components/toolbar/selection_bar.dart';
 import 'package:nts/components/toolbar/toolbar.dart';
@@ -319,9 +320,12 @@ void main() {
 
       await tester.tap(find.byTooltip(t.editor.otherTools.handwriting));
       await tester.pumpAndSettle();
+      final inkBounds = ink
+          .map((stroke) => stroke.bounds)
+          .reduce((a, b) => a.expandToInclude(b));
       await tester.tap(find.text(t.editor.otherTools.convertToText));
       await tester.pump();
-      while (page.quill.controller.document.isEmpty()) {
+      while (page.textBoxes.isEmpty) {
         await tester.runAsync(
           () => Future.delayed(const Duration(milliseconds: 20)),
         );
@@ -329,26 +333,28 @@ void main() {
       }
       await tester.pumpAndSettle();
       expect(recognized, hasLength(1));
-      expect(page.quill.controller.document.toPlainText(), 'Metric Spaces\n');
+      // A text box where the ink was
+      final box = page.textBoxes.single;
+      expect(box.text, 'Metric Spaces');
+      expect(box.position.dx, closeTo(inkBounds.left, 1));
+      expect(box.position.dy, closeTo(inkBounds.top, 1));
       expect(page.strokes, hasLength(strokes.length - ink.length));
 
-      // Two steps: the text, then the ink
-      editor.undo();
-      await tester.pump();
-      expect(page.quill.controller.document.isEmpty(), isTrue);
+      // Two steps: the ink comes back, then the text goes
       editor.undo();
       await tester.pump();
       expect(page.strokes, hasLength(strokes.length));
+      expect(page.textBoxes, hasLength(1));
+      editor.undo();
+      await tester.pump();
+      expect(page.textBoxes, isEmpty);
       editor.redo();
       editor.redo();
       await tester.pumpAndSettle();
-      expect(page.quill.controller.document.toPlainText(), 'Metric Spaces\n');
+      expect(page.textBoxes.single.text, 'Metric Spaces');
 
       final loaded = await saveAndReload(tester, editor);
-      expect(
-        loaded.pages.first.quill.controller.document.toPlainText(),
-        'Metric Spaces\n',
-      );
+      expect(loaded.pages.first.textBoxes.single.text, 'Metric Spaces');
       expect(
         loaded.pages.first.strokes,
         hasLength(strokes.length - ink.length),
@@ -575,10 +581,14 @@ void main() {
       await ctrlV(tester);
       expect(page.strokes, hasLength(strokes + selected));
 
-      // (without focusing the text, whose own paste needs the platform)
+      // Typing in a text box: the text's paste instead
       editor.currentTool = Tool.textEditing;
       tester.element(find.byType(Editor)).markNeedsBuild();
       await tester.pump();
+      editor.addTextBox(0, const Offset(300, 900));
+      await tester.pump();
+      await tester.pump();
+      expect(TextBoxes.focused.value, isNotNull);
       await ctrlV(tester);
       expect(page.strokes, hasLength(strokes + selected));
       expect(editor.currentTool, Tool.textEditing);

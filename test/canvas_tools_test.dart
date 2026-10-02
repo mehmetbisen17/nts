@@ -23,10 +23,10 @@ import 'package:nts/data/prefs.dart';
 import 'package:nts/data/tools/calligraphy_pen.dart';
 import 'package:nts/data/tools/eraser.dart';
 import 'package:nts/data/tools/fill.dart';
+import 'package:nts/data/tools/highlighter.dart';
 import 'package:nts/data/tools/insert_space.dart';
 import 'package:nts/data/tools/pen.dart';
 import 'package:nts/data/tools/select.dart';
-import 'package:nts/data/tools/shape_pen.dart';
 import 'package:nts/data/tools/tape.dart';
 import 'package:nts/data/tools/tool_catalog.dart';
 import 'package:nts/pages/editor/editor.dart';
@@ -83,9 +83,7 @@ void main() {
   );
   setupMockPathProvider();
   FlavorConfig.setup();
-  FileManager.documentsDirectory =
-      '$tmpDir/canvas_tools_test/'
-      '${FileManager.appRootDirectoryPrefix}';
+  FileManager.documentsDirectory = '$tmpDir/canvas_tools_test/nts';
 
   setUp(() {
     stows.lastTool.value = .fountainPen;
@@ -100,7 +98,7 @@ void main() {
 
   group('saving', () {
     test('the file version is new enough for older apps to notice', () {
-      expect(EditorCoreInfo.sbnVersion, 20);
+      expect(EditorCoreInfo.sbnVersion, 21);
     });
 
     test('tape, brush pen and calligraphy strokes keep their pen', () {
@@ -853,15 +851,15 @@ void main() {
       for (final point in points.skip(1)) {
         pen.onDragUpdate(point, null);
       }
-      expect(ShapePen.detectedShape, isNull);
+      expect(Pen.snapPreview, isNull);
       await tester.pump(Pen.holdToSnapDelay);
-      expect(ShapePen.detectedShape, isNotNull);
+      expect(Pen.snapPreview, isA<CircleStroke>());
 
       final stroke = pen.onDragEnd();
       expect(stroke, isA<CircleStroke>());
       expect(stroke!.toolId, ToolId.fountainPen);
       expect((stroke as CircleStroke).radius, closeTo(100, 10));
-      expect(ShapePen.detectedShape, isNull);
+      expect(Pen.snapPreview, isNull);
       page.dispose();
     });
 
@@ -878,7 +876,7 @@ void main() {
       }
       await tester.pump(Pen.holdToSnapDelay);
       pen.onDragUpdate(const Offset(500, 500), null);
-      expect(ShapePen.detectedShape, isNull);
+      expect(Pen.snapPreview, isNull);
       expect(pen.onDragEnd(), isNot(isA<CircleStroke>()));
 
       stows.holdToSnapShape.value = false;
@@ -887,7 +885,7 @@ void main() {
         pen.onDragUpdate(point, null);
       }
       await tester.pump(Pen.holdToSnapDelay);
-      expect(ShapePen.detectedShape, isNull);
+      expect(Pen.snapPreview, isNull);
       expect(pen.onDragEnd(), isNot(isA<CircleStroke>()));
       page.dispose();
     });
@@ -907,6 +905,175 @@ void main() {
       expect(stroke.runtimeType, Stroke);
       expect(stroke.length, greaterThan(10));
       page.dispose();
+    });
+
+    /// The stroke [pen] makes through [points] when held still at the end.
+    Future<Stroke> held(
+      WidgetTester tester,
+      Pen pen,
+      List<Offset> points,
+    ) async {
+      final page = EditorPage();
+      pen.onDragStart(points.first, page, 0, null);
+      for (final point in points.skip(1)) {
+        pen.onDragUpdate(point, null);
+      }
+      await tester.pump(Pen.holdToSnapDelay);
+      return pen.onDragEnd()!;
+    }
+
+    // Wobbly, and with few points, like a quick stroke with the Pencil
+    List<Offset> wobbly(List<Offset> corners, {int perSide = 8}) {
+      final random = Random(2);
+      return [
+        for (var i = 0; i + 1 < corners.length; i++)
+          for (var k = 0; k < perSide; k++)
+            Offset.lerp(corners[i], corners[i + 1], k / perSide)! +
+                Offset(
+                  random.nextDouble() * 8 - 4,
+                  random.nextDouble() * 8 - 4,
+                ),
+        corners.last,
+      ];
+    }
+
+    testWidgets('a quick wobbly line snaps straight', (tester) async {
+      final points = wobbly(const [Offset(100, 100), Offset(500, 130)]);
+      expect(points.length, lessThan(64));
+      final line = await held(tester, Pen.ballpointPen(), points);
+      expect(line.length, 3); // first, last, last
+    });
+
+    testWidgets('a squarish rectangle snaps square, a long one stays', (
+      tester,
+    ) async {
+      final square = await held(
+        tester,
+        Pen.fountainPen(),
+        wobbly(const [
+          Offset(100, 100),
+          Offset(300, 110),
+          Offset(305, 290),
+          Offset(100, 300),
+          Offset(102, 104),
+        ]),
+      );
+      expect(square, isA<RectangleStroke>());
+      final rect = (square as RectangleStroke).rect;
+      expect(rect.width, closeTo(rect.height, 1e-9));
+
+      final long = await held(
+        tester,
+        Pen.fountainPen(),
+        wobbly(const [
+          Offset(100, 100),
+          Offset(500, 105),
+          Offset(500, 300),
+          Offset(100, 300),
+          Offset(102, 104),
+        ]),
+      );
+      final longRect = (long as RectangleStroke).rect;
+      expect(longRect.width, greaterThan(longRect.height * 1.5));
+    });
+
+    testWidgets('a long loop snaps to an oval, a round one to a circle', (
+      tester,
+    ) async {
+      List<Offset> loop(double rx, double ry) => [
+        for (var i = 0; i <= 70; i++)
+          Offset(
+            300 + rx * cos(2 * pi * i / 72),
+            300 + ry * sin(2 * pi * i / 72),
+          ),
+      ];
+      final oval = await held(tester, Pen.fountainPen(), loop(200, 80));
+      expect(oval, isNot(isA<CircleStroke>()));
+      expect(oval.bounds.width, closeTo(400, 10));
+      expect(oval.bounds.height, closeTo(160, 10));
+      expect(oval.isClosed, isTrue);
+
+      expect(
+        await held(tester, Pen.fountainPen(), loop(100, 95)),
+        isA<CircleStroke>(),
+      );
+    });
+
+    testWidgets('a tilted oval stays tilted, a tilted square too', (
+      tester,
+    ) async {
+      // An oval turned 45°: its upright box is square, but it isn't a circle
+      final turned = [
+        for (var i = 0; i <= 70; i++)
+          () {
+            final t = 2 * pi * i / 72;
+            final x = 200 * cos(t), y = 80 * sin(t);
+            return Offset(300 + (x - y) / sqrt2, 300 + (x + y) / sqrt2);
+          }(),
+      ];
+      final oval = await held(tester, Pen.fountainPen(), turned);
+      expect(oval, isNot(isA<CircleStroke>()));
+      expect(oval.isClosed, isTrue);
+      // Its far ends are about 200 from the middle, along the diagonal
+      final far = oval.bounds.topLeft - const Offset(300, 300);
+      expect(far.distance, closeTo(200 * sqrt2 * 0.75, 40));
+
+      final diamond = await held(
+        tester,
+        Pen.fountainPen(),
+        wobbly(const [
+          Offset(300, 100),
+          Offset(500, 300),
+          Offset(300, 500),
+          Offset(100, 300),
+          Offset(302, 102),
+        ]),
+      );
+      expect(diamond, isNot(isA<RectangleStroke>()));
+      expect(diamond.bounds.width, closeTo(400, 30));
+    });
+
+    testWidgets("snapping a line doesn't change the pen's taper", (
+      tester,
+    ) async {
+      final brush = Pen.brushPen();
+      final taper = brush.options.start.taperEnabled;
+      expect(taper, isTrue);
+      await held(
+        tester,
+        brush,
+        wobbly(const [Offset(100, 100), Offset(500, 130)]),
+      );
+      expect(brush.options.start.taperEnabled, taper);
+      expect(brush.options.end.taperEnabled, isTrue);
+    });
+
+    test('a quick line straightens only when held, not by itself', () {
+      final quick = _stroke(
+        List.generate(
+          20,
+          (i) => Offset(100 + i * 20.0, 100 + (i.isEven ? 3 : -3)),
+        ),
+      );
+      expect(quick.length, lessThan(64));
+      expect(quick.isStraightLine(), isFalse);
+      expect(quick.detectShape()?.name, isNotNull);
+    });
+
+    testWidgets('the highlighter only snaps lines', (tester) async {
+      final circle = await held(tester, Highlighter(), [
+        for (var i = 0; i <= 76; i++)
+          const Offset(300, 300) +
+              Offset(cos(2 * pi * i / 80), sin(2 * pi * i / 80)) * 100,
+      ]);
+      expect(circle.runtimeType, Stroke);
+      expect(circle.length, greaterThan(10));
+      final line = await held(
+        tester,
+        Highlighter(),
+        wobbly(const [Offset(100, 100), Offset(600, 100)]),
+      );
+      expect(line.length, 3);
     });
   });
 

@@ -22,8 +22,7 @@ import 'package:nts/data/services/plot_spec.dart';
 
 final _dir =
     Platform.environment['NTS_EVAL_DIR'] ??
-    '/private/tmp/claude-501/-Users-mehmetbisen-Desktop-saber/'
-        'e21e6fbf-1b17-49c8-84d9-1e9fe570551b/scratchpad/eval';
+    '${Directory.systemTemp.path}/nts-eval';
 
 /// Six calls at most: (picture, action).
 const _cases = [

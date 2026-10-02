@@ -54,7 +54,7 @@ abstract final class HiganTheme {
 
     TextStyle mono(double size, [Color? color]) => TextStyle(
       fontFamily: HiganText.mono,
-      fontFamilyFallback: saberMonoFontFallbacks,
+      fontFamilyFallback: ntsMonoFontFallbacks,
       fontSize: size,
       letterSpacing: 0.12 * size,
       color: color,
@@ -62,7 +62,7 @@ abstract final class HiganTheme {
     TextStyle sans(double size, [Color? color, FontWeight weight = .w400]) =>
         TextStyle(
           fontFamily: fontFamily,
-          fontFamilyFallback: saberSansSerifFontFallbacks,
+          fontFamilyFallback: ntsSansSerifFontFallbacks,
           fontSize: size,
           fontWeight: weight,
           color: color,
@@ -105,7 +105,7 @@ abstract final class HiganTheme {
       colorScheme: colorScheme,
       platform: platform,
       fontFamily: fontFamily,
-      fontFamilyFallback: saberSansSerifFontFallbacks,
+      fontFamilyFallback: ntsSansSerifFontFallbacks,
       extensions: [c],
     );
     final textTheme = base.textTheme
