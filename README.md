@@ -4,6 +4,16 @@ nts is a handwriting notes app for iPad and Mac. You write with an Apple Pencil,
 
 nts is a personal project. It isn't on the App Store, and it isn't affiliated with Saber or its authors. It's a modified version of [Saber](https://github.com/saber-notes/saber) (see [Credits and license](#credits-and-license)).
 
+![Writing in a notebook on iPad](docs/screenshots/editor.png)
+
+<p>
+  <img src="docs/screenshots/recent.png" width="32%" alt="Recent notes on iPad">
+  <img src="docs/screenshots/folders-mac.png" width="32%" alt="Folders on Mac, night theme">
+  <img src="docs/screenshots/toolbar.png" width="32%" alt="Full toolbar, night theme">
+</p>
+
+<sub>Screenshots are rendered by the app's snapshot tests (`HIGAN_SNAPSHOT=1`) using Saber's demo notes.</sub>
+
 ## Features
 
 ### Kinds of notes
